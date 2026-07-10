@@ -1,0 +1,15 @@
+[gd_scene load_steps=2 format=3 uid="uid://cyy74n40qe24n"]
+
+[ext_resource type="Script" uid="uid://bevy4iswuwt13" path="res://Scenes/main.gd" id="1_8nass"]
+
+[node name="Main" type="Node2D"]
+script = ExtResource("1_8nass")
+
+[node name="Provinces" type="Node2D" parent="."]
+
+[node name="LocationMap" type="Sprite2D" parent="Provinces"]
+centered = false
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(121, 130)
+zoom = Vector2(2, 2)

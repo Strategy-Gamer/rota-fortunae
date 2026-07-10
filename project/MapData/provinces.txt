@@ -1,0 +1,116 @@
+{
+	"#a76275" : {
+		"name": "London",
+		"owner": "ENG",
+		"terrain": "urban",
+		"region": "England"
+	},
+	"#165465" : {
+		"name": "Sussex",
+		"owner": "ENG",
+		"terrain": "plains",
+		"region": "England"
+	},
+	"#15a059" : {
+		"name": "Cornwall",
+		"owner": "ENG",
+		"terrain": "hills",
+		"region": "England"
+	},
+	"#3b6db6" : {
+		"name": "Gloucestershire",
+		"owner": "ENG",
+		"terrain": "plains",
+		"region": "England"
+	},
+	"#15fa5f" : {
+		"name": "East Anglia",
+		"owner": "ENG",
+		"terrain": "plains",
+		"region": "England"
+	},
+	"#16ae6a" : {
+		"name": "East Midlands",
+		"owner": "ENG",
+		"terrain": "plains",
+		"region": "England"
+	},
+	"#168168" : {
+		"name": "West Midlands",
+		"owner": "ENG",
+		"terrain": "hills",
+		"region": "England"
+	},
+	"#157357" : {
+		"name": "Wales",
+		"owner": "ENG",
+		"terrain": "hills",
+		"region": "England"
+	},
+	"#173573" : {
+		"name": "Lancashire",
+		"owner": "ENG",
+		"terrain": "hills",
+		"region": "England"
+	},
+	"#16db6d" : {
+		"name": "Yorkshire",
+		"owner": "ENG",
+		"terrain": "plains",
+		"region": "England"
+	},
+	"#170870" : {
+		"name": "Northumberland",
+		"owner": "ENG",
+		"terrain": "hills",
+		"region": "England"
+	},
+	"#154654" : {
+		"name": "Lothian",
+		"owner": "ENG",
+		"terrain": "plains",
+		"region": "Scotland"
+	},
+	"#176276" : {
+		"name": "Lanark",
+		"owner": "ENG",
+		"terrain": "hills",
+		"region": "Scotland"
+	},
+	"#17e97e" : {
+		"name": "Aberdeenshire",
+		"owner": "ENG",
+		"terrain": "hills",
+		"region": "Scotland"
+	},
+	"#151951" : {
+		"name": "Scottish Highlands",
+		"owner": "ENG",
+		"terrain": "hills",
+		"region": "Scotland"
+	},
+	"#14ec4e" : {
+		"name": "Northern Ireland",
+		"owner": "ENG",
+		"terrain": "plains",
+		"region": "Ireland"
+	},
+	"#13de3d" : {
+		"name": "Leinster",
+		"owner": "ENG",
+		"terrain": "plains",
+		"region": "Ireland"
+	},
+	"#178f78" : {
+		"name": "Connaught",
+		"owner": "ENG",
+		"terrain": "plains",
+		"region": "Ireland"
+	},
+	"#17bc7b" : {
+		"name": "Munster",
+		"owner": "ENG",
+		"terrain": "plains",
+		"region": "Ireland"
+	}
+}

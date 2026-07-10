@@ -1,0 +1,897 @@
+0	Rota Fortunae: Civilizations
+1	But actually including the rise and fall of empires
+2	Core Concept: Play as the spirit of your civilization, tending to its polities to rise to glory. Yet societies are fragile and fortune is never permanent. Will your peoples’ achievements be remembered? Or will they crumble and be forgotten in strategy gaming’s most faithful take on the dynamics of history. 
+3	Ideas Blurb
+4	Gameplay Hooks
+5	“Just One More” Loops
+6	Emergent Narratives
+7	Timeline for acquisition of great people/change of traditions/important events
+8	Cultural Conflict
+9	Religious Events/Conversion
+10	Epidemics
+11	Famines
+12	Golden Ages (really good Expansion)
+13	Adoption of Great Person
+14	Map timeline
+15	Synergy-driven Customization
+16	Power Spikes
+17	Risk/Reward
+18	Meta-Progression
+19	Cascading Consequences
+20	Dynamic Resolvable Crises
+21	Mastery Curve
+22	Asymmetric Playstyles/Faction Identity
+23	Gabe Newell: Interactivity is the definition of fun.
+24	Rise &amp; Fall of Empires
+25	Create empires, they rise &amp; fall
+26	They experience periodic crises that can destroy them
+27	Your actions can lead to them persisting
+28	Legacy System
+29	Get most of it through the death of empires
+30	
+31	AI
+32	Encode how you would play the game?
+33	
+34	Gradual increase in complexity
+35	Think Civilization series: Simple start, gets more complicated over time
+36	Tutorial: Disable parts of the UI for each thing
+37	
+38	Title/Game Ideas
+39	Title Elements:
+40	Epoch/Age/Era/Time
+41	Civilization
+42	Evolution
+43	Dynamism
+44	Wheel/Cycle
+45	Kingdom/Empire
+46	World/Globe
+47	Fortune/Fortuna
+48	Titles:
+49	Rota Fortunae: Civilizations
+50	4X God-Game
+51	Rota Fortunae: Wizards and Warriors
+52	4X God-Game?
+53	Rota Fortunae: Galactic Domination
+54	4X God-Game?
+55	Civolution/CivEvolution
+56	Rogue-lite
+57	FrontierOS
+58	4X Farmer was replaced-esque Automation game
+59	Interplanetary/Interstellar Grand Strategy
+60	Ocean Liner Tycoon
+61	
+62	List of Data Structures &amp; Values
+63	Data Structures
+64	Values
+65	Civilizations
+66	Countries
+67	Civilizational Will
+68	Treasury
+69	Legacy
+70	Countries
+71	State Revenue (Sum of local wealth * effective tax rate * control/capacity modifiers)
+72	State Expenses
+73	State Balance
+74	Treasury
+75	State Capacity (Country-level ability to administer &amp; extract)
+76	Elite Opportunities
+77	Elite Satisfaction
+78	Goods Balance (Food, Materials, Goods Access)
+79	Resilience
+80	Unrest Threshold
+81	Legitimacy
+82	Locations
+83	Pops
+84	Type/Class
+85	Civilization
+86	Amount
+87	Wealth/SoL
+88	Literacy
+89	Religion(s) &amp; %
+90	Cohesion
+91	Districts
+92	Type
+93	Tier
+94	Labor Values
+95	Production Values
+96	Land (Total, Unused, Pastoral, Arable)
+97	Labor Pools
+98	Security
+99	Control
+100	Unrest
+101	Loyalty
+102	
+103	Core Mechanics
+104	Civilizations
+105	Civilizations are who the player actually controls and directs. Players act as the spirit of the civilization, directing countries and their parts. The primary currency is Civilizational Will or CW for short. CW is what players use to change priorities, instate new regimes, provoke revolts, push through reforms, and more against or beyond what the AI would normally do.
+106	
+107	Civilizational Will - Primary Currency to change civilization
+108	Treasury - Money used by you to shape matters
+109	Up to 20% (modified by cohesion) of your pop’s excess wealth beyond sustenance will be donated to your CT
+110	Charity - money given to the poorest to reduce inequality
+111	Entrepreneurship
+112	Legacy - Currency &amp; Accumulated value used to shape cultural/religious traits, scoring
+113	Countries
+114	Legitimacy
+115	Administrative Regions
+116	
+117	Countries have prestige, which is a short-form version of legacy focused on the here and now. It is how impressive the country is at that very moment. 
+118	
+119	Countries adopt certain civics &amp; institutions that basically puts their cultural traits into action.
+120	
+121	Legacy
+122	Accumulating legacy is the primary goal of the game. It is used to shape cultural traits, alter norms, used for powerful temporary boosts, but, most importantly, it is used in final scoring.
+123	
+124	Legacy is accumulated tick by tick, but significant amounts of legacy is also gained from the collapse of an empire.
+125	Sources include, but are not limited to:
+126	Empire Collapse
+127	Golden Ages
+128	Cultural Continuity
+129	Scholarly Achievements
+130	Religious Endurance
+131	Crisis Survival
+132	Civil Wars &amp; Heroic Tragedies
+133	Monuments &amp; Public Works
+134	Maintaining traditions under pressure
+135	Great Works
+136	Long-lived Realms
+137	Fulfilling the conditions of certain religious traits
+138	
+139	Culture
+140	Barbarians
+141	A unique civilization that owns no innovation generation, has minimal traits, and cannot be played. They represent all civilizations that could otherwise not be included.
+142	
+143	Civilization Choices:
+144	Civilization Traits Design Philosophy: Make at least one “obviously good” action mediocre, and at least one “obviously bad” action good.
+145	
+146	Mesopotamian
+147	Kittum - Stability is achieved by making rules explicit, public, and fixed. Legitimacy flows from clarity rather than consensus
+148	Egyptian
+149	Ma’at - Social order is preserved by maintaining equilibrium, disruption is more dangerous than stagnation.
+150	Social reforms are twice as destabilizing, legacy from continuity is doubled
+151	Levantine
+152	Koloniá - Security and prosperity come from relationships and connectivity rather than depth of control
+153	
+154	Hebraic
+155	People of the Covenant - Law, identity, and legitimacy persist independently of territory or sovereignty
+156	-50% Assimilation of others, but Hebraic pops do not passively assimilate. Gain legacy from the presence of Hebraic pops in foreign civilizations. Cohesion gain from foreign persecution is doubled.
+157	Anatolian
+158	Land of a Thousand Gods - Continuity is maintained by absorbing, reinterpreting, and repurposing external traditions
+159	Iranian
+160	Asha - The world is a contest between order and chaos, where alignment with truth grants legitimacy
+161	Indic
+162	Dharma - Social order arises from fulfilling one’s role rather than enforcing equality
+163	Sinitic
+164	Mandate of Heaven - Authority is conditional on delivering stability and prosperity. Failure justifies replacement.
+165	Japanese
+166	Bushidō - Cultural emphasis on discipline, honor, duty, and self-mastery
+167	Turkic
+168	Törü - Law and custom exist to be adapted, not fossilized
+169	Mongolic
+170	Nökör - Authority flows from personal loyalty and shared success
+171	Latin
+172	Civitas - Belonging is defined by legal status, not ancestry
+173	All accepted pops under a Latin Country can assimilate, regardless of cultural differences.
+174	Hellenic
+175	Logos - Truth is discovered through reasoned debate and inquiry
+176	Celtic
+177	Clú - Status is earned through personal reputation and honor, not institutional rank
+178	Germanic
+179	Eigenständigkeit - Strong preference for personal space, household independence, and limits on imposed authority
+180	Slavic
+181	Terpeniye - Society endures prolonged hardship far better than most
+182	Arab
+183	Nasab - Social order is grounded in lineage, reputation, and personal honor rather than territory
+184	Ethiopian
+185	Amba - Highland geography fosters isolation, continuity, and resistance to external domination
+186	Sahelian
+187	Griot Memory - Social continuity and legitimacy are preserved through oral historians, genealogy, and living memory rather than written record
+188	Nigerian
+189	Compound Society - Society is organized through dense, overlapping affiliations rather than singular hierarchy
+190	Bantu
+191	Ubuntu - Social expansion favors incorporation and assimilation over exclusion or annihilation
+192	Assimilation of Barbarian pops is doubled, halved cohesion penalty from pop diversity
+193	Mesoamerican
+194	Teotl Cycle - Cosmic balance is maintained through continual reciprocal action.
+195	Andean
+196	Ayni - Reciprocity and coordination across ecological extremes
+197	Mississippian
+198	Ritual Landscape - Social order is expressed through sacred geography, seasonal movement, and ceremonial centers rather than permanent political institutions
+199	Austronesian
+200	Wayfinding - Movement, navigation, and connection are normal conditions of life
+201	Tai
+202	Kreng Jai - Social harmony and face-saving take precedence over rigid principle
+203	Khmer
+204	Deveraja - Society expresses meaning, authority, and identity through large-scale, ordered construction
+205	Public works generate legitimacy and additional legacy
+206	
+207	Secular Cycles
+208	Countries are sorted into phases of what are called secular cycles. These are the following phases:
+209	Expansion
+210	Vigorous population growth
+211	Stable prices and wages
+212	Few but growing Commoners, Few but growing Elites
+213	Stagnation
+214	Population approaches carrying capacity, transition smooth
+215	Majority of commoners  experience economic difficulty
+216	Elites enjoy golden age
+217	Many and stagnant Commoners, Many and growing Elites
+218	Crisis
+219	Transition from stagnation can be abrupt
+220	Pandemics, extreme famine, or state collapse followed by civil war
+221	Extended period of time that can last one or more human generations
+222	Many but shrinking Commoners, Many but shrinking Elites
+223	Depression
+224	Smooth transition
+225	Characterized by endemic civil conflict
+226	Ends when elites are pruned by internal conflict and popular misery has ended so new secular cycle can begin
+227	If no functioning state can reemerge, it transitions into an “intercycle”
+228	Strong elites can lengthen depression (e.g. Mamaluks)
+229	Few and stagnant Commoners, Many but shrinking Elites
+230	
+231	Typical periods of secular cycles lie in the range of 2-3 centuries in monogamous strong powers. Polygamy may result in elite reproduction rates so high that commoners do not even factor into the cycle. With foreign tribes conquering and ruling a settled state, depression state may be little to none (as old elites get replaced with fewer tribal elites). For these types of states a secular cycle may take only 1 century to complete.
+232	
+233	Secular Cycles in RF
+234	Secular cycles are emergent historical rhythms produced by four main variables: population pressure, elite overproduction, sociopolitical instability, and state capacity. These are derived from game-state truths and turned into a 0-1 scale. The game does not force countries through fixed phases, but instead the labels describe the dominant dynamic in a society.
+235	
+236	There are three phases:
+237	Prosperity
+238	Strain
+239	Fracture
+240	Prosperity
+241	Occurs when population pressure is low, elite overproduction is low, and unrest is low. State capacity increases during this time and it is the era of a general “golden age” for the people. Wages are high, population growth is strong, and the state tends to be looking to expand &amp; grow.
+242	Strain
+243	Occurs when either population pressure or elite overproduction is high. Instability tends to rise, state capacity reaches its maximum, wages drop, the population suffers, and elites have a golden age… a “Gilded Age” of sorts. High arts &amp; culture flourishes but you increasingly suffer famines &amp; diseases. Elite overproduction puts strain on the state and makes it increasingly belligerent.
+244	Fracture
+245	Occurs when population pressure or elite overproduction is high but dropping. Instability reaches its peak, state capacity drops, possibly to zero, due to unrest &amp; maintaining elite status. Four horsemen of the Apocalypse appear. When population pressure drops too low, that squeezes elites and causes endemic civil wars until elite overproduction clears out. Population is often unable to grow due to extreme instability. State tries to restart but often fails again with repeated waves of violence (Father-son cycles).
+246	Fall of Empires
+247	Should be clear when territories are unprofitable
+248	Administrative Regions becoming de-facto sovereign over time
+249	
+250	Resilience:
+251	Minimum between:
+252	Legitimacy
+253	Elite Satisfaction
+254	Control (avg)
+255	Security (avg)
+256	“Shock” Events may change resilience temporarily
+257	Ex: Succession Crisis: -24 Resilience, improves by 4 per month
+258	Ex: Existential War: +25 Resilience, decreases by 1 per month
+259	
+260	Insurgencies &amp; Rebellions
+261	Resilience
+262	Country value. Answers how much unrest each owned location can tolerate before a revolt is possible.
+263	
+264	Determined by taking the minimum of the following:
+265	Legitimacy
+266	Elite Satisfaction
+267	Control (weighted avg across locations)
+268	Security (weighted avg across locations)
+269	
+270	Certain “shock” events may change resilience temporarily. These can induce revolts by lowering the threshold enough to make them possible.
+271	Ex: Succession Crisis: -24 Resilience, improves by 12 every year
+272	
+273	Unrest &amp; Rebel Movements
+274	Unrest is a location value. Determines how uppity a location is. Is not exclusive to revolts to break away but includes any popular discontent.
+275	
+276	The Unrest Threshold is a country value. Determines at what point does unrest start to affect the location. The owner can only react to unrest once it reaches this point. Higher unrest thresholds, therefore, result in less problems initially, but offer less time for the country to react to developing situations. Higher unrest thresholds also worsen the effects of unrest, should it go beyond the unrest threshold. 
+277	
+278	High unrest can cause the following problems:
+279	Decrease security and control in the location
+280	Create attritional costs to state resources
+281	Affect logistics for nearby military forces
+282	
+283	When a location exceeds either
+284	Resilience divided by 2
+285	Country’s unrest threshold
+286	Then a rebel movement forms.
+287	
+288	Whether the movement is a civil (war) movement or a secessionary movement is determined by the location’s loyalty. Over 50 loyalty turns into a civil movement, under 50 is a secession movement. Low loyalty increases unrest in a location. High cohesion of the same civilization pops increases loyalty and low cohesion lowers loyalty. High cohesion of different civilizations’ pops decreases loyalty and low cohesion does not affect loyalty. Loyalty is capped at 50% + ½ * your own civilization's population share in the location.
+289	
+290	Rebel movements, active on a per-country basis, track involved locations, can be interacted with directly by players, and can grow or shrink over time with eligible locations. The eligibility of a location is determined by the above conditions to create a rebel movement. Rebel movements only trigger a revolt should any location exceed the owner’s resilience.
+291	
+292	If the average control of the rebelling locations is low enough (&lt;25%) then the rebel movement may secede without causing a war, though the former owner will receive a casus beli. Should the average control be near zero (&lt;10%) then they will not receive a casus beli.
+293	
+294	If a Civil rebellion fires, and the capital province has joined the movement, has Unrest in excess of Resilience, and Elite Satisfaction is below a critical threshold, then instead of firing a civil war a Coup d’Etat occurs, instantly changing out the ruling regime. This, however, will generate a Shock event that will reduce resilience, so it may end up creating a counter-civil war.
+295	Map &amp; Time
+296	Time
+297	Starts in 1000 BC, ends in 2000 AD
+298	Monthly ticks
+299	Subdivided into 3: early, mid, late
+300	Only for military
+301	AI calculations subdivided throughout year to ease yearly tick performance
+302	
+303	Yearly ticks
+304	Just about everything
+305	
+306	Speeds:
+307	1: ⅓ Month per second
+308	2: 1 Month per second
+309	3: 3 Months per second
+310	4: 6 Months per second
+311	5: As fast as possible
+312	
+313	Map
+314	Locations
+315	Basic territory unit of the game
+316	Has:
+317	Terrain (Climate/Vegetation/Topography)
+318	Pops
+319	Security
+320	Control
+321	Arable/Pastoral Capacity
+322	Districts
+323	Resource Nodes
+324	
+325	Tiers:
+326	Locations
+327	Atomic territorial unit
+328	~4000 total
+329	Regions
+330	~100 total
+331	25-100 locations
+332	Continents
+333	6 total
+334	Terrain
+335	Terrain should not merely result in “-33% food” modifiers, but determine what is possible. Deserts may support tiny subsistence, and mining, but not massive grain agriculture without sufficient infrastructure. Forested regions can support a lot of people but are bad for steppe-style pastoral cavalry &amp; herding. Mountains are not merely “bad terrain” but have low caps.
+336	
+337	Arable/Pastoral Capacity, Construction Cost, Transportation throughput, disease pressure, security vulnerability, resource nodes, district types, district caps. Not just percentage modifiers.
+338	
+339	Climates:
+340	Tropical (Af, Am)
+341	Savannah (Aw, As)
+342	Desert (BWh, BWk)
+343	Steppe (BSh, BSk)
+344	Mediterranean (Csa, Csb, Csc)
+345	Subtropical (Cwa, Cfa)
+346	Oceanic (Cwb, Cwc, Cfb, Cfc)
+347	Continental (Dsa, Dwa, Dfa, Dsb, Dwb, Dfb)
+348	Subpolar (Dsc, Dsd, Dwc, Dwd, Dfc, Dfd)
+349	Polar (ET, EF)
+350	
+351	Vegetation
+352	Barren
+353	Sparse
+354	Grassland
+355	Woods
+356	Forest
+357	Jungle
+358	
+359	Topography
+360	Dunes
+361	Flatland
+362	Plateau
+363	Hills
+364	Mountains
+365	Wetlands
+366	Shallows
+367	Inland Sea
+368	Coastal
+369	Ocean
+370	Deep Ocean
+371	
+372	Pops
+373	Live in locations.
+374	Each “pop” is a group of people defined as having a type and civilization. All other characteristics would be a % of the total (e.g. literacy) and would not divide a pop into separate groups.
+375	They can range from a size of 1 to 2^32 (64 bit?).
+376	
+377	They have a standard of living determined by:
+378	Wealth per capita (mainly)
+379	Food access
+380	Goods access
+381	Security
+382	
+383	SOL drives:
+384	Population growth
+385	Unrest
+386	Migration
+387	Class mobility
+388	Civilizational treasury contribution (partly)
+389	
+390	Types:
+391	Slaves
+392	Work rural jobs for free. All wealth surplus goes to owners
+393	Preferred before commoners
+394	Receive only subsistence
+395	Commoners
+396	Can work for wages in rural districts
+397	Urbanites
+398	Can work for wages in urban districts
+399	Important for innovation, legacy, administration
+400	Elites
+401	Does not work. 
+402	Own all districts &amp; receive surplus
+403	Generates elite pressure when numbers exceed elite opportunities
+404	
+405	Diseases
+406	Also should gate foreign civs from colonizing territory (disease resistance)
+407	
+408	Economy
+409	
+410	Locations determine what is possible. Pops at what scale. Districts provide the scale.
+411	
+412	Goods
+413	Food
+414	Grown in Arable &amp; Pastoral districts
+415	Survival/biological constraint
+416	Famines -&gt; increases disease risk
+417	Materials
+418	Raw extractive inputs.
+419	Goods
+420	Have types. Variety &amp; sufficient quantity increases satisfaction &amp; SOL
+421	Wealth
+422	Value signal, not a normal traded good.
+423	Represents surplus value, exchange value, used for tax base.
+424	Production
+425	Land
+426	Every location has land divided into three states:
+427	Arable Land
+428	Used by Arable Agriculture Districts &amp; Self-employed rural pops
+429	Produces good amounts of Food &amp; Wealth
+430	Vulnerable to raids &amp; low security
+431	Upgrades from pastoral land. Decent amount of investment required. More with certain terrains
+432	
+433	Pastoral Land
+434	Used by Pastoral Agricultural Districts &amp; Self-employed rural pops
+435	Produces small amounts of wealth &amp; food, also nomadic cavalry
+436	Cheap &amp; less vulnerable
+437	
+438	Unused Land
+439	Land which is not incorporated into productive use
+440	Wilderness, Abandoned Farmland, Unsafe Countryside
+441	Low security can convert arable/pastoral land into unused land
+442	Recovery restores unused land to pastoral first
+443	Labor
+444	Rural Labor
+445	Produced by Slaves &amp; Commoners
+446	Used by Rural Districts &amp; Subsistence (Farm, Pasture, Plantation, Extraction, Infrastructure)
+447	Slaves assigned first
+448	Urban Labor
+449	Produced by Urbanites
+450	Used by Urban Districts (Industry, Commerce, Administration, Culture, Education, Religion, Military)
+451	District Economy
+452	Organized economic units of a location
+453	Type
+454	Tier
+455	Labor Demand
+456	Input Demand
+457	Output
+458	Elite Opportunities
+459	Security Exposure
+460	Other effects
+461	Build/expand districts
+462	Rural &amp; Urban
+463	Has a type that can be upgraded over time, similar to Stellaris buildings.
+464	Ex: Workshops -&gt; Guilds -&gt; Factories -&gt; Production Plants
+465	Owners must upgrade them
+466	# Agriculture
+467	Farm
+468	Basic Farming
+469	Intensive Agriculture
+470	Mechanized Agriculture
+471	Precision Agriculture
+472	Pasture
+473	Open Grazing
+474	Managed Pasture
+475	Factory Farms
+476	Plantation
+477	Basic Planting
+478	Cash Crops
+479	Mechanized Plantations
+480	Precision Plantations
+481	# Rural
+482	Mining
+483	Manual Extraction
+484	Organized Extraction
+485	Mechanized Extraction
+486	Precision Extraction
+487	Fortifications
+488	Basic Forts
+489	Castles
+490	Bastions
+491	Bunkers
+492	Infrastructure
+493	Paths
+494	Roads
+495	Railroads
+496	# Urban
+497	Administration
+498	Scribal Houses
+499	Civil Service
+500	Administrative Bureaus
+501	Commercial
+502	Market Stalls
+503	Banks
+504	Stock Exchanges
+505	E-Commerce Platforms
+506	Culture
+507	Ampitheaters
+508	Artistries
+509	Museums
+510	Broadcast Media
+511	Industrial
+512	Workshops
+513	Manufactories
+514	Factories
+515	Production Plants
+516	Education
+517	Academies
+518	Universities
+519	Schools
+520	Laboratories
+521	Religion
+522	Shrine / Church / Mosque
+523	Temple / Cathedral / Grand Mosque
+524	Resource Nodes
+525	Increases max district cap &amp; affects output. May require tech unlock.
+526	
+527	Material Nodes (Tech unlock):
+528	Stone
+529	Lead
+530	Copper
+531	Tin (Bronze Working)
+532	Iron (Iron Working)
+533	Coal (Coke)
+534	Zinc (Metallurgy)
+535	Oil (Combustion)
+536	Nickel (Material Science)
+537	Manganese (Material Science)
+538	Chromium (Material Science)
+539	Natural gas (Mass Production)
+540	Aluminum (Combined Arms)
+541	Titanium (Rocketry)
+542	Technology Metals (Computers)
+543	
+544	Goods Nodes (Plantation):
+545	Spices
+546	Cocoa
+547	Coffee
+548	Incense
+549	Silk
+550	Sugar
+551	Tea
+552	Tobacco
+553	Wine
+554	Goods Nodes (Extraction)
+555	Gold
+556	Silver
+557	Gems
+558	Salt
+559	Ivory
+560	Land &amp; Agriculture
+561	Each location has a total land area. Districts will consume land area, but rural districts consume the most land.
+562	
+563	Agriculture has two restraints: Arable Capacity and Pastoral Capacity. Both vie for Land Area, and land used for arable farming will remove pastoral capacity as well.
+564	Unused capacity (arable or pastoral) is free to be used by commoners.
+565	Depending on the vegetation and climate, pastoral and arable capacity will have different amounts of slots. Worse vegetation requires greater long-term investment for farming to be viable. While terrain can affect total output, it mostly caps how much you can scale. Though heavy infrastructure use may allow farming in the desert.
+566	
+567	Security
+568	Can people safely live, invest, farm, trade, &amp; store wealth here?
+569	
+570	Determines what time horizon is considered for investment
+571	90-100% - Industrialized states
+572	70-90% - Urban societies
+573	50-70% - Basic towns/high value extractives
+574	30-50% - Grazing, Hunter Gatherers, removal of settled pops
+575	0-30% - Depopulation in all contexts
+576	Limiting factor in development
+577	Sedentary districts are high-value, stationary targets - lose years of value when burned
+578	Nomads will have lower fixed capital, recover faster - destruction barely matters
+579	Raids &amp; warfare will lower security
+580	Security Exposure
+581	Modified by forts, terrain, local armies (both enemy/friendly)
+582	Diplomatic status matters
+583	Increases for every bordering location that is not owned by the same country or an ally (help reduce bordergore)
+584	
+585	Control
+586	Can the state impose its will here?
+587	High control enables taxation, conscription, policy enforcement
+588	Low control results in autonomy &amp; possible separatism. They may break away entirely.
+589	
+590	Warfare (Simple)
+591	What is the smallest military model that makes empires rise, overextend, fracture, and leave successors?
+592	
+593	Three main concepts:
+594	Force - How much violence the state can project
+595	Logistics - How far the state can effectively project its violence 
+596	Pressure - How much violence the country must absorb or suppress
+597	
+598	The thinking should be “My empire is powerful near the core, weak at the frontiers, and too expensive to hold together.”
+599	
+600	Army - How much land power the country has
+601	Has a base strength value
+602	Deteriorates with distance
+603	Navy - How much sea power the country has
+604	Extends reach across sea zones (decreasing effective distance)
+605	Protects coastal commerce &amp; security
+606	Enables overseas war
+607	Logistics - How far the country can project power
+608	Deployment consumes a certain amount of logistics
+609	Logistic cost = amount * distance. 
+610	A small expeditionary force halfway across the world may be more expensive than sustaining a large force nearby.
+611	Individual for each theater commitment, but summed for general territory maintenance
+612	More logistics is burdened, the worse that sustaining long-distance operations gets. (So expeditionaries are disproportionately affected)
+613	Very likely logistics will be overburdened in most circumstances until the industrial era
+614	Sourced from infrastructure, military institutions, doctrine, and industrial base. Logistics cost may be reduced from local support &amp; bases
+615	Military Burden - How expensive the military is relative to the state
+616	Should be clear how much each operation costs
+617	More logistics strain = more costly
+618	Maintaining land requires a certain amount of army, naval power and logistics
+619	Inability to sustain the necessary burden results in security &amp; control issues
+620	
+621	Map
+622	Instead of armies as pieces, you have a military control overlay where each empire exerts pressure.
+623	Every location has a state:
+624	Protected
+625	Exposed
+626	Overextended
+627	Contested
+628	Uncontrolled
+629	The more a country tries to claim, the more their logistics &amp; army get stretched. Pressure can have meaningful effects on the location’s security. It may even exude into adjacent territory depending on the situation (e.g. if that country claims the territory, nomad states, so on).
+630	
+631	To prevent blobbing, things like power getting weaker the further you are from the core, the fact every frontier creates additional burden, and that conquest should be easy but it's more expensive to hold territory.
+632	Doctrines &amp; Types
+633	Land &amp; Naval doctrines are set per country and determine a few things:
+634	Implied unit composition
+635	Preferred terrain
+636	Battle tactics
+637	Mobility
+638	Siege ability
+639	Cost
+640	Vulnerabilities (Rock paper scissors type matchups)
+641	Sea control
+642	Raiding ability
+643	Expeditionary ability
+644	
+645	Unit types also exist, but they do not need to be manually assembled. Improvements in technology may improve unit types, or unlock new ones.
+646	
+647	Line Warfare may struggle in irregular terrain. Steppe Warfare beats Levy Infantry in open fields, but Line Warfare may beat Steppe Warfare.
+648	Wars &amp; Theaters
+649	A theater is a region where military force is actively contested. They can be created by:
+650	Contested border region
+651	Rebellions
+652	Invasions/Naval Landings
+653	Civil Wars
+654	Normal Wars
+655	Countries commit forces to theaters. Players may influence or override country behavior with CW, but normal AI handles it.
+656	
+657	There are two main layers:
+658	Attritional Warfare
+659	Daily and monthly background fighting. This can slowly change the front over time, but isn’t naturally decisive. It favors the “status quo”, defined as the current balance of power (this doesn’t mean the front-line doesn’t move, but rather the current momentum stays roughly the same).
+660	Major Battles
+661	These are decisive engagements where both sides commit heavily and the result may massively swing the result. Ideally there might be anywhere between 2 to 12 per theater. Small wars may be decided by one battle. Battles do not *have* to be turning points (e.g. Verdun) but should be most of the time.
+662	
+663	In theaters with naval warfare, in order to exact landings, naval superiority must be achieved. Theaters should also remain focused, but general enough so you don’t end up with dozens of them. For a WW2 example, Europe would comprise the North African theater, Italian theater, French/Western theater, the short-lived Polish theater, the short-lived Balkan theater (for the invasion of Yugoslavia &amp; Greece), and the Eastern Front theater. Theaters should also be allowed to merge, though with some “stickiness” as to the splitting/joining of theaters to prevent theaters from constantly splitting/rejoining with minor frontline changes. The Pacific might turn into a Burmese Theater, a China theater, a Manchuria theater, an Indonesian/South Pacific theater, and a Central/North Pacific theater. So whilst the Pacific example may have a South Pacific and North Pacific theaters that would be adjacent, they’d be too large to have as one large theater. Burma and China would also be separate due to terrain. Manchuria, finally, because of a separate war.
+664	
+665	Each theater would have a commitment level, which determines how much army/navy capacity is sent, how much risk is accepted, and how vulnerable other areas become. The commitment level would depend on war aims &amp; reasons (explained in the complex section - simple model would use it too).
+666	Warfare (Complex)
+667	Armies
+668	Core Design problem:
+669	Preindustrial Warfare wants discrete armies, sieges, raids, and set-piece battles
+670	Modern Warfare wants fronts, logistics, mobilization, and attrition
+671	Countries should not operate 100+ units by late game
+672	Fully abstracting armies feels cheap
+673	
+674	Solution: Armies exist on the map, but exact tile/position is not sacred.
+675	They exist as operational commitments tied to space, not chess pieces
+676	Armies are a named formation, visible on the map, anchored in a location. They are able to move, siege, intercept, suppress, raid, and occupy, BUT they project influence and control into nearby locations. It’s not merely in “province X” but rather exists in a “quantum field” around that location.
+677	
+678	Forts, cities, ports, mountain passes sit in locations. Roads and sea routes connect locations. Armies move between locations. So on so forth. Battles happen *between locations*. Sieges happen *at locations*. Late-game frontlines emerge implicitly from overlapping zones of control rather than a front system or individual units in each tile.
+679	
+680	Three main combat contexts:
+681	Location Combat
+682	Sieges &amp; Assaults, Urban Warfare
+683	Battles happen in one location.
+684	Thinking about removing this and focusing on 2 and 3
+685	Between-Location Combat
+686	Intercepts, set-piece battles, frontline warfare
+687	Attacker &amp; Defender occupy two different locations in battle
+688	Area-of-Operations Pressure
+689	Raiding, occupation spread, control projection, rebel suppression, screening, supply disruption, air superiority
+690	Happens in the zone of control of armies. Relatively diffuse, and more about attrition than set-piece battles.
+691	
+692	Battles are operational outcomes, not tactics. They do not need to model exact flanking, formations, or tactical placement. They only need to account for army comp, tech, doctrine, terrain, supply, morale, cohesion, professionalism.
+693	
+694	Logistics constrains how far armies can operate, how large an army can be in a certain area, how much attrition armies suffer. Supply origin would be core homeland territory, not just the capital, so surrounding the capital does not kill all logistics.
+695	
+696	Navies
+697	Navies at sea are equivalent to armies on land, but focus on sea-lane control:
+698	Protecting naval shipping
+699	Blockading enemies
+700	Enable overseas invasions
+701	Suppress or engage in piracy/raiding
+702	Opening up new trade routes
+703	
+704	War Diplomacy
+705	War Aims &amp; War Reasons are state-machines designed to help the AI figure out what they want and how much they’re willing to commit to a war.
+706	
+707	AIs should not ask “Can I win” but rather “Is it still worth it given what I’m aiming for?”. Escalation can occur by adding aims which can escalate commitment by causing reevaluation of the war reasons. Partial success may impact legitimacy for the one who over-promised. To prevent overcommitment, particularly by the AI, there would be an amount the AI would be willing to actually commit. A cost they’re willing to bear out. 
+708	
+709	Nomad Armies - lives off the land (very small logistics capacity requirement)
+710	
+711	Raiding
+712	Doesn’t require declaration of war
+713	Limited scope - pillage and extract as much value as possible
+714	
+715	Damage Types:
+716	Each unit has attack/defense against each type.
+717	Unit with higher initiative chooses best damage type
+718	Ex: Horse Archers vs Swordsmen. HA dominate swords.
+719	With guns/plate armor suddenly things change
+720	Horse archers require grazing
+721	
+722	Religion
+723	Religions are their own entities that are missionary, universal, and are not tied to a single civilization. There are four religions (in order of appearance):
+724	Buddhism
+725	Christianity
+726	Islam
+727	Atheism
+728	
+729	They each have their own unique mechanics, interactions, effects, and focus. They can also evolve, internally, over time.  
+730	Buddhism
+731	The biggest aspect of Buddhism is it is syncretic. It grants bonuses without replacing your core culture’s religious traits.
+732	
+733	Start of Buddhism:
+734	Region in the “fracture” phase
+735	There must be a recent shattered empire
+736	Preference for Indic Civilization
+737	Needs Philosophy tech
+738	
+739	There are various schools of Buddhism available that can be embraced…
+740	Theravada
+741	Mahayana
+742	Vajrayana
+743	Dalai Lama
+744	Christianity
+745	Christianity is the first religion where you would have to abandon the religious traits you have and take Christianity’s effects. “Take it or leave it” mentality. It’s the most powerful religion, but it provides the most constraints.
+746	
+747	Start of Christianity: 
+748	Civilization under a foreign empire
+749	Said empire needs to be in its “prosperity” phase
+750	It needs to be after a certain date/time
+751	Religion ought to be monotheistic or messianic
+752	Strong preference for the Hebraic Civilization
+753	Civilization needs Moralism
+754	
+755	Christianity grows under persecution. However, Christianity also only tends to spread to or from settled states.
+756	
+757	Upon adoption, Ecclesiastical Church springs up. This however doesn’t last long and schisms can break apart Christianity into various sects/denominations.
+758	
+759	Each denomination will have relations with the other to determine how close they are. 
+760	
+761	The adopted values of each denomination can change over time. Banning familial marriages, promoting love-marriages, slave abolitionism, priests not marrying, so on.
+762	Islam
+763	The unifying-conquest religion. It provides a strong expansion spike, bridges tribals &amp; settled, creates religious and political legitimacy through the Caliphate, and greatly increases the ability to integrate foreign lands. Like Christianity, it is take-it or leave-it.
+764	
+765	Start of Islam:
+766	Tribal/Nomadic? Civilization bordering/in a Christian area
+767	Unifies areas not under settled states
+768	Large boost to cohesion &amp; conquest
+769	
+770	Caliphate
+771	Atheism
+772	The most flexible of the religions. Its primary aim is the improvement of material conditions (which is where legacy mostly originates from for Atheist states) whilst removing the positive cohesion effects that religion provides.
+773	
+774	Start of Atheism:
+775	Need Secularism
+776	
+777	Secularism is a toned down version of Atheism which can be adopted by any other religion on top of their normal religious mechanics. It unlocks some of the benefits of Atheism, whilst mitigating its worst effects. In a way, it’s Atheism-lite.
+778	Innovation
+779	Innovation is a civilization-level mechanic. It is accumulated from every source and the player chooses a technology to research from among a set of weighted random choices (Basically the Stellaris system). Each tech may have a variety of bonuses to accelerate or slow down research. 
+780	
+781	There is also a “tech spread” slot which will randomly pick a technology you have not researched and someone close-by has researched and begin automatically researching it for you. Diffusion does speed up through the game, but being in contact with a source may lend you that tech within 50 years. 
+782	
+783	Ages
+784	Ages are categories of proverbial breakthroughs in sociological and technological progress. Each has a set of starting &amp; spread conditions. 
+785	
+786	
+787	Ages:
+788	Antiquity (1000 BC - ~400 AD)
+789	Early Game starting age
+790	City States &amp; Early Empires
+791	Axial Religions
+792	Imperiality (~500 BC - ~1500 AD)
+793	Polity scaling
+794	Logistics
+795	Administration
+796	Pre-Gunpowder Military
+797	Commerciality (~1000 AD - ~1800 AD)
+798	Economic scaling
+799	Better economics
+800	Ocean-going sailing vessels
+801	Modernity (1600 AD - present)
+802	Breakaway - traditional barriers get broken down
+803	Begins with scientific advancement
+804	By Industrial Revolution, encompasses all areas
+805	
+806	To unlock Imperiality, either you need a country with more than 1 million people or you need to be Buddhist. It has no spread conditions (so it spreads to anyone who can reach you).
+807	
+808	To unlock Commerciality, you need either the Meritocracy or Education techs AND conduct significant trade. It does not spread to Nomads.
+809	
+810	To unlock Modernity, you need Experimentalism, Fallibility, and Laws of Nature cultural traits and the Metallurgy, Global Trade, and Newspapers technologies. You also need 50% literacy, Centers of Learning, Independent Scholarship in any country. It can only spread to settled states.
+811	The Four X’s
+812	Exploration
+813	
+814	
+815	Intel:
+816	No Intel
+817	Geography, static location/region data
+818	Cities, Large States (&gt;10 locations), largest Civilization present
+819	Location names, all countries, administrative regions, rough details (highly rounded numbers), 
+820	Exact location/country details, some stats hidden
+821	All stats shown
+822	
+823	Can decay down to 2, 
+824	
+825	Surveying
+826	Expansion
+827	Exploitation
+828	Extermination
+829	
+830	Visuals
+831	UI/UX
+832	Affordances &amp; Signifiers
+833	Ex: Having 3 buttons but put a container around 2, you know 2 are related, and if you gray out one you know it’s not available
+834	Button press states
+835	Hover States
+836	Tooltips (Tooltips in Tooltips)
+837	Visual Hierarchy
+838	Size (more important = larger)
+839	Position (more important = near the top)
+840	Color (colorful is important, b&amp;w is not)
+841	Images/Icons wherever possible
+842	Typography
+843	4 point grid system (because things can always be split in half)
+844	Pick *one* font for the UI
+845	Sans Serif font?
+846	6 font sizes: 64 px, 42 px, 32 px, 20 px, 16 px, 14 px
+847	Information dense: 24 px, 20 px, 18 px, 16 px, 14 px, 12 px
+848	Color Theory
+849	Color for purpose
+850	One primary color?
+851	Blue: trust
+852	Green: success
+853	Red: danger/urgent
+854	Yellow: warning
+855	Shadows
+856	If shadow is the first thing you notice, you’re not using it right
+857	Icons &amp; Buttons
+858	Make icons same size as the line height (not font size)
+859	Padding for buttons: double padding height for the padding width
+860	Feedback &amp; States
+861	When the user does *ANYTHING* there should be a response  
+862	Button States: Default, Hovered, Pressed, Disabled, Loading (sometimes)
+863	Input States: Default, Focus, Error State, Warning States
+864	Success messages
+865	Microanimations on scroll/swipe
+866	Every interaction needs a response
+867	Ex: Replace “copy to clipboard” button with a chip that says “copied!”
+868	Overlays
+869	Black &amp; White gradient
+870	Progressive blur
+871	Sound Effects
+872	Unique sound effects for important buttons
+873	General sound effects for every button (hover, pressed, unpressed)
+874	Make UI that makes the game look instantly recognizable (rather than just copy &amp; paste)
+875	Important menus should open quickly, not slowly
+876	
+877	Important Notes from Paradox/Others
+878	Whenever possible use icons, or more dense information formats (e.g. Pie chart over list)
+879	Try to avoid text where unnecessary (think do like Stellaris, not EU5), but do use text for displaying numbers or important details (e.g. primary title in CK3, dynasty name)
+880	Incorporate graphical elements that work with the feel of that UI (CK3 crusade/war window)
+881	Empty space is sometimes necessary
+882	Break up UI windows so it’s not one long monotonous list (CK3 character window)
+883	Add minor shader detailing to progress bars, important buttons. Make important buttons stand out (without garish colors)
+884	Pick a theme that works, and adhere to it
+885	Colored numbers/text with the color of the stat (e.g. Civ VI’s science/faith/culture/gold)
+886	Rich Tooltips (Sukitract’s Simple UI Adjustments, Meiou &amp; Taxes)
+887	On-map displays whenever possible (so long as it’s not cluttered)
+888	Additional UI inspiration: Unity of Command II
+889	Map
+890	Empires of History:
+891	https://steamcommunity.com/sharedfiles/filedetails/?id=3288407594&amp;searchtext=
+892	Enhanced Papermap:
+893	https://steamcommunity.com/sharedfiles/filedetails/?id=3600623918&amp;searchtext=
+894	
+895	
+896	

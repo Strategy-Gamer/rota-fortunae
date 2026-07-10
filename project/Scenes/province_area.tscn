@@ -1,0 +1,16 @@
+[gd_scene load_steps=2 format=3 uid="uid://w5qsf1wroyj0"]
+
+[ext_resource type="Script" path="res://Scenes/province_area.gd" id="1_wg6h7"]
+
+[node name="ProvinceArea" type="Area2D"]
+script = ExtResource("1_wg6h7")
+
+[node name="Base Map" type="Node2D" parent="."]
+
+[node name="Overlay Map" type="Node2D" parent="."]
+
+[connection signal="child_entered_tree" from="." to="." method="_on_child_entered_tree"]
+[connection signal="input_event" from="." to="." method="_on_input_event"]
+[connection signal="mouse_entered" from="." to="." method="_on_mouse_entered"]
+[connection signal="mouse_exited" from="." to="." method="_on_mouse_exited"]
+[connection signal="child_entered_tree" from="Base Map" to="." method="_on_base_map_child_entered_tree"]

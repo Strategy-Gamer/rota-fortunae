@@ -1,0 +1,264 @@
+func get_polygons(image, region_color, pixel_color_dict):
+	# Gets polygons for this region
+	var targetImage = Image.create(image.get_size().x,image.get_size().y, false, Image.FORMAT_RGBA8)
+	
+	if not pixel_color_dict.has(region_color):
+		return []
+	
+	for value in pixel_color_dict[region_color]:
+		targetImage.set_pixel(value.x,value.y, "#ffffff")
+	
+	var bitmap = BitMap.new()
+	bitmap.create_from_image_alpha(targetImage)
+	var polygons = bitmap.opaque_to_polygons(Rect2i(Vector2i(0,0), bitmap.get_size()), 0.1)
+	return polygons
+
+func build_adjacency_graph(pixel_color_dict: Dictionary, image: Image) -> Dictionary:
+	var adjacency = {}
+	var border_edges = {}
+	var offsets = [Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1)]
+	
+	var bounds = Rect2i(Vector2i(0,0), image.get_size())
+
+	for province_color in pixel_color_dict:
+		adjacency[province_color] = {}
+
+		for px in pixel_color_dict[province_color]:
+			for offset in offsets:
+				var neighbor = px + offset
+				if !bounds.has_point(neighbor):
+					continue
+
+				var neighbor_color = "#" + image.get_pixelv(neighbor).to_html(false)
+				if neighbor_color != province_color:
+					# Record Adjacency
+					adjacency[province_color][neighbor_color] = true
+					
+					# Use a sorted tuple for consistency
+					var key = [province_color, neighbor_color]
+					key.sort()
+					var edge_key = key[0] + "|" + key[1]
+					
+					if province_color == key[0]:
+						if not border_edges.has(edge_key):
+							border_edges[edge_key] = []
+						border_edges[edge_key].append(px)
+					
+	#print("Total province keys: ", border_edges.size())
+	#for key in border_edges.keys():
+		#print(key, " edge count: ", border_edges[key].size())
+
+	return { "adjacency": adjacency, "border_edges": border_edges }
+
+func separate_edge_clusters(points):
+	var unvisited = points.duplicate()
+	var clusters = []
+	var offsets = [
+		Vector2i.LEFT, Vector2i.RIGHT, Vector2i.UP, Vector2i.DOWN,
+		Vector2i(1,1), Vector2i(-1,-1), Vector2i(1,-1), Vector2i(-1,1)
+	]
+
+	while not unvisited.is_empty():
+		var queue = [unvisited.pop_front()]
+		var cluster = []
+		var visited = {}
+
+		while not queue.is_empty():
+			var current = queue.pop_front()
+			if visited.has(current):
+				continue
+			visited[current] = true
+			cluster.append(current)
+
+			for offset in offsets:
+				var neighbor = current + offset
+				if unvisited.has(neighbor):
+					unvisited.erase(neighbor)
+					queue.append(neighbor)
+
+		clusters.append(cluster)
+
+	return clusters
+
+func order_edge_path(points: Array[Vector2i]) -> Array[Vector2i]:
+	var neighbors = {}  # Vector2i -> Array[Vector2i]
+	var point_set = points.duplicate()
+	var offsets = [
+		Vector2i(1,0), Vector2i(-1,0), Vector2i(0,1), Vector2i(0,-1),
+		Vector2i(1,1), Vector2i(-1,-1), Vector2i(-1,1), Vector2i(1,-1)
+	]
+
+	for point in points:
+		neighbors[point] = []
+		for offset in offsets:
+			var neighbor = point + offset
+			if point_set.has(neighbor):
+				neighbors[point].append(neighbor)
+
+	var visited = {}
+	var path = []
+	var current = points[0]
+
+	while current != null:
+		path.append(current)
+		visited[current] = true
+		var found = false
+		for neighbor in neighbors[current]:
+			if not visited.has(neighbor):
+				current = neighbor
+				found = true
+				break
+		if not found:
+			break  # Dead end
+
+	return path
+
+func dsu_find(dsu, pos):
+	if dsu[pos] != pos:
+		dsu[pos] = dsu_find(dsu, dsu[pos])
+	return dsu[pos]
+func dsu_union(dsu, a, b):
+	var ra = dsu_find(dsu, a)
+	var rb = dsu_find(dsu, b)
+	if ra != rb:
+		dsu[rb] = ra
+
+func get_connected_components(pixels) -> Array:
+	var dsu = {}
+	var pixel_dict = {}
+	for px in pixels:
+		dsu[px] = px
+		pixel_dict[px] = true
+	
+	for px in pixels:
+		for offset in [Vector2i(1,0), Vector2i(0,1)]:
+			var neighbor = px + offset
+			if pixel_dict.has(neighbor):
+				dsu_union(dsu, px, neighbor)
+	
+	var groups = {}
+	for px in pixels:
+		var root = dsu_find(dsu, px)
+		if root not in groups:
+			groups[root] = []
+		groups[root].append(px)
+		
+	return groups.values()
+
+func create_edge_list(pixels) -> Dictionary:
+	var edges = {}
+	var pixel_dict = {}
+	for px in pixels:
+		pixel_dict[px] = true
+	
+	for px in pixels:
+		for offset in [Vector2i(1,0), Vector2i(0,1), Vector2i(-1,0), Vector2i(0,-1)]:
+			var neighbor = px + offset
+			if not pixel_dict.has(neighbor):
+				if not edges.has(px):
+					edges[px] = {}
+				edges[px][offset] = true
+				
+	return edges
+
+# Detects edges and returns a list of a list of edges.
+# Determines each list by using a wall running algorithm (like simple maze solvers)
+func order_edges(edge_list: Dictionary) -> Array:
+	var pixels = edge_list.keys()
+	var edge_paths: Array = []
+	var visited: Dictionary = {}
+
+	print(edge_list)
+	
+	for start_px in pixels:
+		for dir in edge_list[start_px].keys():
+			var edge_id = str(start_px) + "|" + str(dir)
+			if visited.has(edge_id):
+				continue
+			
+			var polygon: Array = []
+			var current_px = start_px
+			var current_dir = dir
+			
+			while true:
+				var edge_key = str(current_px) + "|" + str(current_dir)
+				if visited.has(edge_key):
+					break
+				visited[edge_key] = true
+								
+				# if current dir is an edge: turn clockwise
+				# if current dir is not an edge, move forward and turn counter-clockwise
+				# When you run back into the original pixel and direction, stop
+
+				print("Current Pixel: ", current_px, " Current Dir: ", current_dir)
+				
+				# if current dir is an edge: turn counter-clockwise
+				if edge_list.has(current_px) and edge_list[current_px].has(current_dir):
+					# Add leading vertex for this edge
+					var point = edge_to_vertex(current_px, current_dir)
+					polygon.append(point)
+					print("		Added Point: ", point)
+
+					current_dir = rotate_vec(current_dir, RotationDirection.CW)
+				# if current dir is not an edge, move forward and turn counter-clockwise
+				else:
+					current_px += current_dir
+					current_dir = rotate_vec(current_dir, RotationDirection.CCW)
+				
+				# When you run back into the original pixel and direction, stop
+				if current_px == start_px and current_dir == dir:
+					edge_paths.append(polygon)
+					break
+
+	return edge_paths
+	
+func rotate_vec(vec: Vector2i, direction: int) -> Vector2i:
+	match direction:
+		RotationDirection.CW:
+			return Vector2i(-vec.y, vec.x)
+		RotationDirection.CCW:
+			return Vector2i(vec.y, -vec.x)
+		_:
+			return vec
+	
+func edge_to_vertex(pixel: Vector2i, dir: Vector2i) -> Vector2:
+	if dir == Vector2i(1, 0):     # Right
+		return Vector2(pixel.x + 1, pixel.y + 1)
+	elif dir == Vector2i(0, 1):   # Down
+		return Vector2(pixel.x, pixel.y + 1)
+	elif dir == Vector2i(-1, 0):  # Left
+		return Vector2(pixel.x, pixel.y)
+	elif dir == Vector2i(0, -1):  # Up
+		return Vector2(pixel.x + 1, pixel.y)
+	else:
+		push_error("Invalid edge direction: " + str(dir))
+		return pixel
+
+func build_location_geometery(edge_list: Dictionary) -> void:
+	var loops = order_edges(edge_list)
+	print(loops)
+	if loops.is_empty():
+		return
+	
+	# pick largest loop as outer
+	var best_idx = 0
+	var best_size = 0
+	for i in range(loops.size()):
+		var area = signed_area(loops[i])
+		print("Loop ", i, " area: ", area)
+		if abs(area) > best_size:
+			best_size = abs(area)	
+			best_idx = i
+	
+	var outer_loop = loops[best_idx]
+
+func signed_area(poly: Array) -> float:
+	var sum1 = 0.0
+	var sum2 = 0.0
+	for i in range(poly.size() - 1):
+		sum1 += poly[i].x * poly[i + 1].y
+		sum2 += poly[i].y * poly[i + 1].x
+	
+	sum1 += poly[poly.size() - 1].x * poly[0].y
+	sum2 += poly[poly.size() - 1].y * poly[0].x
+	return (sum1 - sum2) * 0.5

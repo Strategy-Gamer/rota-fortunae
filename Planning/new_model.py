@@ -1,7 +1,9 @@
 import math
 import numpy as np
-import matplotlib as plt
+import matplotlib.pyplot as plt
 import random
+
+from economy import Location, Pop, District, FARM
 
 # Carrying Capacity -> Increase in Population -> 
 # Reduction of wages (population pressure is highly correlated to inverse wages) -> 
@@ -106,6 +108,54 @@ class FinalSim:
         self.population = 0.6
         self.elites = 0.006
 
+        # ---- Agrarian economy (districts + subsistence). Read-out layer for now: computed & tracked,
+        #      but NOT yet fed back into P/E/U/S (that comes with elite income & district-driven capacity).
+        #      NOTE: NO GDP in this model. Districts generate WEALTH (surplus value, tax base) which is
+        #      NEVER negative; falling below subsistence is a FOOD shortage, tracked separately. See
+        #      economy_design.md. ----
+        self.land_productivity = 1.0   # yield per unit land (tech / district-tier hook; will raise K later)
+        self.subsistence = 1.0         # per-capita subsistence need (food-equivalent units)
+        self.base_yield = 2.0          # per-worker output at low density (subsistence units); sets surplus scale
+        self.district_share = 0.5      # fraction of usable land organized into elite-owned districts
+        self.wage_share = 0.5          # commoners' share of district wealth (the rest is elite surplus)
+
+        # Economic history (measurement + wiring for later stages)
+        self.wealth_pc_history = []      # WEALTH per capita (>=0), the main SoL driver
+        self.food_ratio_history = []     # food output / need (>=1 fed, <1 shortage)
+        self.wage_history = []           # commoner SoL / real-wage index driving mobilization
+        self.elite_income_history = []   # district wealth surplus accruing to elites
+        self.commoner_wealth_history = []# commoner wealth (self-employed surplus + district wages)
+
+        # ---- Attached district/pop economy (economy.py). Only the COMMONER side is exposed to the
+        #      cycle (it drives the wage). Elite district income is computed but discarded ("into the
+        #      aether") for now; the old self.elites scalar dynamics below are untouched. This lets us
+        #      confirm the cycle still works with real districts attached before rewiring the elites. ----
+        self.econ_land = 1.0             # location land ~ carrying capacity, so district jobs ~ population and
+                                         #   labor pressure actually bites (workers/jobs ~ 1 at carrying capacity)
+        self.wage_d_crit = 0.9           # wage-SHARE falling point: commoners' share of district wealth crosses 50%
+                                         #   when workers reach this fraction of carrying capacity (=> wage 50% at ~90%)
+        self.location = Location(land_area=self.econ_land, security=1.0, wage_d_crit=self.wage_d_crit)
+        self._commoner = Pop("Commoner", self.population)
+        self._elite_owner = Pop("Elite", self.elites)   # the "new" elite pop; grown/shrunk by the elite dynamics
+        self.location.add_pop(self._commoner)
+        self.location.add_pop(self._elite_owner)
+        # Districts fill the land so subsistence (fully commoner-owned) doesn't dilute the wage share, and so
+        # commoner capture ~= the labor wage share (elite-independent). Elites building districts comes later.
+        self.location.add_district(District(FARM, size=1.0, tier=0, owner=self._elite_owner))
+
+        # ---- State fiscal (treasury-buffered, survival-seeking; debt ignored for now). ----
+        self.tax_rate = 0.25          # constant tax on commoner + elite surplus alike
+        self.army_base = 0.006        # baseline army upkeep
+        self.army_unrest = 0.02       # extra army upkeep per unit unrest (suppression surge)
+        self.mil_positions = 0.01     # standing officer corps -> baseline elite positions (with districts)
+        self.k_patronage = 2.0        # cost to employ one excess elite as a patronage position
+        self.treasury_years = 5.0     # treasury caps at this many years of (gross) revenue
+        self.S_adjust = 0.2           # how fast state capacity tracks its target
+        self.w_buffer = 0.55          # weight of the treasury buffer vs structural budget health in S (rest is structural)
+        self.treasury = 0.0           # state savings (stock; capped, floored at 0 -> no debt)
+        self.treasury_history = []
+        self.revenue_history = []
+
     def get_birth_rate(self, P, carrying_cap, security=1.0, start_decline=0.75, end_decline=1.5):
         # High fertility when well under cap (resources abundant, early marriage etc.), gradual decline as density rises. Still significant births beyond carrying cap
         rel = P / max(carrying_cap * security, 1e-8) # Low security has the effect of reducing carrying capacity when it comes to births
@@ -140,37 +190,105 @@ class FinalSim:
 
 
         # Population Growth
-        carrying_cap = self.land_area
-        birth_rate = self.get_birth_rate(self.population, carrying_cap, security=max(0.5,self.S-self.U_e))
+        security = max(0.5, self.S - self.U_e)   # state order minus violence; gates districts (and, via births, the effective cap)
+        carrying_cap = self.land_area * self.land_productivity
+        birth_rate = self.get_birth_rate(self.population, carrying_cap, security=security)
         death_rate = self.get_death_rate(self.population, carrying_cap, birth_rate, famine_severity=0.0, disease_severity=0.0, war_severity=self.U_e)
         self.population += (birth_rate - death_rate) * self.population
         dP = (birth_rate - death_rate)
 
-        # Effective wages
-        # TODO: Implement a more complex wage model that takes into account wealth, labor supply/demand, and cultural factors.
-        w = 1.0 - self.P  # Inverse of population pressure (high population = low wages, low population = high wages)
-        w_inverse = w ** -1  # Inverse relative wage
-        
-        # Elite overproduction increases with population pressure (so long as the state exists)
-        # How elite numbers themselves grow:
-        # de/dt ~= u0 * e * (w0 - w ) / w
-        # u0 = mobility responsiveness (how quickly elites respond to changes in wages)
-        # w0 = point where social mobility is zero (wage level where elites are neither gaining nor losing members, wages above w0 reduce elites, below increase elites)
-        # w = commoner wages
-        # When commoner wages are low, more people try to climb into the elite, so elite numbers expand. Key feedback that links popular & elite departments
-        # Elites are also teh target in instability, so they are pruned when instability is high. This is a slow attrition, not a sharp crash, so elites persist into the depression.
-        elite_positions = (1 + self.S) * self.population * 0.01 # 2% of the population can be elites
-        elite_wage = 0.5
-        if self.elites < elite_positions:
-            elite_wage = 0.5 + 0.5 * (self.elites / elite_positions) # When elites are below the number of positions, their relative income is higher, so they are less likely to be pruned
-        else:
-            elite_wage = 0.5 - 0.1 * ((self.elites - elite_positions) / elite_positions) # When elites are above the number of positions, their relative income is lower, so they are more likely to be pruned
+        # ---- Attached district/pop economy: commoners work districts + subsistence; the wage emerges. ----
+        # Commoners work districts + subsistence; elites (self._elite_owner) receive the district surplus.
+        self._commoner.amount = max(self.population, 1e-8)
+        self.location.security = security
+        econ = self.location.tick()
+        elite_income = econ["elite_income"]                    # district surplus -> self._elite_owner.wealth (used below)
+        food_access = self._commoner.food_access               # food produced / food need (=1 at carrying capacity)
+        wealth_per_capita = self._commoner.wealth_per_capita() # commoner wealth (running total) per head
+        commoner_wealth = self._commoner.wealth
+        food_ratio = food_access
+        famine_severity = max(0.0, 1.0 - food_access)          # tracked; feeds famine mortality in a later increment
 
-        e_social_mobility = (self.elites) * 0.02 * (elite_wage - w) / w
+        # Commoner wage that drives mass mobilization: Turchin RELATIVE WAGE = average commoner wage /
+        # GDP-per-capita analog = (commoner wealth / commoners) / (total wealth / total population).
+        # Elite-independent in practice (commoner capture ~= the labor wage share). Low w -> high MMP.
+        Wc, Nc = self._commoner.wealth, self._commoner.amount
+        We, Ne = self._elite_owner.wealth, self._elite_owner.amount
+        gdp_pc = (Wc + We) / max(Nc + Ne, 1e-8)
+        w = (Wc / max(Nc, 1e-8)) / max(gdp_pc, 1e-8)
+        w = min(max(w, 1e-4), 1.0)
+        w_inverse = w ** -1                                     # inverse relative wage -> mass mobilization potential
+        
+        # ---- State fiscal (treasury-buffered): taxes surplus, funds an army + patronage to absorb excess
+        #      elites, runs a treasury capped at ~5 years of revenue. A survival-seeking state opens
+        #      patronage positions for overproduced elites for as long as it can afford to. Debt ignored. ----
+        total_income = commoner_wealth + elite_income          # wealth generated this tick (running totals)
+        collection = max(0.0, 1.0 - self.U_e)                  # unrest wrecks the tax base; control ~1 for now
+        revenue = self.tax_rate * total_income * collection    # taxes a portion of commoner + elite surplus alike
+
+        district_jobs = sum(d.elite_opportunities() for d in self.location.districts)  # ownership/mgmt slots
+        baseline_positions = district_jobs + self.mil_positions      # + standing officer corps (military)
+        excess_elites = max(0.0, self.elites - baseline_positions)
+        desired_patronage = excess_elites * self.k_patronage         # cost to employ every excess elite
+        army_cost = self.army_base + self.army_unrest * self.U_e     # baseline upkeep + suppression surge
+
+        # Fund from treasury + revenue; the army is paid before patronage.
+        funds = self.treasury + revenue
+        army_paid = min(army_cost, funds)
+        patronage_paid = max(0.0, min(desired_patronage, funds - army_paid))
+        patronage_jobs = patronage_paid / max(self.k_patronage, 1e-9)
+
+        # Treasury: keep the surplus, capped at ~5 years of gross revenue, floored at 0 (no debt).
+        max_treasury = self.treasury_years * self.tax_rate * total_income
+        self.treasury = min(max(self.treasury + revenue - army_paid - patronage_paid, 0.0), max_treasury)
+
+        # Funded elite positions = baseline + the patronage the state could actually pay for. Used for elite
+        # mobility (w0): patronage keeps opening slots, so aspirants keep climbing. The E *gauge* below uses
+        # baseline_positions instead, so RAW overproduction stays visible in stagnation even while the state
+        # pacifies it (S suppresses the conflict) — the strain phase then shows up before the collapse.
+        elite_positions = max(baseline_positions + patronage_jobs, 1e-6)
+
+        # ---- State capacity = BUFFER + STRUCTURAL-HEALTH blend (NOT a binary funds/desired). ----
+        # The old min(1, funds/desired) read 1.0 for as long as the treasury held anything, then snapped to
+        # ~0 the instant it emptied (a decade of accumulated deficit released at once). Split into two signals:
+        #   fiscal_buffer     = how full the reserves are (treasury / cap). Patronage (discretionary) drains it
+        #                       gradually through stagnation -> S declines with early warning, not a cliff.
+        #   structural_health = can current REVENUE fund the ESSENTIAL core (the army the state must pay)?
+        #                       Stays ~1 through stagnation (revenue >> army), and craters only when unrest
+        #                       wrecks tax collection -> this is what carries S toward 0 in the acute crisis.
+        # So stagnation weakens S via the buffer; the deep collapse comes via structural when collection -> 0
+        # (S can't reach 0 unless tax collection does, as specified).
+        essential_cost = army_cost                      # army = must-fund core; patronage is discretionary (buffer)
+        fiscal_buffer = self.treasury / max(max_treasury, 1e-9)
+        structural_health = min(1.0, revenue / max(essential_cost, 1e-9))
+        S_target = self.w_buffer * fiscal_buffer + (1.0 - self.w_buffer) * structural_health
+        self.S = max(0.0, min(1.0, self.S + (S_target - self.S) * self.S_adjust))
+
+        # ---- Elites: the "new" elite POP is grown/shrunk here; self.elites mirrors it for the readouts. ----
+        # How elite numbers grow (Turchin):  de/dt ~= u0 * e * (w0 - w) / w
+        #   u0 = mobility responsiveness; w0 = the commoner-wage level at which mobility is ZERO (the value
+        #        the user calls "elite_wage" — NOT the elites' literal wage); w = commoner (relative) wage.
+        #   When commoner wages fall below w0, more people climb into the elite, so elite numbers expand —
+        #   the key feedback linking commoners & elites. Elites are also the target of instability, pruned
+        #   slowly (linear in U_e) so they persist into the depression and clear only at its end.
+        # Elite OPPORTUNITIES (elite_positions) come from the fiscal block above: district ownership/mgmt
+        # slots + military officer corps + the patronage the state can currently afford.
+        elite_count = self._elite_owner.amount
+
+        # w0 = mobility zero point. Most attractive when elites ~ fill the positions, less so when
+        # overproduced (too many elites for the slots). Multiplier chosen for scale (free per the design).
+        if elite_count < elite_positions:
+            elite_wage = 0.5 + 0.5 * (elite_count / elite_positions)
+        else:
+            elite_wage = 0.5 - 0.1 * ((elite_count - elite_positions) / elite_positions)
+
+        e_social_mobility = elite_count * 0.02 * (elite_wage - w) / w
         if e_social_mobility < 0:
-            e_social_mobility *= 0.5 # Social mobility is slower when elites are losing members
-        e_attrition = self.elites * 0.05 * self.U_e
-        self.elites += e_social_mobility - e_attrition
+            e_social_mobility *= 0.5              # downward mobility is stickier than upward
+        e_attrition = elite_count * 0.05 * self.U_e   # violence prunes elites (linear -> gradual)
+        elite_count += e_social_mobility - e_attrition
+        self._elite_owner.amount = max(elite_count, 1e-6)
+        self.elites = self._elite_owner.amount   # mirror for the E readout (and, next increment, the fiscal side)
         dE = (e_social_mobility - e_attrition) / max(self.elites, 1e-8)
 
         # Sociopolitical instability increases with elite overproduction and population pressure, and decreases with state capacity. 
@@ -193,18 +311,7 @@ class FinalSim:
         # Smooth the instability on the high end to avoid runaway instability. This is a simple logistic function that caps instability at 1.0.
         psi = 1.0 / (1.0 + math.exp(-8.0 * (psi - 0.5))) # Logistic smoothing for sociopolitical instability
 
-        # SFD (state fiscal distress) = Y/G * (1-T) - Y is national debt, G is GDP, T is trust/legitimacy. Debt Interest/State Revenue can be used instead. SFD is roughly inverse of state capacity.
-        # dS/dt = p * surplus - elite demands - military costs - patronage
-        revenue = self.population * 0.1
-        expenses = 6.0 * (self.elites - elite_positions) + self.U_e * (self.elites * 8 + self.population * 0.1)
-        
-        dS = (revenue - expenses) / self.population
-        if dS > 0:
-            dS *= (1.5 - self.S)/1.5
-            dS *= self.dS_mult
-        else:
-            dS *= (self.S+0.2)/1.2
-            dS *= self.dS_nmult
+        # (State capacity S is now set by the treasury-buffered fiscal block above, not a dS gauge rule.)
 
         # Update variables with some smoothing
         #self.P = max(0.0, min(1.0, self.P + dP * 0.1))
@@ -212,11 +319,11 @@ class FinalSim:
         pressure = 1.0 / (1.0 + math.exp(-7.2 * (rel - 1.0))) # Logistic smoothing for population pressure
         self.P = max(0.0, min(1.0, pressure)) # Logistic smoothing for population pressure
 
-        rel = (self.elites) / max(elite_positions, 1e-8)
+        rel = (self.elites) / max(baseline_positions, 1e-8)   # RAW overproduction (vs baseline, not patronage-funded)
         pressure = 1.0 / (1.0 + math.exp(-1.8 * (rel - 2.0))) # Logistic smoothing for elite overproduction pressure
         self.E = max(0.0, min(1.0, pressure)) # Logistic smoothing for elite overproduction pressure
         self.U = max(0.0, min(1.0, self.U))
-        self.S = max(0.0, min(1.0, self.S + dS * 0.1))
+        # (self.S already updated in the fiscal block.)
 
         self.U_e = max(0.0, min(psi, 1.0)) # Effective instability is instability above 0.5 * state capacity
         
@@ -235,6 +342,15 @@ class FinalSim:
         self.U_e_history.append(self.U_e)
         self.S_history.append(self.S)
         self.phase_history.append(self.phase)
+
+        # Economic read-outs (tracked for measurement; not yet coupled into the cycle)
+        self.wealth_pc_history.append(wealth_per_capita)
+        self.food_ratio_history.append(food_ratio)
+        self.wage_history.append(w)
+        self.elite_income_history.append(elite_income)
+        self.commoner_wealth_history.append(commoner_wealth)
+        self.treasury_history.append(self.treasury)
+        self.revenue_history.append(revenue)
 
 random.seed(42)
 
