@@ -1,6 +1,5 @@
-[gd_scene load_steps=6 format=3 uid="uid://dcq7npan0lnsi"]
+[gd_scene load_steps=5 format=3 uid="uid://dcq7npan0lnsi"]
 
-[ext_resource type="Script" uid="uid://cg2j0u8pxg556" path="res://Scripts/map_state.gd" id="1_ci6au"]
 [ext_resource type="Script" uid="uid://di4m1tpagv7m0" path="res://Scripts/map.gd" id="1_p3ir5"]
 [ext_resource type="Script" uid="uid://dnxhetd0sn6ww" path="res://Scripts/map_renderer.gd" id="2_26yhd"]
 [ext_resource type="Shader" uid="uid://cdrwspmix1yqc" path="res://Shaders/map.gdshader" id="4_q0mm3"]
@@ -9,8 +8,7 @@
 [node name="Map" type="Node2D"]
 script = ExtResource("1_p3ir5")
 
-[node name="MapState" type="Node" parent="."]
-script = ExtResource("1_ci6au")
+[node name="MapState" type="MapState" parent="."]
 
 [node name="MapRenderer" type="Node2D" parent="."]
 script = ExtResource("2_26yhd")

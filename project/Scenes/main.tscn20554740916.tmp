@@ -1,10 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://cyy74n40qe24n"]
+[gd_scene load_steps=5 format=3 uid="uid://cyy74n40qe24n"]
 
 [ext_resource type="Script" uid="uid://bevy4iswuwt13" path="res://Scenes/main.gd" id="1_8nass"]
 [ext_resource type="PackedScene" uid="uid://dcq7npan0lnsi" path="res://Scenes/map.tscn" id="2_8gbba"]
 [ext_resource type="Script" uid="uid://crht3smjxauja" path="res://Scenes/map_camera.gd" id="2_bo1nx"]
 [ext_resource type="PackedScene" uid="uid://cgc5cjsx4o66v" path="res://Scenes/menu.tscn" id="4_jjvhh"]
-[ext_resource type="PackedScene" uid="uid://bk7ptb8ho7rof" path="res://Scenes/topbar.tscn" id="5_kry3j"]
 
 [node name="Main" type="Node2D"]
 texture_filter = 1
@@ -22,5 +21,3 @@ script = ExtResource("2_bo1nx")
 
 [node name="Menu" parent="CanvasLayer" instance=ExtResource("4_jjvhh")]
 visible = false
-
-[node name="Topbar" parent="CanvasLayer" instance=ExtResource("5_kry3j")]

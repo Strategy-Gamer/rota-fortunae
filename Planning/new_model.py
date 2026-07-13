@@ -103,7 +103,8 @@ class FinalSim:
         self.child_mortality = 0.4
         self.k_famine = 0.1
         self.k_disease = 0.1
-        self.k_war = 0.05
+        self.k_war = 0.035  # war mortality coefficient (lower => more gradual population decline; trough is held ~0.6 of
+                            #   carrying capacity by the security floor regardless -> "suppressed at the bottom")
         self.land_area = 1.0
         self.population = 0.6
         self.elites = 0.006
@@ -146,13 +147,54 @@ class FinalSim:
         # ---- State fiscal (treasury-buffered, survival-seeking; debt ignored for now). ----
         self.tax_rate = 0.25          # constant tax on commoner + elite surplus alike
         self.army_base = 0.006        # baseline army upkeep
-        self.army_unrest = 0.02       # extra army upkeep per unit unrest (suppression surge)
+        self.k_suppress = 0.006       # cost to suppress one unit of mobilization POTENTIAL (not active unrest) ->
+                                      #   overproduction is fiscally costly even before it erupts (breaks a solvent state).
+                                      #   robust ~0.006-0.008; too low+high k_absorb -> stuck in chronic fracture
+        self.max_suppression = 0.9    # at S=1 the state suppresses this fraction of potential; the rest leaks (S=1 != 0 unrest)
         self.mil_positions = 0.01     # standing officer corps -> baseline elite positions (with districts)
         self.k_patronage = 2.0        # cost to employ one excess elite as a patronage position
+        self.k_absorb = 2.0           # the state absorbs a SHRINKING fraction of excess elites as overproduction
+                                      #   rises (it can't bear the whole class) -> higher overproduction, longer S
+        self.k_emp = 10.0             # EMP scale: elite overproduction x inverse relative elite income. Lower =>
+                                      #   crisis fires later => elites accumulate more => higher E_peak & longer strain
         self.treasury_years = 5.0     # treasury caps at this many years of (gross) revenue
-        self.S_adjust = 0.2           # how fast state capacity tracks its target
-        self.w_buffer = 0.55          # weight of the treasury buffer vs structural budget health in S (rest is structural)
+        self.w_buffer = 0.5           # weight of treasury buffer vs structural budget health in the fiscal signal.
+                                      #   Higher -> deeper collapses & longer period; lower (structural) -> shallower.
         self.treasury = 0.0           # state savings (stock; capped, floored at 0 -> no debt)
+
+        # ---- Fracture behaviour (phase-aware; the crisis has its own "attitudes"). ----
+        self.emp_floor_fracture = 0.5 # base EMP in fracture (0.5 + E*ew_inv): keeps unrest high as E clears
+        self.emp_floor_hi = 0.1       # floor is FULL while E>=this, then LERPs to 0 by E_exit_thresh (so unrest
+                                      #   can finally subside once elites clear; a constant floor pins U_e=1 forever)
+        self.k_attrition = 0.10       # rate violence prunes elites (x U_e). Higher so each violence spike kills
+                                      #   more elites (unrest is rarer/spikier via war-weariness below)
+        self.k_attrition_fracture = 0.0   # extra pruning in fracture (0 => waves + baseline clear E)
+        self.E_exit_thresh = 0.08     # fracture ends once elite overproduction is (near-)cleared (relaxable ~0.05-0.1)
+        self.psi_steepness = 3.0      # unrest logistic steepness. Gentle => U_e sits at intermediate values (~0.3)
+                                      #   instead of pinning at 1.0 -> a shaped unrest curve, not a flat plateau
+        self.psi_midpoint = 1.5       # potential at which U_e = 0.5. High enough that calm potential (~0.03) stays
+                                      #   ~0, but weariness-damped fracture potential (~1-2) lands mid-range (waves)
+
+        # ---- War-weariness (father-son waves): violence exhausts people; it accrues during unrest and fades
+        #      over ~a generation, multiplicatively damping mobilization -> spike / lull / resurge episodes. ----
+        self.war_weariness = 0.0
+        self.wear_build = 0.3         # how fast weariness accrues from violence above wear_thresh
+        self.wear_thresh = 0.0        # violence above this exhausts people. NOTE: this simple weariness model gives a
+                                      #   damped spike->decline (U_e falls through ~0.3), NOT a true oscillation; raising
+                                      #   wear_thresh (~0.5) trades the decline for a higher mid-plateau. True father-son
+                                      #   waves would need a second slow variable / hysteresis (open follow-up).
+        self.wear_decay = 0.72        # how fast weariness fades (~a generation)
+        self.k_weariness = 5.0        # how strongly weariness damps mobilization (shapes the U_e decline)
+
+        # ---- State capacity S = logistic readout of a slow "state health" stock (smooth, like P). ----
+        self.state_health = 1.0       # slow stock the state's capacity is read off of (integrates the fiscal signal)
+        self.health_adjust = 0.06     # recovery rate of state_health (small => smooth, non-sawtooth recovery)
+        self.health_adjust_down = 0.5 # collapse rate (asymmetric: sharp drop at fracture onset -- user OK with sharp DOWN)
+        self.fracture_floor = 0.1     # in fracture the health target is capped this low, easing up as E clears
+        self.E_clear = 0.3            # E level at which the fracture cap has fully lifted
+        self.k_S = 5.0                # steepness of the S logistic readout (gentler than P's 7.2 -> visible ramp)
+        self.x0_S = 0.4               # midpoint of the S logistic readout
+
         self.treasury_history = []
         self.revenue_history = []
 
@@ -218,7 +260,34 @@ class FinalSim:
         w = (Wc / max(Nc, 1e-8)) / max(gdp_pc, 1e-8)
         w = min(max(w, 1e-4), 1.0)
         w_inverse = w ** -1                                     # inverse relative wage -> mass mobilization potential
-        
+
+        # ---- Mobilization POTENTIAL (before the state suppresses it) = mass x elite mobilization. ----
+        # MMP = inverse relative wage (immiserated commoners). EMP = elite overproduction amplified by the
+        # inverse of relative elite income (ew = elite income per capita / GDP per capita): as the elite pie
+        # splits among more elites, relative elite income falls -> ew_inverse rises -> fiercer intra-elite
+        # competition. Potential builds as elites overproduce even while a strong state keeps ACTIVE unrest low
+        # -- and the state must SPEND to hold it down (see the army/suppression cost in the fiscal block).
+        mmp = w_inverse
+        elite_income_pc = We / max(Ne, 1e-9)
+        ew_relative = elite_income_pc / max(gdp_pc, 1e-9)
+        ew_inverse = 1.0 / max(ew_relative, 1e-6)
+        # In FRACTURE the populace stays radicalised: EMP carries a base level so unrest persists as E
+        # clears (instead of fading with E). The base itself fades out as overproduction clears (E ramps
+        # from E_clear down to the exit threshold) so that once the elites are gone unrest can finally
+        # subside and the phase can end -- otherwise a constant floor pins U_e=1 forever (collection -> 0).
+        if self.phase == 2:
+            # full while E >= emp_floor_hi (0.1), LERP to 0 by the exit threshold (0.05)
+            floor_scale = min(1.0, max(0.0, (self.E - self.E_exit_thresh) / max(self.emp_floor_hi - self.E_exit_thresh, 1e-6)))
+            emp_floor = self.emp_floor_fracture * floor_scale
+        else:
+            emp_floor = 0.0
+        emp = self.k_emp * (emp_floor + self.E * ew_inverse)
+        # War-weariness accrues from active violence (last tick) and fades over a generation; it damps
+        # mobilization, so sustained violence exhausts itself -> spike, lull, resurge (father-son waves).
+        self.war_weariness = self.war_weariness * self.wear_decay + self.wear_build * max(0.0, self.U_e - self.wear_thresh)
+        weariness_damp = 1.0 / (1.0 + self.k_weariness * self.war_weariness)
+        mobilization_potential = mmp * emp * weariness_damp
+
         # ---- State fiscal (treasury-buffered): taxes surplus, funds an army + patronage to absorb excess
         #      elites, runs a treasury capped at ~5 years of revenue. A survival-seeking state opens
         #      patronage positions for overproduced elites for as long as it can afford to. Debt ignored. ----
@@ -229,8 +298,16 @@ class FinalSim:
         district_jobs = sum(d.elite_opportunities() for d in self.location.districts)  # ownership/mgmt slots
         baseline_positions = district_jobs + self.mil_positions      # + standing officer corps (military)
         excess_elites = max(0.0, self.elites - baseline_positions)
-        desired_patronage = excess_elites * self.k_patronage         # cost to employ every excess elite
-        army_cost = self.army_base + self.army_unrest * self.U_e     # baseline upkeep + suppression surge
+        # The state takes on only a PART of the excess elites, a smaller share the more overproduced they
+        # are (it cannot bear the whole overproduced class). -> overproduction runs higher, treasury lasts longer.
+        overproduction = self.elites / max(baseline_positions, 1e-9)
+        absorb_fraction = 1.0 / (1.0 + self.k_absorb * max(0.0, overproduction - 1.0))
+        desired_patronage = excess_elites * absorb_fraction * self.k_patronage   # cost of the part it takes on
+        # Army = baseline upkeep + the cost of suppressing the mobilization POTENTIAL (not active unrest).
+        # A strong state must pay to hold down overproduced elites, so overproduction drains the treasury
+        # even before it erupts -> this is what lets overproduction break even a permanently-solvent state.
+        suppression_cost = self.k_suppress * mobilization_potential
+        army_cost = self.army_base + suppression_cost
 
         # Fund from treasury + revenue; the army is paid before patronage.
         funds = self.treasury + revenue
@@ -249,20 +326,34 @@ class FinalSim:
         elite_positions = max(baseline_positions + patronage_jobs, 1e-6)
 
         # ---- State capacity = BUFFER + STRUCTURAL-HEALTH blend (NOT a binary funds/desired). ----
-        # The old min(1, funds/desired) read 1.0 for as long as the treasury held anything, then snapped to
-        # ~0 the instant it emptied (a decade of accumulated deficit released at once). Split into two signals:
-        #   fiscal_buffer     = how full the reserves are (treasury / cap). Patronage (discretionary) drains it
-        #                       gradually through stagnation -> S declines with early warning, not a cliff.
-        #   structural_health = can current REVENUE fund the ESSENTIAL core (the army the state must pay)?
-        #                       Stays ~1 through stagnation (revenue >> army), and craters only when unrest
-        #                       wrecks tax collection -> this is what carries S toward 0 in the acute crisis.
-        # So stagnation weakens S via the buffer; the deep collapse comes via structural when collection -> 0
-        # (S can't reach 0 unless tax collection does, as specified).
-        essential_cost = army_cost                      # army = must-fund core; patronage is discretionary (buffer)
+        # Root cause of the old snap: S_target = min(1, FUNDS/desired) put the whole treasury in the
+        # numerator, so S read 1.0 until the treasury emptied then released a decade of deficit at once.
+        # Fix: take the treasury OUT of the structural signal and track it separately as a buffer.
+        #   structural_health = can this year's REVENUE (not reserves) cover the state's ongoing commitments
+        #                       (army + the elite patronage it has taken on)? Declines as elites overproduce
+        #                       (commitments outgrow the tax base = Turchin's structural fiscal crisis) AND
+        #                       craters when unrest wrecks collection -> carries S toward 0 iff revenue -> 0.
+        #   fiscal_buffer     = reserves (treasury / cap); drains gradually as it funds the deficit -> S falls
+        #                       with early warning, not a cliff.
+        desired = army_cost + desired_patronage         # ongoing commitments the state is trying to fund
         fiscal_buffer = self.treasury / max(max_treasury, 1e-9)
-        structural_health = min(1.0, revenue / max(essential_cost, 1e-9))
-        S_target = self.w_buffer * fiscal_buffer + (1.0 - self.w_buffer) * structural_health
-        self.S = max(0.0, min(1.0, self.S + (S_target - self.S) * self.S_adjust))
+        structural_health = min(1.0, revenue / max(desired, 1e-9))
+        fiscal_signal = self.w_buffer * fiscal_buffer + (1.0 - self.w_buffer) * structural_health
+
+        # State capacity is a logistic read-out of a SLOW "state health" stock (mirrors how population
+        # pressure P is read off the slow population stock) -> S is smooth, not a sawtooth.
+        # In FRACTURE the collapsed, contested state is deliberately held down: the health target is capped
+        # low and only eases up as elite overproduction (E) clears -> S stays low through the depression and
+        # recovers smoothly as the elites are pruned. (Replaces the old unrest-rebuild gate.)
+        target = fiscal_signal
+        if self.phase == 2:
+            frac_ceiling = self.fracture_floor + (1.0 - self.fracture_floor) * max(0.0, 1.0 - self.E / self.E_clear)
+            target = min(target, frac_ceiling)
+        # Asymmetric: collapse is sharp (state fails fast at the crisis onset), recovery is slow & smooth.
+        rate = self.health_adjust_down if target < self.state_health else self.health_adjust
+        self.state_health += (target - self.state_health) * rate
+        self.state_health = max(0.0, min(1.0, self.state_health))
+        self.S = 1.0 / (1.0 + math.exp(-self.k_S * (self.state_health - self.x0_S)))   # logistic readout, like P
 
         # ---- Elites: the "new" elite POP is grown/shrunk here; self.elites mirrors it for the readouts. ----
         # How elite numbers grow (Turchin):  de/dt ~= u0 * e * (w0 - w) / w
@@ -285,31 +376,24 @@ class FinalSim:
         e_social_mobility = elite_count * 0.02 * (elite_wage - w) / w
         if e_social_mobility < 0:
             e_social_mobility *= 0.5              # downward mobility is stickier than upward
-        e_attrition = elite_count * 0.05 * self.U_e   # violence prunes elites (linear -> gradual)
+        if self.phase == 2:
+            e_social_mobility = min(0.0, e_social_mobility)  # no one climbs into a collapsing elite mid-crisis
+                                                             # -> E clears monotonically, can't settle in a limbo
+        # Violence prunes elites (linear in U_e -> gradual). Fracture prunes harder so E clears near-completely.
+        attrition_rate = self.k_attrition + (self.k_attrition_fracture if self.phase == 2 else 0.0)
+        e_attrition = elite_count * attrition_rate * self.U_e
         elite_count += e_social_mobility - e_attrition
         self._elite_owner.amount = max(elite_count, 1e-6)
         self.elites = self._elite_owner.amount   # mirror for the E readout (and, next increment, the fiscal side)
         dE = (e_social_mobility - e_attrition) / max(self.elites, 1e-8)
 
-        # Sociopolitical instability increases with elite overproduction and population pressure, and decreases with state capacity. 
-        # TODO:
-        # MMP (Mass Mobilization Potential) = W^-1 * (N(urb) / N) * A(20-29)
-        # W^-1 = Inverse relative wage (real worker wage / GDP per capita) -> high wages = low unrest, low wages = high unrest
-        # N(urb) / N = Urbanization rate (urban population / total population) -> high urbanization = high unrest, low urbanization = low unrest. 
-        #       Rural misery is much harder to turn into mass political action. High urbanization dramatically increases the potential for unrest.
-        # A(20-29) = Age structure (population aged 20-29 / total population) -> high proportion of young adults = high unrest, low proportion of young adults = low unrest. 
-        #       Young adults are more likely to be politically active and willing to take risks.
-        # Additional proxy factors: Labor oversupply more broadly, Declining biological wellbeing, erosion of family & community structures, rising urban density within cities, reduction of cooperation
-        mmp = w_inverse # Simplified MMP: Inverse relative wage (real worker wage / GDP per capita) -> high wages = low unrest, low wages = high unrest
-
-        # EMP (Elite Mobilization Potential) = ew^-1 * E
-        # ew^-1 = Relative elite income (elite income / GDP per capita).
-        #       When elite pie is divided between too many people, relative elite incomes fall even if absolute incomes are high. Creates huge competition within elites
-        # E = Elite overproduction (number of elites / number of elite positions) -> high elite overproduction = high unrest, low elite overproduction = low unrest.
-        emp = self.E * (1+w) # Simplified EMP: Just Elite overproduction
-        psi = mmp * emp * (1 - self.S) # Sociopolitical instability is a function of MMP, EMP, and state capacity. High state capacity suppresses instability.
-        # Smooth the instability on the high end to avoid runaway instability. This is a simple logistic function that caps instability at 1.0.
-        psi = 1.0 / (1.0 + math.exp(-8.0 * (psi - 0.5))) # Logistic smoothing for sociopolitical instability
+        # ---- Active unrest = the mobilization potential the state FAILS to suppress. ----
+        # Potential (mmp*emp) was computed above, before the fiscal block (the state's suppression spending
+        # keys off it). At S=1 the state suppresses only `max_suppression` of it (the rest leaks -> a strong
+        # state is not perfectly safe, and enough overproduction erupts even while solvent); at S=0 the full
+        # potential erupts.
+        psi = mobilization_potential * (1.0 - self.max_suppression * self.S)
+        psi = 1.0 / (1.0 + math.exp(-self.psi_steepness * (psi - self.psi_midpoint))) # gentle+high midpoint => U_e varies
 
         # (State capacity S is now set by the treasury-buffered fiscal block above, not a dS gauge rule.)
 
@@ -332,8 +416,8 @@ class FinalSim:
             self.phase = 1 # Strain (Stagflation)
         elif self.phase == 1 and (self.U_e > 0.5 or self.S < 0.5 or (dE < 0 and dP < 0)):
             self.phase = 2 # Fracture (Crisis+Depression)
-        elif self.phase == 2 and (self.U_e < 0.1 and dP > 0 and self.S > 0.2):
-            self.phase = 0 # Prosperity (Expansion)
+        elif self.phase == 2 and (self.E < self.E_exit_thresh and self.U_e < 0.1 and dP > 0):
+            self.phase = 0 # Prosperity (Expansion) -- only once elite overproduction is (near-)cleared
 
         # Record history
         self.P_history.append(self.P)

@@ -33,39 +33,27 @@ func create_random_scenario(seed: int = 0) -> void:
 
 # Location selection functions
 
-func set_hovered_location(location: LocationData) -> void:
-	if location == null:
-		map_renderer.set_hovered_location(-1)
-		return
-
-	var location_id = location.id
+func set_hovered_location(location_id: int) -> void:
 	if map_renderer.hovered_location_id == location_id:
 		return
-	map_renderer.set_hovered_location(location_id)
-func set_selected_location(location: LocationData) -> void:
-	if location == null:
-		map_renderer.set_selected_location(-1)
-		return
 
-	var location_id = location.id
+	map_renderer.set_hovered_location(location_id)
+func set_selected_location(location_id: int) -> void:
 	if map_renderer.selected_location_id == location_id:
 		return
 	map_renderer.set_selected_location(location_id)
 
-func get_location_at_id(location_id: int) -> LocationData:
+func get_location_at_id(location_id: int) -> int:
 	return map_state.get_location_by_id(location_id)
-func get_location_at_px(pos: Vector2i) -> LocationData:
-	return map_state.get_location_by_id(map_state.get_location_id_at_px(pos))
+func get_location_at_px(pos: Vector2i) -> int:
+	return map_state.get_location_id_at_pixel(pos)
 
-func get_location_at_mouse() -> LocationData:
+func get_location_at_mouse() -> int:
 	var mouse_pos = location_map.get_global_mouse_position()
 	var local_pos = location_map.to_local(mouse_pos)
 
 	var x = int(floor(local_pos.x))
 	var y = int(floor(local_pos.y))
-
-	if x < 0 or x >= map_state.width or y < 0 or y >= map_state.height:
-		return null  # Out of bounds
 
 	return get_location_at_px(Vector2i(x, y))
 
@@ -87,25 +75,28 @@ func load_map(hex_map_path) -> void:
 		hex_image.convert(Image.FORMAT_RGB8)
 
 	var t1 = Time.get_ticks_usec()
-	print("loading map took %d us" % (t1 - t0))
-
-	# Process hex_image as needed for map state
-	t0 = Time.get_ticks_usec()
-	var data_arrays = create_data_arrays(hex_image)
-	print("Created data arrays for map.")
-	t1 = Time.get_ticks_usec()
-	print("create_data_arrays took %d us" % (t1 - t0))
-
-	t0 = Time.get_ticks_usec()
-	map_state.prepare_new_map_state(
-		hex_image,
-		data_arrays["id_bytes"],
-		data_arrays["num_locations"]
+	print(
+		"Loaded map image: %d x %d in %d us"
+		% [
+			hex_image.get_width(),
+			hex_image.get_height(),
+			t1 - t0
+		]
 	)
-	print("Prepared new map state with %d locations." % data_arrays["num_locations"])
-	t1 = Time.get_ticks_usec()
-	print("Preparing map state took %d us" % (t1 - t0))
 
+	# Process hex_image
+	t0 = Time.get_ticks_usec()
+	map_state.build_from_image(hex_image)
+	
+	t1 = Time.get_ticks_usec()
+	print(
+		"Built map state with %d locations in %d us"
+		% [
+			map_state.get_location_count(),
+			t1 - t0
+		]
+	)
+	
 	map_renderer.prepare_rendering()
 	print("Map rendering prepared.")
 

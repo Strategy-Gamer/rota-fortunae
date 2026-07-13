@@ -13,37 +13,90 @@ class_name MapRenderer
 @onready var map_sprite: Sprite2D = $LocationMap
 @onready var border_sprite: Sprite2D = $BorderMap
 
+var id_texture: ImageTexture
+var palette_texture: ImageTexture
+
 var selected_location_id: int = -1
 var hovered_location_id: int = -1
 
+enum MapMode {
+	LOCATION_COLOR = 0,
+	POLITICAL = 1,
+}
+
 func prepare_rendering() -> void:
-	
-	# Base province map
-	map_sprite.texture = map_state.id_texture
+	var id_image: Image = map_state.create_id_image()
+	var palette_image: Image = map_state.create_map_mode_palette(
+		MapMode.LOCATION_COLOR
+	)
+
+	id_texture = ImageTexture.create_from_image(id_image)
+	palette_texture = ImageTexture.create_from_image(
+		palette_image
+	)
+
+	_prepare_location_map()
+	_prepare_border_map()
+
+func _prepare_location_map() -> void:
+	map_sprite.texture = id_texture
 	map_sprite.centered = false
 	map_sprite.position = Vector2.ZERO
 	map_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
-	# Setup shader material
-	var mat = ShaderMaterial.new()
+	var mat := ShaderMaterial.new()
 	mat.shader = province_shader
-	mat.set_shader_parameter("id_tex", map_state.id_texture)
-	mat.set_shader_parameter("palette_tex", map_state.palette_texture)
+	mat.set_shader_parameter("id_tex", id_texture)
+	mat.set_shader_parameter("palette_tex", palette_texture)
 	mat.set_shader_parameter("selected_id", selected_location_id)
 	mat.set_shader_parameter("hovered_id", hovered_location_id)
+
 	map_sprite.material = mat
 
-	# Setup border map
-	border_sprite.texture = map_state.id_texture
+
+func _prepare_border_map() -> void:
+	border_sprite.texture = id_texture
 	border_sprite.centered = false
 	border_sprite.position = Vector2.ZERO
 	border_sprite.texture_filter = CanvasItem.TEXTURE_FILTER_NEAREST
 
-	var bmat = ShaderMaterial.new()
-	bmat.shader = border_shader
-	border_sprite.material = bmat
+	var mat := ShaderMaterial.new()
+	mat.shader = border_shader
+
+	# Add this only if the border shader declares an id_tex uniform.
+	# material.set_shader_parameter("id_tex", id_texture)
+
+	border_sprite.material = mat
 	border_sprite.visible = true
 
+func set_map_mode(map_mode: int) -> void:
+	var palette_image: Image = (
+		map_state.create_map_mode_palette(map_mode)
+	)
+
+	if palette_image == null or palette_image.is_empty():
+		push_error("Invalid map-mode palette.")
+		return
+
+	if palette_texture == null:
+		palette_texture = (
+			ImageTexture.create_from_image(
+				palette_image
+			)
+		)
+	else:
+		palette_texture.update(palette_image)
+
+	var mat := (
+		map_sprite.mat as ShaderMaterial
+	)
+
+	if mat != null:
+		mat.set_shader_parameter(
+			"palette_tex",
+			palette_texture
+		)
+	
 func set_selected_location(location_id: int) -> void:
 	selected_location_id = location_id
 	var mat = map_sprite.material as ShaderMaterial

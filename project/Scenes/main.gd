@@ -1,12 +1,18 @@
 extends Node2D
 
-@export var locationMapPath: String = "res://MapData/uk_eu5.png"
+@export var locationMapPath: String = "res://MapData/locations.png"
 
 @onready var map: GameMap = $Map
+@onready var session = DeterministicSession.new()
 
 func _ready():
 	#var path = OS.get_system_dir(OS.SystemDir.SYSTEM_DIR_DOCUMENTS) + "/Paradox Interactive/Hearts of Iron IV/mod/EoaNB/toi/history/states/1-Corsica.txt"
 	map.load_map(locationMapPath)
+	session.is_host = true
+	session.my_player_id = 1
+	session.map = map
+	add_child(session)
+	$CanvasLayer/Menu.session = session
 
 
 func _unhandled_input(event):

@@ -293,14 +293,45 @@ Replaced the abstract `dS` gauge rule with a real, survival-seeking fiscal state
   funding the army first, then patronage, from `treasury + revenue`.
 - **Treasury**: a stock, capped at `treasury_years·gross_revenue` (5 yr), floored at 0 (no debt). Builds
   in expansion, drains via patronage in stagnation.
-- **State capacity** `S ← S + (S_target−S)·S_adjust`, `S_target = min(1, funds/desired)` where desired =
-  army + full patronage want. So S=1 while the treasury buffers, and only falls once the treasury is
-  drained AND revenue can't cover army+patronage → **never 0 unless collection (revenue) → 0**, exactly
-  as specified.
-- Two supporting fixes: the **E gauge uses BASELINE positions** (district+military, not patronage-funded)
-  so raw overproduction stays visible during stagnation (proper strain phase) while patronage/`w0` use
-  funded positions; and the dormant **instability_memory** is now active (`mmp ·= 1+mem_weight·mem`,
-  ratchets with U_e, decays ~a generation) giving the crisis a long tail / father-son character.
+- **State capacity** — see Increment 5b below for the corrected (non-binary) formulation.
+- Supporting fix that stayed: the **E gauge uses BASELINE positions** (district+military, not
+  patronage-funded) so raw overproduction stays visible during stagnation (proper strain phase) while
+  patronage/`w0` use funded positions.
+
+# Increment 5b: state capacity — fixing the binary S (buffer + structural health)
+
+User pushback: the first S was **binary** (a "severe downgrade") and the instability-memory tail was a
+bandaid. **Removed the memory.** Root-caused the fast crash instead of patching:
+
+**Root cause (instrumented):** `S_target = min(1, FUNDS/desired)` with `funds = treasury + revenue`
+put the *whole treasury in the numerator*, so S read **exactly 1.0 for the entire ~10 years the treasury
+drained** (0.195→0.045) — no signal — then the instant it emptied, a decade of accumulated deficit
+released at once and S went 1.0→0.6→0.35→0.08→0.004 in four ticks (amplified by the
+unrest→collection→revenue cascade).
+
+**Fix (per Grok's decomposition, corrected):** take the treasury OUT of the structural numerator and
+split S into two signals (`S = w_buffer·buffer + (1−w_buffer)·structural`):
+- `fiscal_buffer = treasury / max_treasury` — reserves; drain gradually while funding the deficit → S
+  falls with **early warning**, not a cliff.
+- `structural_health = min(1, revenue / desired)`, `desired = army_cost + desired_patronage` — can *this
+  year's revenue* (not reserves) cover ongoing commitments? Declines as elites overproduce (commitments
+  outgrow the tax base = Turchin's structural fiscal crisis) and craters when unrest wrecks collection →
+  carries S→0 iff revenue→0 (the spec). **Note:** an earlier attempt used army-only ("essential") for
+  structural, but that made structural ≈ 1 always (army is cheap) so the buffer did all the work and
+  *leaning structural broke the cycle* (stuck in permanent strain). Putting patronage back into
+  structural fixed that.
+
+Now S=1.0 only while the state is in genuine surplus, then declines smoothly over the treasury-drain
+period once the deficit begins (e.g. 1.0→0.51 over ~9 ticks), then the acute collection-collapse
+finishes it. Gradual onset, gradual recovery, **no memory needed**.
+
+**Extensive robustness sweep (the user asked to find where it breaks, not patch):** the cycle is robust
+across tax_rate (0.15–0.35), k_patronage (1–4), army_base/army_unrest, treasury_years (2–12),
+S_adjust (0.1–0.5), mil_positions, and **all of `w_buffer` 0.1–0.9**. Levers: higher `w_buffer` →
+**deeper collapses** (S→0.07–0.12) & longer period (fits "preindustrial states mostly collapse"); lower
+(structural-leaning) → shallower crashes, longer prosperity, shorter period. Default `w_buffer=0.5`.
+Remaining sharpness is only the acute `collection = 1−U_e` tax-collapse (2–4 ticks) — realistic and
+matches the spec; softenable via the collection curve if wanted.
 
 **Mechanism (verified over a cycle):** expansion builds the treasury (→0.20) & S→1; strain = elites
 overproduce visibly (E 0.2→0.63) while the state patronizes them and the **treasury drains** (0.20→0),
@@ -314,8 +345,148 @@ collapses restored (S→0.03, U_e→1.0).
 prosperity) is just the demographic recovery rate (birth/death); period via elite mobility rate + treasury
 size; crisis depth via `army_unrest`, `k_patronage`, collection curve. `dS_mult/dS_nmult` are now unused.
 
-## Next (open, per earlier notes)
+# Increment 5c: state absorbs PART of elites + proper EMP (DONE)
 
-- Tune period/prosperity balance if desired (birth rate, elite mobility, treasury size).
-- Elites building districts (district-driven carrying capacity growth); food/famine mortality
-  (`famine_severity` already computed); goods/materials; control vs security.
+User: the state paying for ALL excess elites is silly — it takes on a *shrinking fraction* as
+overproduction rises. And EMP was still the placeholder `E·(1+w)`; it should be `E · ew⁻¹`
+(ew = relative elite income).
+
+- **Partial absorption**: `absorb_fraction = 1/(1 + k_absorb·(overproduction−1))`,
+  `desired_patronage = excess·absorb_fraction·k_patronage`. The state employs a declining share of the
+  excess. **Confirmed the user's prediction:** overproduction 2.75×→**3.0×** (E_max 0.72→**0.85**), and
+  state capacity lasts longer (period 86→**125**, strain 14%→**21%** — a real stagnation phase). Phase
+  54/21/25, ordering P→E→U_e→S intact, severe collapses kept.
+- **EMP fixed**: `elite_income_pc = We/Ne`, `ew = elite_income_pc/gdp_pc`, `emp = k_emp·E·ew⁻¹`
+  (`k_emp≈17` to reach firing scale; `ew⁻¹` runs 0.009–0.166 since elites are 6–110× richer per capita
+  than average). Better shape than `(1+w)`: `ew⁻¹` rises with overproduction, so EMP amplifies exactly
+  when elites are overproduced (intra-elite competition), and the crisis is now driven by elite
+  overproduction/EMP (frustrated unabsorbed elites) rather than pure fiscal exhaustion — proper Turchin.
+
+**Robustness / where it breaks (extensive test):** `k_emp` robust 10–28. `k_absorb` works 0.3–~1.5;
+**≥2 BREAKS** → stuck in permanent strain, overproduction 6.5×, E=1.0, but **U_e≈0.03 and S≈0.52**.
+Mechanism: absorbing too little makes patronage cost plateau *below* revenue → the state never runs a
+deficit → S stays 1.0 → and since `psi ∝ (1−S)`, S=1 is an ABSOLUTE suppressor → no crisis however
+overproduced. **Structural implication:** in this model elite overproduction can only trigger a crisis
+by bankrupting the state; a permanently-solvent state suppresses everything. To let overproduction
+threaten a solvent state (coups/organizing regardless of treasury), the `(1−S)` term would need
+revisiting (open design question, not patched). Default `k_absorb=1.0`.
+
+# Increment 5d: suppression as expenditure + S=1 leak + violence/population shape (DONE)
+
+Addressed the solvent-state question (5c) and violence/population feedback, per the user's design:
+- **Suppression is now an EXPENDITURE keyed off mobilization POTENTIAL, not active unrest.** Computed
+  `mobilization_potential = mmp·emp` *before* the fiscal block; `army_cost = army_base + k_suppress·
+  potential`. A strong state must pay to hold down overproduced elites, so overproduction drains the
+  treasury *before* it erupts → **fixes the forever-solvent break**: the old "stuck in strain, no crisis
+  at high k_absorb" mode is gone (k_absorb 1–5 all cycle; strain grows 18%→26% with k_absorb).
+- **S=1 no longer negates all unrest**: `psi = potential·(1 − max_suppression·S)` (`max_suppression=0.9`),
+  so a strong state leaks 10% of potential.
+- **EMP** = `k_emp·E·ew⁻¹` (from 5c) now feeds `potential` cleanly (moved above fiscal, computed once).
+- **Violence is now a WAVE, not a plateau**: ramps ~8 ticks, peaks ~0.95 for ~6 ticks, decays ~12 ticks
+  (was pinned at 1.0 for 30–40). The leak + earlier crisis firing did it; no instability-memory bandaid.
+- **Population decline gentler**: `k_war` 0.05→**0.035** (~38% crash, ~3.4%/tick vs 4.2%); trough is held
+  ~0.60 of carrying capacity by the security floor regardless of k_war ("suppressed at the bottom").
+
+Default (k_absorb=2, k_suppress=0.006, max_suppression=0.9, k_war=0.035): **~32 cyc, period ~94, phase
+54/20/26**, ordering P→E→U_e→S, E→0.53, U_e→0.98, S→0.15.
+
+**Tradeoffs / where it breaks (tested):** (1) the suppression cost fires the crisis when potential hits
+the affordability threshold, so it **caps overproduction ~2×** (vs 3× in 5c) — lower `k_suppress` allows
+more but risks the next break. (2) New break mode: **extreme `k_absorb`≥6 at low `k_suppress` → chronic
+low-level fracture** (stuck in phase 2, U_e simmering); raising `k_suppress` to 0.01 extends the safe
+range to k_absorb 8+. So k_suppress trades overproduction-ceiling against robustness.
+
+# Increment 5e: lengthen the fracture — unrest-gated state recovery (DONE)
+
+User: the fracture is too short because S recovers too fast ("dies then gets resurrected quickly"). Key
+insight: a state that is weak AND still contested can't consolidate — S should not rebuild until unrest
+is low. Goals: (1) keep S low longer [priority], (2) prolong unrest tail, (3) higher E to start, (4) E
+drops further before recovery.
+
+- **Asymmetric, unrest-gated S recovery**: collapse is ungated; rebuilding is throttled by
+  `rebuild_gate = max(0, 1 − U_e/rebuild_thresh)` (`rebuild_thresh=0.2`), so S can only climb once unrest
+  falls below the threshold. Self-limiting: low S sustains unrest → elite attrition keeps pruning →
+  potential drops → unrest eventually dips below threshold → S recovers → new expansion. No stuck state.
+  Achieves #1 (S sits ~0.16 for ~24 ticks), #2 (U_e decays slowly over ~40 ticks), and #4 (E → ~0.10
+  before recovery) together.
+- **Higher E (#3)**: lowered `k_emp` 17→**10** — weaker EMP delays the crisis so elites accumulate more →
+  E_peak 0.53→**0.68**, and strain lengthens (15%→23%). (User's own suggestion: "lower the multipliers
+  into violence to delay it until more elites come around.")
+
+Default (rebuild_thresh=0.2, k_emp=10, k_absorb=2, k_suppress=0.006, max_suppression=0.9, k_war=0.035):
+**26 cyc, period ~115, phase 46/23/31**, E→0.68, U_e→0.97, S→0.16, avg depression (S<0.3) ~24 ticks.
+Robust: gate × k_absorb(1–4) × rebuild_thresh(0.15–0.25) all cycle (18–25), fracture tunable 29–37%,
+no permanent-stuck states. `rebuild_thresh` is the primary fracture-length knob (lower = longer).
+
+# Increment 6: fracture rework — reliably-high U, full E clearing, smooth (non-sawtooth) S (DONE)
+
+User sanctioned phase-aware behaviour ("video game, attitudes differ by phase"). Three fracture fixes;
+father-son waves deferred to a follow-up (`instability_memory` reserved).
+
+- **Fracture EMP floor** (keeps U high as E clears): `emp = k_emp·(emp_floor + E·ew⁻¹)` in fracture, with
+  `emp_floor = emp_floor_fracture · floor_scale`, `floor_scale` full while E≥`emp_floor_hi` (0.1) then
+  LERPs to 0 by `E_exit_thresh` (0.05). **Must fade with E** — a constant floor pins U_e=1 → collection→0
+  → no revenue → permanent deadlock (found & fixed).
+- **Fracture exit gated on E clearing**: `2→0` now requires `E < E_exit_thresh (0.05)` (+ U_e<0.1, dP>0).
+  E's natural floor is ~0.027 (elites→0), so 0.05 is reachable.
+- **No upward elite mobility in fracture**: `if phase==2: e_social_mobility = min(0, ...)`. Without this,
+  once E≈0.05 and S recovered, elites *regrow* and the system settles in a limbo (E~0.063, U~0.158) that
+  never satisfies the exit → stuck in fracture. This makes E clear **monotonically** → robust exit.
+- **S = logistic readout of a slow `state_health` stock** (replaces the 5e unrest-gate; mirrors P off the
+  population stock): `fiscal_signal = w_buffer·buffer + (1−w_buffer)·structural`; in fracture the target is
+  capped by `frac_ceiling = fracture_floor + (1−fracture_floor)·max(0,1−E/E_clear)` (low while elites
+  remain, rises as E clears); `state_health += (target−state_health)·health_adjust` (slow = smoothing);
+  `S = σ(k_S·(state_health−x0_S))`. Deliberate phase suppression + slow stock → **S is a smooth wave**
+  (rounded ramps between plateaus), not a sawtooth. `S_adjust`/`rebuild_thresh` removed.
+
+Self-limiting loop: fracture → S held low (ceiling) + U high (floor) → attrition clears E monotonically →
+E<0.05 → floor fades, U drops, ceiling lifts → S recovers smoothly → phase ends.
+
+Default (emp_floor_fracture=0.5, emp_floor_hi=0.1, k_attrition=0.05, k_attrition_fracture=0.0,
+E_exit_thresh=0.05, health_adjust=0.06, fracture_floor=0.1, E_clear=0.3, k_S=5, x0_S=0.4):
+**18 cyc, period ~167, phase 44/26/29**, ordering P→E→U→S; **E clears to 0.050 at exit** (was ~0.17),
+**U_e mean 0.73 in fracture**, **S max Δ/tick 0.040 (smoother than P's 0.070)**, S range 0.19–0.95.
+
+**Robustness (full sweep, no stuck states):** emp_floor_fracture 0.2–1.0 all cycle (also a fracture-length
+knob: lower→longer, 0.2→67% / 0.5→29% / 1.0→22%); k_absorb 1–4, health_adjust 0.03–0.1, E_clear 0.2–0.4,
+k_emp 8–14, w_buffer 0.3–0.7, fracture_floor, k_S all OK. `k_attrition_fracture` left 0 (the floor alone
+clears E; a boost just shortens the fracture). The old emp_floor=0.3 stuck-in-fracture is fixed by the
+no-climb rule. Note: U_e is a flat plateau (~1.0) through fracture — the deferred father-son pass adds the
+oscillation/waves.
+
+# Increment 6b: shape the fracture U_e curve (de-plateau) + war-weariness + sharp S collapse (DONE, partial)
+
+User feedback: U_e was a flat plateau at 1.0 through fracture; wanted it to *decline through ~0.3*
+before zero; population crashed too hard (because U stuck at 1); S collapsed near the *end* of fracture
+not the start; E<0.05 exit maybe too strict. Changes:
+- **War-weariness stock** (`war_weariness`): accrues from U_e (above `wear_thresh`), fades (`wear_decay`),
+  multiplicatively damps `mobilization_potential` (`1/(1+k_weariness·weariness)`). Repurposed the reserved
+  memory slot.
+- **Gentler unrest logistic with a high midpoint**: `psi = σ(psi_steepness·(potential−psi_midpoint))`,
+  `psi_steepness=3`, `psi_midpoint=1.5`. Key: the high midpoint keeps *calm* potential (~0.03) → U_e≈0
+  while weariness-damped *fracture* potential (~1–2) lands mid-range → U_e passes through ~0.3. (A gentle
+  logistic with the old 0.5 midpoint raised the baseline and stalled the whole cycle in prosperity.)
+- **Asymmetric state_health**: `health_adjust_down=0.5` (sharp collapse at crisis onset — user OK with a
+  sharp DOWN), `health_adjust=0.06` (smooth recovery).
+- **Attrition up** `k_attrition` 0.05→0.10 (each violence spike kills more elites, since unrest is now
+  lower/shaped). **Exit relaxed** `E_exit_thresh` 0.05→0.08.
+
+Default now: **21 cyc, period ~143, phase 36/30/34**, U calm 0.012, **U fracture mean 0.33** (was 1.0),
+E exit 0.08, S(0.13,0.95) sharp collapse, ordering P→E→U→S. Robust (k_absorb 1–4, emp_floor 0.3–0.8,
+k_weariness 3–8 all cycle, no stuck states). Population crash is gentler now that U_e isn't pinned at 1.
+
+**KNOWN LIMITATION (open):** this weariness model gives a **damped spike→decline** (U_e spikes ~1.0 for
+~4 ticks then declines through ~0.3), **NOT true father-son oscillation** (spike/lull/resurge). The
+negative feedback stabilizes to a fixed point, not a limit cycle — tried threshold-based accrual
+(`wear_thresh`), which just gives a higher mid-plateau (~0.66) instead of waves. Real oscillation needs a
+**second slow variable or hysteresis** (e.g. an elite-cohort/organization stock, or a refractory timer).
+Also the user wanted the *last* fracture spike to clear the final elites — not yet modelled.
+
+## Next
+
+- **True father-son oscillation** (open): add a second slow state (cohort/organization or refractory
+  timer) so violence genuinely resurges; make a final spike clear the last elites.
+- Tune period/prosperity balance if desired; then urban & slave pops.
+- Urban & slave pops (user's stated next major addition). Food/famine mortality (`famine_severity`
+  already computed); goods/materials; control vs security. (Elites building districts deemed unnecessary
+  for the secular-cycle focus — it just shifts the starting districts.)
