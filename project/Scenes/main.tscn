@@ -23,4 +23,5 @@ script = ExtResource("2_bo1nx")
 [node name="Menu" parent="CanvasLayer" instance=ExtResource("4_jjvhh")]
 visible = false
 
-[node name="Topbar" parent="CanvasLayer" instance=ExtResource("5_kry3j")]
+[node name="Topbar" parent="CanvasLayer" node_paths=PackedStringArray("map") instance=ExtResource("5_kry3j")]
+map = NodePath("../../Map")

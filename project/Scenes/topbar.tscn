@@ -1,10 +1,13 @@
-[gd_scene format=3 uid="uid://bk7ptb8ho7rof"]
+[gd_scene load_steps=2 format=3 uid="uid://bk7ptb8ho7rof"]
+
+[ext_resource type="Script" uid="uid://cnld7ti0ugpbf" path="res://Scenes/topbar.gd" id="1_dw8i7"]
 
 [node name="Topbar" type="Control"]
 layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
 grow_horizontal = 2
+script = ExtResource("1_dw8i7")
 
 [node name="PanelContainer" type="PanelContainer" parent="."]
 custom_minimum_size = Vector2(0, 50)
@@ -23,16 +26,16 @@ text = "Country"
 
 [node name="SetOwnerButton" type="Button" parent="PanelContainer/Leftside"]
 layout_mode = 2
-text = "Set Ownership"
+text = "Set England"
 
 [node name="RemoveOwnerButton" type="Button" parent="PanelContainer/Leftside"]
 layout_mode = 2
-text = "Remove Ownership"
+text = "Set Scotland"
 
 [node name="ToggleMapmodesButton" type="Button" parent="PanelContainer/Leftside"]
 layout_mode = 2
 text = "Toggle Mapmodes Button
-Current: Base"
+Current: Political"
 
 [node name="Rightside" type="HBoxContainer" parent="PanelContainer"]
 layout_mode = 2
@@ -50,3 +53,10 @@ text = "+"
 [node name="DecreaseSpeedButton" type="Button" parent="PanelContainer/Rightside"]
 layout_mode = 2
 text = "-"
+
+[connection signal="pressed" from="PanelContainer/Leftside/SetOwnerButton" to="." method="_on_set_owner_button_pressed"]
+[connection signal="pressed" from="PanelContainer/Leftside/RemoveOwnerButton" to="." method="_on_remove_owner_button_pressed"]
+[connection signal="pressed" from="PanelContainer/Leftside/ToggleMapmodesButton" to="." method="_on_toggle_mapmodes_button_pressed"]
+[connection signal="pressed" from="PanelContainer/Rightside/PauseButton" to="." method="_on_pause_button_pressed"]
+[connection signal="pressed" from="PanelContainer/Rightside/IncreaseSpeedButton" to="." method="_on_increase_speed_button_pressed"]
+[connection signal="pressed" from="PanelContainer/Rightside/DecreaseSpeedButton" to="." method="_on_decrease_speed_button_pressed"]

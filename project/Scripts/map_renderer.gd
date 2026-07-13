@@ -88,7 +88,7 @@ func set_map_mode(map_mode: int) -> void:
 		palette_texture.update(palette_image)
 
 	var mat := (
-		map_sprite.mat as ShaderMaterial
+		map_sprite.material as ShaderMaterial
 	)
 
 	if mat != null:

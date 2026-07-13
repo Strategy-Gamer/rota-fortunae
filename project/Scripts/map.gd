@@ -99,6 +99,38 @@ func load_map(hex_map_path) -> void:
 	
 	map_renderer.prepare_rendering()
 	print("Map rendering prepared.")
+	create_test_countries()
+	
+func create_test_countries() -> void:
+	var england: int = map_state.create_country(
+		"England",
+		Color(0.8, 0.15, 0.15)
+	)
+
+	var scotland: int = map_state.create_country(
+		"Scotland",
+		Color(0.15, 0.3, 0.85)
+	)
+
+	var location_count := (
+		map_state.get_location_count()
+	)
+
+	for location_id in range(location_count):
+		if location_id % 2 == 0:
+			map_state.set_location_owner(
+				location_id,
+				england
+			)
+		else:
+			map_state.set_location_owner(
+				location_id,
+				scotland
+			)
+
+	map_renderer.set_map_mode(
+		MapRenderer.MapMode.POLITICAL
+	)
 
 func _load_image(path: String) -> Image:
 	var tex = load(path) as Texture2D

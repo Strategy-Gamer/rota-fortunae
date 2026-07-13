@@ -1,6 +1,6 @@
 extends Node2D
 
-@export var locationMapPath: String = "res://MapData/locations.png"
+@export var locationMapPath: String = "res://MapData/uk_eu5.png"
 
 @onready var map: GameMap = $Map
 @onready var session = DeterministicSession.new()
@@ -13,6 +13,8 @@ func _ready():
 	session.map = map
 	add_child(session)
 	$CanvasLayer/Menu.session = session
+	$CanvasLayer/Topbar.session = session
+	$CanvasLayer/Topbar.mapstate = map.map_state
 
 
 func _unhandled_input(event):
@@ -22,7 +24,14 @@ func _unhandled_input(event):
 	elif event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			# Update selected ID in map
-			map.set_selected_location(map.get_location_at_mouse())
+			var location_id = map.get_location_at_mouse()
+			map.set_selected_location(location_id)
+			if $CanvasLayer/Topbar.set_ownership_toggle and location_id >= 0:
+				map.map_state.set_location_owner(location_id, 0)
+				map.map_renderer.set_map_mode($CanvasLayer/Topbar.mapmode)
+			if $CanvasLayer/Topbar.remove_ownership_toggle and location_id >= 0:
+				map.map_state.set_location_owner(location_id, 1)
+				map.map_renderer.set_map_mode($CanvasLayer/Topbar.mapmode)
 
 
 		
