@@ -103,19 +103,11 @@ class FinalSim:
         self.child_mortality = 0.4
         self.k_famine = 0.1
         self.k_disease = 0.1
-        self.k_war = 0.015  # war mortality coefficient. LOWERED (0.035->0.015): direct war deaths were a big
-                            #   FRONT-LOADED spike at the first (biggest) father-son wave -> a precipitous crash then
-                            #   stagnation. Gentler war deaths let the decline be driven more by SUPPRESSED BIRTHS
-                            #   (order/security collapse) spread across the fracture -> a shallower (~30% vs ~36%),
-                            #   more rounded decline (matching Turchin's pressure metric & Tudor stagnation). NOTE: a
-                            #   truly LINEAR decline needs K itself to rise (pop stagnant, pressure falls) -- deferred
-                            #   until districts/tech make carrying_cap dynamic; with fixed K the crash asymptotes.
+        self.k_war = 0.035  # war mortality coefficient (lower => more gradual population decline; trough is held ~0.6 of
+                            #   carrying capacity by the security floor regardless -> "suppressed at the bottom")
         self.security_floor = 0.62 # minimum security (state order) even at the depths of a crisis. Also the effective
                             #   birth-capacity floor post-crisis: raising it lets the crashed population start
                             #   recovering immediately instead of stagnating below its own security-limited cap.
-        self.p_steepness = 3.0     # steepness of the population-pressure gauge logistic sigma(k*(pop/cap - 1)). Gentle
-                            #   (was 7.2) so the gauge is ~linear over the operating band & stays in a Turchin-like
-                            #   mid-range instead of amplifying the real ~36% drop into an ~83% gauge cliff.
         self.land_area = 1.0
         self.population = 0.6
         self.elites = 0.006
@@ -174,7 +166,7 @@ class FinalSim:
         self.treasury = 0.0           # state savings (stock; capped, floored at 0 -> no debt)
 
         # ---- Fracture / attrition params. ----
-        self.k_attrition = 0.09       # rate violence prunes elites (x cull_wave). Each father-son spike is a
+        self.k_attrition = 0.06       # rate violence prunes elites (x cull_wave). Each father-son spike is a
                                       #   burst of killing that clears a chunk of elites. Kept LOW so no single wave
                                       #   clears the overproduction -- a SEQUENCE of ~3-4 father-son waves steps E
                                       #   down gradually across the (long) disintegrative phase, the last finishing it.
@@ -196,26 +188,20 @@ class FinalSim:
                                       #   above the ~0.07 fragility cliff where clearing the last sliver drags the
                                       #   fracture out to 70% (weak tail spikes barely cull). Now a genuine threshold,
                                       #   not the old sigmoid-floor hack (E used to bottom at ~0.14 regardless).
-        self.elite_mobility = 0.009   # base rate of elite up/down mobility per tick (Turchin de = e*u0*(w0-w)/w).
-                                      #   LOWER slows how fast elites REBUILD after a crisis -> a longer prosperity/
-                                      #   strain expansion (E:0->crisis takes longer) relative to the fracture.
-        self.frac_mobility_scale = 1.0   # how much non-violent DOWNWARD elite mobility operates in fracture. Full:
-                                      #   as the population crashes and commoner wages recover, overproduced elites
-                                      #   slide back down to commoner status -- a real DYNAMICS-driven E drain that
-                                      #   grows in the LATTER HALF of the crisis (once pop has fallen).
-        self.frac_elite_drain = 0.012 # steady DOWNWARD drain of surplus elites through the crisis, proportional to
-                                      #   the surplus (elites - positions): overproduced elites simply can't be
-                                      #   sustained during a fracture (lost estates/offices, ruin, demotion),
-                                      #   independent of violence or wages. Small, so the WAVES still do most of the
-                                      #   E-clearing -- but it GUARANTEES E always clears (even if the oscillator is
-                                      #   weak, e.g. high rad_suppress where violence is too low to crash the
-                                      #   population). This is the dynamic that ends the crisis, replacing the old
-                                      #   age-timed forced-bleed CATCH.
-        self.fracture_age = 0         # ticks the current fracture has lasted (0 outside fracture); exposed read-out
-        self.u_exit_thresh = 0.20     # fracture -> prosperity needs the SMOOTHED violence U_e to have decayed this
-                                      #   low (a lull), so we don't flip to prosperity mid-wave and the last wave's
-                                      #   tail doesn't bleed into early prosperity. (One of only TWO exit conditions,
-                                      #   the other being E cleared -- the crisis ends on dynamics, not a stack of catches.)
+        self.frac_mobility_scale = 0.25  # how much non-violent downward elite mobility survives in fracture. Low =>
+                                      #   the WAVES do the E-clearing (not this quiet bleed) => E stays high enough to
+                                      #   re-ignite many gradual father-son waves instead of the crisis short-cutting.
+        self.fracture_age = 0         # ticks the current fracture has lasted (0 outside fracture)
+        self.frac_ramp_start = 160    # after this many ticks in fracture, the forced elite bleed starts ramping up
+        self.frac_ramp_len = 140      # ...reaching full over this many more ticks -> rescues a stuck (frozen-E)
+                                      #   crisis without touching normal ~110-tick fractures (which never reach here)
+        self.frac_forced_bleed = 0.03 # max per-tick forced elite loss once the wind-down ramp is full
+        self.rad_exit_thresh = 0.05   # fracture won't exit while radicals R exceed this (a wave is active/imminent),
+                                      #   so prosperity starts only in a lull. On exit the radical pool is RESET
+                                      #   (below) so the refractory restarts and no leftover wave leaks into prosperity.
+        self.u_exit_thresh = 0.20     # fracture won't exit until the SMOOTHED violence U_e has decayed this low
+                                      #   too -- so the tail of the last wave doesn't bleed into early prosperity
+                                      #   (rad_R can hit ~0 while the slow-decaying U_e readout is still elevated).
         self.prosperity_damp = 0.25   # radicalization recruitment is damped this much in PROSPERITY (phase 0):
                                       #   good times don't breed revolt. Stops chronic/leftover radical noise from
                                       #   culling elites in prosperity (which would prevent the next cycle building).
@@ -268,14 +254,11 @@ class FinalSim:
                                       #   fracture doesn't drag out into a long tail of sub-cull wavelets (severity=E,
                                       #   i.e. exp=1, doubled the fracture length). Still monotonic => amplitude tracks
                                       #   the scale of the crisis both within a fracture and between cycles.
-        self.strain_P_thresh = 0.85   # population-pressure gauge at which prosperity tips into strain (Malthusian
-                                      #   stagflation). HIGH so strain onset waits for pressure to build near its
-                                      #   peak -> a longer prosperity expansion; low would cut prosperity short.
-        self.strain_E_thresh = 0.40   # E at which prosperity tips into strain; ALSO the foot of the unrest ramp.
-        self.strain_hum_span = 0.50    # over this rise in E (above strain_E_thresh) the strain unrest hum ramps
-                                      #   0 -> full (smoothstep). So unrest is 0 in prosperity, then CLIMBS smoothly
-                                      #   through strain as overproduction builds -- starting from 0 at the strain
-                                      #   onset (continuous with prosperity, no bump) and reaching full by the crisis.
+        self.hum_quiet = 0.15         # fraction of the endemic hum that shows OUTSIDE fracture (phases 0,1). Low =>
+                                      #   strain stays visibly calm while unrest ACCUMULATES (R charging toward
+                                      #   ignition), so the first burst SPIKES at the strain->fracture onset rather
+                                      #   than the baseline ramping up gradually through strain. (Ignition spike is
+                                      #   never gated, so the transition-marking burst still fires at full size.)
 
         # ---- State capacity S = an independent slow-drifting variable driven by LEGITIMACY + fiscal health.
         #      No longer pinned low in fracture: it ebbs & flows as legitimacy erodes with the violence and
@@ -339,7 +322,7 @@ class FinalSim:
 
 
         # Population Growth
-        security = max(self.security_floor, self.security_floor + (self.S - self.U_e))   # state order minus violence; gates districts (and, via births, the effective cap)
+        security = max(self.security_floor, self.S - self.U_e)   # state order minus violence; gates districts (and, via births, the effective cap)
         carrying_cap = self.land_area * self.land_productivity
         # Population PRESSURE reads off max(current cap, rolling ~100-tick average cap): a RISING carrying
         # capacity (tech/districts) relieves pressure immediately, but a FALLING one (war wrecking the land)
@@ -481,7 +464,7 @@ class FinalSim:
         else:
             elite_wage = 0.5 - 0.1 * ((elite_count - elite_positions) / elite_positions)
 
-        e_social_mobility = elite_count * self.elite_mobility * (elite_wage - w) / w
+        e_social_mobility = elite_count * 0.02 * (elite_wage - w) / w
         if e_social_mobility < 0:
             e_social_mobility *= 0.5              # downward mobility is stickier than upward
         if self.phase == 2:
@@ -491,8 +474,6 @@ class FinalSim:
             # enough to re-ignite a sequence of father-son waves rather than mobility short-cutting the crisis.
             self.fracture_age += 1
             e_social_mobility = min(0.0, e_social_mobility) * self.frac_mobility_scale
-            # + the surplus-proportional drain (dynamics that always clears E; see frac_elite_drain).
-            e_social_mobility -= max(0.0, elite_count - baseline_positions) * self.frac_elite_drain
         else:
             self.fracture_age = 0
         # Elite culling is WAVE-driven: each father-son burst (the cull envelope above the between-wave lull)
@@ -504,6 +485,13 @@ class FinalSim:
         cull_wave = max(0.0, self.cull_env - self.cull_env_floor)
         e_attrition = elite_count * attrition_rate * cull_wave
         elite_count += e_social_mobility - e_attrition
+        # Crisis wind-down safety net: a fracture that drags on abnormally long (its waves too weak to clear
+        # E -> a frozen-E limbo) gets a forced elite bleed that ramps up with the fracture's age, guaranteeing
+        # E clears and the phase exits regardless of economic conditions. Normal ~110-tick fractures never
+        # reach frac_ramp_start, so it doesn't touch them.
+        if self.phase == 2 and self.fracture_age > self.frac_ramp_start:
+            ramp = min(1.0, (self.fracture_age - self.frac_ramp_start) / self.frac_ramp_len)
+            elite_count -= elite_count * ramp * self.frac_forced_bleed
         self._elite_owner.amount = max(elite_count, 1e-6)
         self.elites = self._elite_owner.amount   # mirror for the E readout (and, next increment, the fiscal side)
         dE = (e_social_mobility - e_attrition) / max(self.elites, 1e-8)
@@ -518,34 +506,19 @@ class FinalSim:
         # collapse is what fires the FIRST burst and tips strain -> fracture. Calm -> ~0, crisis -> ~1.
         raw_conditions = emp * (1.0 - self.max_suppression * self.S)
         conditions = 1.0 / (1.0 + math.exp(-self.cond_steepness * (raw_conditions - self.cond_midpoint)))
-        # The father-son oscillator's DRIVE is phase-dependent -- this is the whole "waves fire on a clock only
-        # in fracture" idea, and it lets DYNAMICS (not exit catches) end the crisis:
-        #   FRACTURE   -> full (1.0): once the crisis is on, each wave ignites at FULL strength on its own
-        #                 ~generational clock REGARDLESS of conditions, so every wave keeps CULLING decisively
-        #                 and E always resets to ~0 (no plateau stuck just above the exit threshold).
-        #   STRAIN     -> conditions: the FIRST burst's timing is set by how bad things are -- a real,
-        #                 conditions-driven buildup (dynamics decide WHEN the crisis breaks), not a fixed clock.
-        #   PROSPERITY -> damped conditions: good times breed no waves.
-        if self.phase == 2:
-            crisis_drive = 1.0
-        elif self.phase == 1:
-            crisis_drive = conditions
-        else:
-            crisis_drive = conditions * self.prosperity_damp
+        if self.phase == 0:
+            conditions *= self.prosperity_damp   # in good times radicalism doesn't take hold: damp recruitment
+            # so no wave fires in prosperity (S recovers with a lag, so conditions alone can stay high early on).
+            # The crisis still initiates in STRAIN (triggered by E>0.3, undamped), so this can't block onset --
+            # it only stops leftover/chronic radical activity from culling elites and preventing the next expansion.
 
         # SIR/SIRS flows on the naive/radical/moderate fractions (sum ~= 1):
-        #   naive -> radical : contagion*R*conditions*N  +  seed*N   (radicals recruit; a steady pressure seeds)
-        #   radical -> moderate: burnout*R + suppress*R*M            (radicals tire out; moderates de-radicalise them)
-        #   moderate -> naive : wane*M                               (immunity fades over ~a generation)
-        # The SEED is UNCONDITIONAL (not gated by `conditions`): the generational pressure valve ALWAYS
-        # recharges, so once immunity wanes a wave will ALWAYS fire "after enough time" -- it can never be
-        # permanently starved by low conditions (which was letting the LAST father-son wave stall out / get
-        # cut off by the exit). CONTAGION is still gated by `conditions`, so the burst's SIZE still tracks
-        # conditions (amplitude by conditions, firing guaranteed). In prosperity `conditions`~0 so contagion
-        # can't amplify and the tiny seed-fed R stays well below ignition -> no wave fires in good times.
+        #   naive -> radical : (contagion*R + seed) * N * conditions   (radicals recruit; bad times seed unrest)
+        #   radical -> moderate: burnout*R + suppress*R*M              (radicals tire out; moderates de-radicalise them)
+        #   moderate -> naive : wane*M                                 (immunity fades over ~a generation)
         N, R, M = self.rad_N, self.rad_R, self.rad_M
         activation  = 1.0 / (1.0 + math.exp(-self.rad_k_ig * (R - self.rad_trig)))  # excitable ignition gate
-        to_radical  = (self.rad_alpha * R * activation + self.rad_seed) * N * crisis_drive
+        to_radical  = (self.rad_alpha * R * activation + self.rad_seed) * N * conditions
         to_moderate = self.rad_burnout * R + self.rad_suppress * R * M
         to_naive    = self.rad_wane * M
         N += to_naive - to_radical
@@ -575,19 +548,7 @@ class FinalSim:
         # tapers (unlike the display U_e). Fed to the elite block on the next tick (same one-tick lag as U_e).
         env_rate = self.u_rise if spike_component > self.cull_env else self.u_decay
         self.cull_env += (spike_component - self.cull_env) * env_rate
-        # Unrest baseline (hum) gated by phase, SMOOTHLY so there is no jump at a phase boundary:
-        #   prosperity -> 0 (good times breed no unrest);
-        #   strain     -> ramps up from 0 as overproduction E climbs past strain_E_thresh toward the crisis, so
-        #                 unrest ACCUMULATES through strain starting from ~0 (continuous with prosperity -- no
-        #                 artificial bump at the strain onset) and reaches full by the time the crisis breaks;
-        #   fracture   -> full (the sustained crisis hum).
-        if self.phase == 0:
-            hum_gate = 0.0
-        elif self.phase == 1:
-            g = min(1.0, max(0.0, (self.E - self.strain_E_thresh) / self.strain_hum_span))
-            hum_gate = g * g * (3.0 - 2.0 * g)                   # smoothstep 0->1 across the strain buildup
-        else:
-            hum_gate = 1.0
+        hum_gate = 1.0 if self.phase == 2 else self.hum_quiet    # quiet baseline outside the crisis
         hum = severity * self.k_hum * hum_gate
         violence_target = hum + (severity - hum) * spike_component  # rises from the hum up to `severity` at full burst
         u_rate = self.u_rise if violence_target > self.U_e else self.u_decay
@@ -599,12 +560,8 @@ class FinalSim:
         # Update variables with some smoothing
         #self.P = max(0.0, min(1.0, self.P + dP * 0.1))
         rel = self.population / max(cc_eff, 1e-8)   # pressure vs the sticky (rolling-max) carrying capacity
-        # Population PRESSURE gauge. GENTLE logistic (low steepness) so the gauge is ~linear in pop/cap over the
-        # operating band and stays in a moderate range (Turchin's pressure metric oscillates ~0.35-0.57, never
-        # crashing to 0) -- the old steepness 7.2 amplified a ~36% real population drop into an ~83% gauge cliff.
-        # Now the gauge tracks the actual population, so its shape = the population's shape (rounded, not a cliff).
-        pressure = 1.0 / (1.0 + math.exp(-self.p_steepness * (rel - 1.0)))
-        self.P = max(0.0, min(1.0, pressure))
+        pressure = 1.0 / (1.0 + math.exp(-7.2 * (rel - 1.0))) # Logistic smoothing for population pressure
+        self.P = max(0.0, min(1.0, pressure)) # Logistic smoothing for population pressure
 
         rel = (self.elites) / max(baseline_positions, 1e-8)   # elites per available position (1.0 = elites exactly fill positions)
         # Elite OVERPRODUCTION = elites in EXCESS of positions. E is exactly ZERO when elites <= positions
@@ -619,23 +576,17 @@ class FinalSim:
         # (self.S already updated in the fiscal block.)
 
         self.U_e = max(0.0, min(psi, 1.0)) # Effective instability is instability above 0.5 * state capacity
-
-        # Exposed intermediates (game read-outs + introspection): crisis pressure, order, vital rates.
-        self.conditions = conditions
-        self.security = security
-        self.birth_rate = birth_rate
-        self.death_rate = death_rate
-
+        
         # Phase transitions
-        if self.phase == 0 and (self.E > self.strain_E_thresh or self.P > self.strain_P_thresh):
+        if self.phase == 0 and (self.E > 0.3 or self.P > 0.7):
             self.phase = 1 # Strain (Stagflation)
         elif self.phase == 1 and (self.U_e > 0.5 or self.S < 0.5 or (dE < 0 and dP < 0)):
             self.phase = 2 # Fracture (Crisis+Depression)
-        elif self.phase == 2 and self.E < self.E_exit_thresh and self.U_e < self.u_exit_thresh:
-            # Enter Prosperity (Expansion) purely on DYNAMICS: overproduction is cleared (E low -- the waves
-            # reset it) AND violence has subsided to a lull (U_e low, so we're not mid-wave and nothing bleeds
-            # into prosperity). No dP / M / age catches -- with full-strength fracture waves E resets cleanly
-            # right after the final clearing wave, then U_e decays and the crisis simply ends.
+        elif self.phase == 2 and (self.E < self.E_exit_thresh and dP > -0.001
+                                  and self.rad_R < self.rad_exit_thresh and self.U_e < self.u_exit_thresh):
+            # Enter Prosperity (Expansion) once overproduction is (near-)cleared, the population has STOPPED
+            # FALLING (dP >= ~0), AND no wave is active (rad_R low). NOT gated on U_e<0.1 (the endemic hum keeps
+            # U_e above that); gating on R avoids the hum-pinned frozen limbo.
             self.phase = 0
             # RESET the radicalization pool: the crisis is over, the radical movement has burned out and the
             # populace is exhausted (moderate). This restarts the refractory clock so no leftover wave can leak
