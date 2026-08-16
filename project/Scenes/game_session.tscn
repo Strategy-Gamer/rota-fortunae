@@ -1,0 +1,27 @@
+[gd_scene load_steps=6 format=3 uid="uid://c15twdv8e65uk"]
+
+[ext_resource type="Script" uid="uid://c1ip8rt4k604e" path="res://Scripts/game_session.gd" id="1_q4g1x"]
+[ext_resource type="PackedScene" uid="uid://dcq7npan0lnsi" path="res://Scenes/map.tscn" id="2_q4g1x"]
+[ext_resource type="Script" uid="uid://crht3smjxauja" path="res://Scenes/map_camera.gd" id="3_ke43x"]
+[ext_resource type="PackedScene" uid="uid://cgc5cjsx4o66v" path="res://Scenes/menu.tscn" id="4_mabpb"]
+[ext_resource type="PackedScene" uid="uid://bk7ptb8ho7rof" path="res://Scenes/topbar.tscn" id="5_0gxyp"]
+
+[node name="GameSession" type="Node2D"]
+script = ExtResource("1_q4g1x")
+
+[node name="SimWorld" type="SimWorld" parent="."]
+
+[node name="Map" parent="." node_paths=PackedStringArray("sim_world") instance=ExtResource("2_q4g1x")]
+sim_world = NodePath("../SimWorld")
+
+[node name="Camera2D" type="Camera2D" parent="."]
+position = Vector2(155, 211)
+zoom = Vector2(2, 2)
+script = ExtResource("3_ke43x")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+
+[node name="Menu" parent="CanvasLayer" instance=ExtResource("4_mabpb")]
+visible = false
+
+[node name="Topbar" parent="CanvasLayer" instance=ExtResource("5_0gxyp")]

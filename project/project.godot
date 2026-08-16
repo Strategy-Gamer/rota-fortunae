@@ -15,6 +15,10 @@ run/main_scene="uid://cyy74n40qe24n"
 config/features=PackedStringArray("4.5", "Forward Plus")
 config/icon="res://icon.svg"
 
+[autoload]
+
+Game="*res://Scenes/game.tscn"
+
 [input]
 
 cam_up={

@@ -76,7 +76,6 @@ void MapBuilder::build_from_rgb8(
                 color_to_location.emplace(packed_color, location_id);
 
                 geography.display_color_rgb.push_back(packed_color);
-                geography.owner_id.push_back(INVALID_COUNTRY_ID);
                 geography.area.push_back(0);
                 geography.centroid_x.push_back(0);
                 geography.centroid_y.push_back(0);

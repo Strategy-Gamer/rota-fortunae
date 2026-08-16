@@ -1,25 +1,21 @@
 extends Control
 
-@export var session: DeterministicSession
-@export var mapstate: MapState
-@export var map: GameMap
-
 var set_ownership_toggle = false
 var remove_ownership_toggle = false
 var mapmode = 1
 
 func _process(delta: float):
-	if session != null:
-		$PanelContainer/Rightside/PauseButton.text = "Date: " +  str(session.my_world.calendar.get_date_string()) + "\nSpeed: " + str(session.my_world.calendar.speed)
+	if Game.world != null:
+		$PanelContainer/Rightside/PauseButton.text = "Date: " + str(Game.world.get_year()) + "-" + str(Game.world.get_day()) + "\nSpeed: " + str(Game.world.get_speed())
 
 func _on_increase_speed_button_pressed() -> void:
-	session.my_world.calendar.set_speed(session.my_world.calendar.speed + 1)
+	Game.submit(Command.make_set_game_speed(Game.world.get_speed() + 1))
 
 func _on_decrease_speed_button_pressed() -> void:
-	session.my_world.calendar.set_speed(session.my_world.calendar.speed - 1)
+	Game.submit(Command.make_set_game_speed(Game.world.get_speed() - 1))
 
 func _on_pause_button_pressed() -> void:
-	session.my_world.calendar.set_paused(!session.my_world.calendar.paused)
+	Game.submit(Command.make_toggle_pause(!Game.world.is_paused()))
 
 
 func _on_set_owner_button_pressed() -> void:
@@ -34,8 +30,10 @@ func _on_remove_owner_button_pressed() -> void:
 
 func _on_toggle_mapmodes_button_pressed() -> void:
 	if mapmode == 0:
-		map.map_renderer.set_map_mode(MapRenderer.MapMode.POLITICAL)
+		Game._session.map.map_renderer.set_map_mode(MapRenderer.MapMode.POLITICAL)
+		#map.map_renderer.set_map_mode(MapRenderer.MapMode.POLITICAL)
 		mapmode = 1
 	elif mapmode == 1:
-		map.map_renderer.set_map_mode(MapRenderer.MapMode.LOCATION_COLOR)
+		Game._session.map.map_renderer.set_map_mode(MapRenderer.MapMode.LOCATION_COLOR)
+		#map.map_renderer.set_map_mode(MapRenderer.MapMode.LOCATION_COLOR)
 		mapmode = 0

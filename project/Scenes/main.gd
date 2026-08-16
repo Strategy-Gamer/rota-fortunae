@@ -1,37 +1,13 @@
 extends Node2D
 
-@export var locationMapPath: String = "res://MapData/uk_eu5.png"
-
-@onready var map: GameMap = $Map
-@onready var session = DeterministicSession.new()
+const session_scene = preload("res://scenes//game_session.tscn")
 
 func _ready():
 	#var path = OS.get_system_dir(OS.SystemDir.SYSTEM_DIR_DOCUMENTS) + "/Paradox Interactive/Hearts of Iron IV/mod/EoaNB/toi/history/states/1-Corsica.txt"
-	map.load_map(locationMapPath)
-	session.is_host = true
-	session.my_player_id = 1
-	session.map = map
+	var session = session_scene.instantiate()
 	add_child(session)
-	$CanvasLayer/Menu.session = session
-	$CanvasLayer/Topbar.session = session
-	$CanvasLayer/Topbar.mapstate = map.map_state
 
 
-func _unhandled_input(event):
-	if event is InputEventMouseMotion:
-		# Update hovered ID in map
-		map.set_hovered_location(map.get_location_at_mouse())
-	elif event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			# Update selected ID in map
-			var location_id = map.get_location_at_mouse()
-			map.set_selected_location(location_id)
-			if $CanvasLayer/Topbar.set_ownership_toggle and location_id >= 0:
-				map.map_state.set_location_owner(location_id, 0)
-				map.map_renderer.set_map_mode($CanvasLayer/Topbar.mapmode)
-			if $CanvasLayer/Topbar.remove_ownership_toggle and location_id >= 0:
-				map.map_state.set_location_owner(location_id, 1)
-				map.map_renderer.set_map_mode($CanvasLayer/Topbar.mapmode)
 
 
 		

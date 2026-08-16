@@ -43,6 +43,9 @@ sources += Glob("src/*.cpp")
 sources += Glob("src/countries/*.cpp")
 sources += Glob("src/map/*.cpp")
 sources += Glob("src/godot/*.cpp")
+sources += Glob("src/time/*.cpp")
+sources += Glob("src/core/*.cpp")
+sources += Glob("src/utility/*.cpp")
 
 if env["target"] in ["editor", "template_debug"]:
     try:

@@ -2,14 +2,14 @@ extends Node2D
 class_name MapRenderer
 
 # Node that handles rendering the map using shaders
-# It uses the MapState to get the necessary textures and data
+# It uses the SimWorld to get the necessary textures and data
 # All functions here are meant to be called from outside, e.g. from a controller node
 # It does not handle any input or logic itself, and assumes the caller knows what they are doing
 
 @export var province_shader: Shader
 @export var border_shader: Shader
 
-@onready var map_state: MapState = $"../MapState"
+@onready var sim_world: SimWorld
 @onready var map_sprite: Sprite2D = $LocationMap
 @onready var border_sprite: Sprite2D = $BorderMap
 
@@ -25,8 +25,8 @@ enum MapMode {
 }
 
 func prepare_rendering() -> void:
-	var id_image: Image = map_state.create_id_image()
-	var palette_image: Image = map_state.create_map_mode_palette(
+	var id_image: Image = sim_world.create_id_image()
+	var palette_image: Image = sim_world.create_map_mode_palette(
 		MapMode.LOCATION_COLOR
 	)
 
@@ -71,7 +71,7 @@ func _prepare_border_map() -> void:
 
 func set_map_mode(map_mode: int) -> void:
 	var palette_image: Image = (
-		map_state.create_map_mode_palette(map_mode)
+		sim_world.create_map_mode_palette(map_mode)
 	)
 
 	if palette_image == null or palette_image.is_empty():

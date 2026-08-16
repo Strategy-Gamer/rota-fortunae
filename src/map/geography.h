@@ -7,12 +7,9 @@
 namespace rota::map {
 
 using LocationID = std::uint32_t;
-using CountryID = std::int32_t;
 
 inline constexpr LocationID INVALID_LOCATION_ID =
     std::numeric_limits<LocationID>::max();
-
-inline constexpr CountryID INVALID_COUNTRY_ID = -1;
 
 struct Geography {
     std::uint32_t width = 0;
@@ -23,7 +20,6 @@ struct Geography {
 
     // All arrays below are indexed by LocationID.
     std::vector<std::uint32_t> display_color_rgb;
-    std::vector<CountryID> owner_id;
     std::vector<std::uint32_t> area;
     std::vector<std::int32_t> centroid_x;
     std::vector<std::int32_t> centroid_y;
