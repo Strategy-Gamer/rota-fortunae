@@ -1,24 +1,8 @@
 import math
-import random
 import numpy as np
 import matplotlib.pyplot as plt
 
 from economy import Location, Pop, Parcel, CULTIVATED
-
-
-# Crises fire stochastically in strain/fracture only (hazard scales with a driver + phase). Config per type:
-#   base = per-tick ignition rate at driver=1 in strain   dmin/dmax = duration range   cool = refractory ticks
-# The VIOLENT set shares a father-son LULL (see _step_crises war-weariness hysteresis): after a burst of
-# violence they're suppressed for a generation, so ignition rates can be high (they fire, then a lull enforces spacing).
-CRISIS_CFG = {
-    "famine":     dict(base=0.0, dmin=3, dmax=8,  cool=6),    # driver: immiseration
-    "epidemic":   dict(base=0.0, dmin=4, dmax=10, cool=8),    # driver: immiseration + density
-    "revolt":     dict(base=0.12, dmin=4, dmax=10, cool=10),   # driver: immiseration + unrest + low legitimacy
-    "civil_war":  dict(base=0.10, dmin=8, dmax=20, cool=15),   # driver: overproduction + unrest
-    "coup":       dict(base=0.08, dmin=1, dmax=3,  cool=12),   # driver: overproduction + low legitimacy
-    "bankruptcy": dict(base=0.0, dmin=1, dmax=3,  cool=15),   # driver: unpaid army (army_shortfall)
-}
-VIOLENT = {"revolt", "civil_war", "coup"}   # share the war-weariness lull
 
 
 # Secular-cycle causal loop (Turchin): carrying capacity -> population growth -> low wages ->
@@ -67,11 +51,12 @@ class FinalSim:
         self.cc_window = 100                  # ticks the pressure gauge averages carrying capacity over
         self.p_steepness = 3.0                # pressure-gauge slope; gentle so it stays in a Turchin-like band
 
-        self.k_war = 0.0
+        self.k_war = 0.01
+        self.k_attrition = 0.06
         self.security = 1.0
 
         # attached economy: one elite-owned cultivated parcel; commoners work it and the wage emerges
-        self.location = Location(land_area=self.land_area, security=1.0, wage_d_crit=0.9, wage_k=-10)
+        self.location = Location(land_area=self.land_area, security=1.0, wage_d_crit=1.0, wage_k=-10)
         self._commoner = Pop("Commoner", self.population)
         self._elite_owner = Pop("Elite", self.elites)
         self.location.add_pop(self._commoner)
@@ -113,7 +98,7 @@ class FinalSim:
         self.w0_target = 0.5                  # wage where elite up/down mobility balances (constant; needs tuning)
         self.mu_0 = 0.002                    # upward-mobility rate (x commoner pool) when wages sit below w0
         self.mu_down = 0.05                    # downward-mobility rate (x elite pool) when wages recover above w0
-        self.k_attrition = 0.01               # rebellion culling rate (x U^2); gentle so a crisis doesn't wipe elites
+        self.k_attrition = 0.03               # rebellion culling rate (x U^2); gentle so a crisis doesn't wipe elites
         self.E_span = 2.0                     # surplus ratio that reads as E=1 on the display gauge
         
         # ---- legitimacy (relaxes toward a target = 100% minus insecurity, unrest, unpaid obligations, overproduction) ----
@@ -130,33 +115,6 @@ class FinalSim:
         self.k_occupation = 0.0               # how much unrest degrades control, hence tax collection
         self.control_legit_floor = 1.0        # tax control retained at zero legitimacy (1.0 = revenue ignores legitimacy)
         
-        # ---- crises / events (stochastic, seeded; only fire in strain/fracture, can overlap) ----
-        self.seed = 12345
-        self.rng = random.Random(self.seed)
-        self.crisis_frac_mult = 4.0           # fracture makes crises ~this much more likely than strain
-        self.crisis_hazard_cap = 0.5          # max per-tick ignition probability
-        self.w_immis_thresh = 0.5             # wage share below which immiseration bites
-        self.k_famine = 0.06                  # famine pop-death fraction per tick at intensity 1
-        self.k_epidemic = 0.05                # epidemic pop-death fraction per tick at intensity 1
-        self.revolt_unrest = 0.30             # unrest a revolt injects per tick at intensity 1
-        self.civilwar_cull = 0.010            # elite-death fraction from civil war PER TICK (compounds over its duration)
-        self.coup_cull = 0.04                 # elite-death fraction from a coup (targeted, short) per tick at intensity 1
-        self.coup_legit_shock = 0.40          # legitimacy hit from a coup/regicide at intensity 1
-        self.bankruptcy_legit_shock = 0.30    # legitimacy hit from fiscal bankruptcy at intensity 1
-        # father-son lull: violent crises build war-weariness; past weary_high a generation-long lull begins
-        # (active violence ends, none can ignite) until it bleeds back below weary_low -> the next wave can fire.
-        self.weary_gain = 0.06                # war-weariness added per active violent crisis-tick (x intensity)
-        self.weary_relax = 0.02               # war-weariness that bleeds off each tick (lull length = band/relax)
-        self.weary_high = 0.7                 # weariness that triggers the lull (violence exhausts itself)
-        self.weary_low = 0.4                  # weariness at which the lull lifts and violence can flare again
-        self.war_weariness = 0.0
-        self.in_lull = False
-        self.crises = {name: {"active": False, "age": 0, "intensity": 0.0, "dur": 0, "cd": 0}
-                       for name in CRISIS_CFG}
-        self.immis = 0.0
-        self.crisis_load = 0.0                # sum of active crisis intensities (quick gauge)
-        self.crisis_pop_deaths = self.crisis_elite_deaths = 0.0
-
         # ---- gauges & read-outs (labels only; nothing feeds back off them) ----
         self.phase = 0
         self.P = self.E = self.U = self.U_e = 0.0
@@ -174,10 +132,6 @@ class FinalSim:
 
         self.legitimacy_history, self.revenue_history, self.expenses_history = [], [], []
         self.suppression_history, self.treasury_history = [], []
-
-        self.crisis_history = {name: [] for name in CRISIS_CFG}   # per tick: intensity if active else 0
-        self.war_weariness_history = []
-        self.crisis_elite_deaths_history, self.crisis_pop_deaths_history = [], []
 
 
     # ------------------------------------------------------------------ vital rates
@@ -197,14 +151,11 @@ class FinalSim:
 
     # ------------------------------------------------------------------ tick
     def step(self, t):
-        if t == 0:
-            self.rng = random.Random(self.seed)          # reseed so simulate(seed=...) overrides take effect
         cc_eff = self._step_population()
         econ = self._step_economy()
         f = self._step_fiscal(econ, 0)
         self._step_legitimacy(f)
         self._step_unrest(econ, f)
-        self._step_crises(f)                             # stochastic events layer on top of the continuous cycle
         w0 = self._step_elites(econ["w"], f)
         self._step_gauges(cc_eff, f)
         self._step_phase(econ["w"], w0, f)
@@ -237,10 +188,6 @@ class FinalSim:
         w = min(max((Wc / max(Nc, 1e-8)) / max(gdp_pc, 1e-8), 1e-4), 1.0)
         elite_income_pc = We / max(Ne, 1e-9)
         ew_inverse = 1.0 / max(elite_income_pc / max(gdp_pc, 1e-9), 1e-6)   # rises as the elite pie splits thin
-        # immiseration = how far commoners fall below a decent living: low wage share + food shortfall
-        wage_penalty = max(0.0, (self.w_immis_thresh - self.wage_share) / self.w_immis_thresh)
-        food_penalty = max(0.0, 1.0 - self._commoner.food_access)
-        self.immis = min(1.0, wage_penalty + food_penalty)
         self.w = w                                       # instrument: relative wage (falling wages -> immiseration)
         self.ew_inverse = ew_inverse                     # instrument: inverse relative elite income (thin pie)
         self.elite_income_pc = elite_income_pc           # instrument: elite income per head
@@ -328,94 +275,6 @@ class FinalSim:
         self.U_e = self.U - 1.0 * f["suppression_capacity"]
         self.U_e = min(1.0, max(0.0, self.U_e))
 
-    # ------------------------------------------------------------------ crises / events
-    def _crisis_drivers(self, f):
-        # each driver is a 0-1(ish) pressure; hazard = base * driver * phase_mult
-        op = max(0.0, f["felt_overproduction"] - 1.0)                 # elite overproduction pressure
-        density = max(0.0, self.population / max(self.land_area, 1e-9) - 0.8)
-        low_legit = 1.0 - self.legitimacy
-        return {
-            "famine":     self.immis,
-            "epidemic":   0.5 * self.immis + 0.5 * density,
-            "revolt":     0.4 * self.immis + 0.4 * self.U_e + 0.3 * low_legit,
-            "civil_war":  0.5 * op + 0.5 * self.U_e,
-            "coup":       0.5 * op + 0.5 * low_legit,
-            "bankruptcy": f["army_shortfall"],
-        }
-
-    def _step_crises(self, f):
-        self.crisis_pop_deaths = self.crisis_elite_deaths = 0.0
-        if self.phase == 0:                                          # no crises in prosperity; wind everything down
-            for cr in self.crises.values():
-                cr["active"] = False
-                cr["cd"] = max(0, cr["cd"] - 1)
-            self.war_weariness = max(0.0, self.war_weariness - self.weary_relax)
-            self.in_lull = self.in_lull and self.war_weariness > self.weary_low
-            self.crisis_load = 0.0
-            return
-        pop0, el0 = self.population, self.elites
-        drivers = self._crisis_drivers(f)
-        phase_mult = 1.0 if self.phase == 1 else self.crisis_frac_mult   # strain survivable, fracture fatal
-
-        # father-son hysteresis: past weary_high a LULL starts (active violence ends, none can ignite);
-        # it lifts once weariness bleeds back below weary_low -> the next generation's wave can fire.
-        if not self.in_lull and self.war_weariness >= self.weary_high:
-            self.in_lull = True
-            for name in VIOLENT:
-                cr = self.crises[name]
-                if cr["active"]:
-                    cr["active"] = False; cr["cd"] = CRISIS_CFG[name]["cool"]
-        elif self.in_lull and self.war_weariness <= self.weary_low:
-            self.in_lull = False
-
-        for name, cr in self.crises.items():
-            cfg = CRISIS_CFG[name]
-            if cr["active"]:
-                cr["age"] += 1
-                self._apply_crisis(name, cr["intensity"])
-                if cr["age"] >= cr["dur"]:
-                    cr["active"] = False; cr["cd"] = cfg["cool"]
-            elif cr["cd"] > 0:
-                cr["cd"] -= 1
-            elif name in VIOLENT and self.in_lull:
-                continue                                            # lull suppresses new violent crises
-            else:
-                drive = drivers[name]
-                p = min(self.crisis_hazard_cap, cfg["base"] * drive * phase_mult)
-                if drive > 0.0 and self.rng.random() < p:
-                    cr["active"] = True; cr["age"] = 0
-                    cr["intensity"] = min(1.0, drive * (0.5 if self.phase == 1 else 1.0))  # milder in strain
-                    cr["dur"] = self.rng.randint(cfg["dmin"], cfg["dmax"])
-                    self._apply_crisis(name, cr["intensity"])
-
-        violent_load = sum(cr["intensity"] for n, cr in self.crises.items() if n in VIOLENT and cr["active"])
-        self.war_weariness = max(0.0, self.war_weariness - self.weary_relax) + self.weary_gain * violent_load
-        self.crisis_load = sum(cr["intensity"] for cr in self.crises.values() if cr["active"])
-        self.crisis_pop_deaths = max(0.0, pop0 - self.population)
-        self.crisis_elite_deaths = max(0.0, el0 - self.elites)
-
-    def _apply_crisis(self, name, x):
-        # x = intensity in (0,1]; effects are per active tick. Revolt/civil-war unrest lands in next tick's U_e.
-        if name == "famine":
-            self.population *= (1.0 - self.k_famine * x)
-        elif name == "epidemic":
-            self.population *= (1.0 - self.k_epidemic * x)
-        elif name == "revolt":
-            self.U = min(1.0, self.U + self.revolt_unrest * x)
-            self.population *= (1.0 - 0.1 * self.k_famine * x)
-            self.elites = max(1e-6, self.elites * (1.0 - 0.3 * self.civilwar_cull * x))
-        elif name == "civil_war":
-            self.elites = max(1e-6, self.elites * (1.0 - self.civilwar_cull * x))
-            self.population *= (1.0 - 0.2 * self.k_famine * x)
-            self.treasury *= (1.0 - 0.1 * x)
-            self.U = min(1.0, self.U + 0.5 * self.revolt_unrest * x)
-        elif name == "coup":
-            self.elites = max(1e-6, self.elites * (1.0 - self.coup_cull * x))
-            self.legitimacy = max(0.0, self.legitimacy - self.coup_legit_shock * x)
-        elif name == "bankruptcy":
-            self.treasury = 0.0
-            self.legitimacy = max(0.0, self.legitimacy - self.bankruptcy_legit_shock * x)
-
     def _step_elites(self, w, f):
         # build by reproduction + upward mobility (both need order), clear by rebellion culling + downward mobility
         elite_count = self.elites
@@ -488,24 +347,18 @@ class FinalSim:
         self.population_history.append(self.population)
         self.wage_history.append(self.wage_share)
         self.carrying_capacity_history.append(cc_eff)
-        self.immiseration_history.append(self.immis)
+        self.immiseration_history.append(0)
 
         self.elites_history.append(self.elites)
         self.positions_history.append(f["elite_positions"])
         self.e_reproduction_history.append(self.elite_births)
         self.e_mobility_up_history.append(self.elite_up)
         self.e_mobility_down_history.append(self.elite_down)
-        self.e_deaths_history.append(self.elite_cull + self.crisis_elite_deaths)  # continuous + crisis (waves show here)
-        self.crisis_elite_deaths_history.append(self.crisis_elite_deaths)
-        self.crisis_pop_deaths_history.append(self.crisis_pop_deaths)
+        self.e_deaths_history.append(self.elite_cull)
 
         self.legitimacy_history.append(self.legitimacy)
         self.revenue_history.append(self.revenue)
         self.expenses_history.append(self.expenses)
         self.suppression_history.append(self.suppression)
         self.treasury_history.append(self.treasury)
-
-        for name, cr in self.crises.items():
-            self.crisis_history[name].append(cr["intensity"] if cr["active"] else 0.0)
-        self.war_weariness_history.append(self.war_weariness)
         

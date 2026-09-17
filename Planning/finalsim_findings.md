@@ -990,3 +990,38 @@ leaks.** Far fewer catches (exit went 5 conditions -> 2; forced-bleed gone). Mod
 period ~97 a fracture holds ~2 waves (~33t spacing); 3-4 waves/fracture needs a LONGER period (~200-250,
 Plantagenet) -> slow the whole clock (mobility/growth) if wanted. Open items unchanged: legitimacy events,
 DYNAMIC carrying capacity, urban & slave pops, famine/disease.
+
+---
+
+## Increment 17: economy substrate swap -- DISTRICTS -> LAND (new 3-pop / 3-land / 3-good model)
+
+User exported a new, simplified+higher-detail economic model (`Rota Fortunae_ Civilizations.txt`). This
+increment reworks the economy OBJECT layer (`economy.py`) to it; the secular-cycle DYNAMICS (Inc 1-16) are
+untouched. Old district model retired to `economy_old.py`. Decisions (AskUserQuestion): **focused first
+pass** (land+pops+goods+wages now; capital/conversion/migration/tiers/consumables-feedback deferred as
+read-outs), **keep FinalSim running on it**, **stub capital**. User corrections: **no subsistence /
+worker-owned land** (holdover -- all land is elite-owned now) and **pastoral yields a small surplus (1.2
+food)**.
+
+**Changes:** (1) `economy.py` rewritten -- `District/DistrictType/Tier` -> `LandType` + `Parcel` (a parcel
+= a district minus tier-chains, plus a `capital` STUB multiplier; always elite-owned). Land types
+`PASTORAL{food 1.2, wealth 0.3}`, `CULTIVATED{food 2.5, wealth 1.0}`, `URBAN{wealth 3.0, consumables 2.0,
+no food}`. `Pop.TYPES` 4->3 (dropped Urbanite): Slave/Commoner/Elite. Goods 3: food/consumables/wealth
+(dropped materials + the goods/plantation split). `Location.tick()` keeps the same
+land->labor->produce->distribute->SoL flow: rural labor = slaves+commoners with **slaves assigned first &
+unpaid** (commoner share of the labor pool = commoners/(slaves+commoners); slave share confiscated by owner
+-- capless output means "slaves first" == proportional). No subsistence fill; wage floor is now the
+get_wage_share 0.1 clamp. All `extra_functions.py` math reused verbatim. (2) FinalSim coupling (~4 lines):
+import `Parcel, CULTIVATED`; setup a single CULTIVATED parcel of area `econ_land`; `district_jobs ->
+self.location.elite_opportunities()`. Reads (elite_income, commoner food_access/wealth, elite opps)
+unchanged.
+
+**Result / verification:** economy.py smoke test OK (wealth a running total; slaves earn 0 & raise elite
+surplus). **FinalSim cycle PRESERVED** -- baseline **38/21/41** (~ the Inc-16 40/18/42), **ordering P->E->U
+39/39**, E resets 0.000 each cycle, pop varies 0.61-1.94, and an **18-config sweep (incl. rad_suppress/alpha/
+wane, k_attrition/emp/war, security_floor, wage_d_crit) ALL cycle, ZERO stuck, ZERO leaks.** The land base
+outputs changed scale (FARM 1.5/0.3 -> CULTIVATED 2.5/1.0) but the cycle reads RATIOS (relative wage,
+food_access) so nothing drifted -- confirming the swap is a clean substrate change. `economy_design.md`
+rewritten to the new model. Deferred (read-outs / later increments): real capital flows, land conversion,
+consumables demand feedback, migration, location tiers, state elite-opp pool, famine mortality, slave/elite
+pop dynamics in the economy layer.

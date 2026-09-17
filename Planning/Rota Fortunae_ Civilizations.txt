@@ -1,0 +1,1428 @@
+﻿Rota Fortunae: Civilizations
+But actually including the rise and fall of empires
+Core Concept: Play as the spirit of your civilization, tending to its polities to rise to glory. Yet societies are fragile and fortune is never permanent. Will your peoples’ achievements be remembered? Or will they crumble and be forgotten in strategy gaming’s most faithful take on the dynamics of history. 
+________________
+Ideas Blurb
+Gameplay Hooks
+1. “Just One More” Loops
+2. Emergent Narratives
+   1. Timeline for acquisition of great people/change of traditions/important events
+      1. Cultural Conflict
+      2. Religious Events/Conversion
+      3. Epidemics
+      4. Famines
+      5. Golden Ages (really good Expansion)
+      6. Adoption of Great Person
+   2. Map timeline
+3. Synergy-driven Customization
+4. Power Spikes
+5. Risk/Reward
+6. Meta-Progression
+7. Cascading Consequences
+8. Dynamic Resolvable Crises
+9. Mastery Curve
+10. Asymmetric Playstyles/Faction Identity
+11. Gabe Newell: Interactivity is the definition of fun.
+Rise & Fall of Empires
+* Create empires, they rise & fall
+* They experience periodic crises that can destroy them
+* Your actions can lead to them persisting
+Legacy System
+* Get most of it through the death of empires
+
+
+AI
+* Encode how you would play the game?
+
+
+Gradual increase in complexity
+* Think Civilization series: Simple start, gets more complicated over time
+* Tutorial: Disable parts of the UI for each thing
+
+
+Title/Game Ideas
+Title Elements:
+* Epoch/Age/Era/Time
+* Civilization
+* Evolution
+* Dynamism
+* Wheel/Cycle
+* Kingdom/Empire
+* World/Globe
+* Fortune/Fortuna
+Titles:
+* Rota Fortunae: Civilizations
+   * 4X God-Game
+* Rota Fortunae: Wizards and Warriors
+   * 4X God-Game?
+* Rota Fortunae: Galactic Domination
+   * 4X God-Game?
+* Civolution/CivEvolution
+   * Rogue-lite
+* FrontierOS
+   * 4X Farmer was replaced-esque Automation game
+* Interplanetary/Interstellar Grand Strategy
+* Ocean Liner Tycoon
+
+
+
+
+
+
+Things that bother people:
+AI Allies don’t do what you want
+Tall vs Wide
+* Expansion shouldn’t always be the best way to play
+* China Tall vs Rome Wide
+* Playing with medium-sized kingdoms should feel not bad
+Making sure not every civilization/religion/culture feels the same
+Make choices feel impactful, but not decide everything
+Balance between player and ai agency
+Making terrain important
+* Climates should feel different
+Proper mix of shapes & sizes
+* Small vs Large should have their OWN ADVANTAGES (pros/cons)
+* Larger countries are “better” for legacy but harder to maintain
+Cycles are semi-predictable
+Modifier fest
+Unique events should be easily understood as to why or why not they are firing
+Ports can exist anywhere
+* Ports could only exist where nature allowed you to build a port until the modern day
+
+
+________________
+Core Mechanics
+Civilizations
+Civilizations are who the player actually controls and directs. Players act as the spirit of the civilization, directing countries and their parts. The primary currency is Civilizational Will or CW for short. CW is what players use to change priorities, instate new regimes, provoke revolts, push through reforms, and more against or beyond what the AI would normally do.
+
+
+Civilizational Will - Primary Currency to change civilization
+Treasury - Money used by you to shape matters
+* Up to 20% (modified by cohesion) of your pop’s excess wealth beyond sustenance will be donated to your CT
+* Charity - money given to the poorest to reduce inequality
+* Entrepreneurship
+Legacy - Currency & Accumulated value used to shape cultural/religious traits, scoring
+Countries
+A country is a temporary sovereign political unit that controls locations and governs their populations. Countries act autonomously through AI, but can be influenced & directed by player actions. They collect and spend Wealth, maintain the different aspects of the state, conduct political reforms, create elite opportunities, conduct diplomacy, and wage wars. Countries may rise, divide, merge, be conquered or disappear without destroying the host civilization.
+
+
+Countries have a capital, owned & occupied territory, a primary civilization, accepted civilizations, government civics, institutions, cores and claims, diplomatic statuses, and a sovereignty status like if it’s independent, subject, or a rebel tag.
+
+
+The primary civilization may choose to sponsor a country. As such, they will be able to set priorities (economic, political, expansion, etc) and will receive events when the country is at a sufficiently important crossroads. Each sponsorship takes CW to maintain
+
+
+Treasury
+Legitimacy
+State Capacity
+Administrative Regions
+Resilience
+Control
+Security
+Strategic Priorities
+
+
+Countries have prestige, which is a short-form version of legacy focused on the here and now. It is how impressive the country is at that very moment. 
+
+
+Countries adopt certain civics & institutions that basically puts their cultural traits into action.
+
+
+Countries become mechanically empires upon either having significant territory from a different civilization (Rome) or having unified its own civilization (China). It must also have at least 5 million pops and be present in multiple regions.
+
+
+Country Formation
+Countries may enter the world through the following:
+
+
+* Initial placement
+   * Countries receive territory from a file.
+* Direct Player action
+* Rebellion
+* Regional state formation after collapse
+* Liberation
+* Nomadic/Barbarian conquest
+Diplomacy
+
+
+Representing non-civilization territory
+Colonization
+* Assimilation/
+
+
+Legacy
+Accumulating legacy is the primary goal of the game. It is used to shape cultural traits, alter norms, used for powerful temporary boosts, but, most importantly, it is used in final scoring.
+
+
+Legacy is accumulated tick by tick, but significant amounts of legacy is also gained from the collapse of an empire.
+
+Sources include, but are not limited to:
+* Empire Collapse
+* Golden Ages
+* Cultural Continuity
+* Scholarly Achievements
+* Religious Endurance
+* Crisis Survival
+* Civil Wars & Heroic Tragedies
+* Monuments & Public Works
+* Maintaining traditions under pressure
+* Great Works
+* Long-lived Realms
+* Fulfilling the conditions of certain religious traits
+
+
+Culture
+Cultural Values
+Like Stellaris Ethics/EU5 Values, every culture possesses a position on seven discrete Value axes. Each has five positions. Position 3 is not neutral; it represents something closer to the broad historical human norm. Positions toward either end represent increasingly unusual cultural arrangements.
+
+
+Values are relatively persistent. The player cannot casually change them. They can usually be altered through Ethnogenesis or Cultural Reform at a Legacy cost. Large or rapid changes can cause unrest and potentially contribute to cultural splitting.
+
+
+Values have three major functions:
+1. They directly alter how cultures behave in important systems
+2. They determine Affinity with Cultural Traits and potentially country Civics/Institutions
+3. They form a major component of Cultural Similarity
+
+
+Traits can have both affinity preferences and hard incompatibilities. For example Aristocratic Society might strongly prefer certain Hierarchy and Authority positions, while simply being impossible alongside Libertarian Authority.
+
+
+Affinity is calculated from categorical distance between a culture’s Values and the trait’s preferred positions, combined with relevant non-Value conditions. Higher affinity lowers the Legacy cost of selecting the trait and strengthens both its positive and negative effects.
+
+
+
+
+Value
+	Question
+	Extreme A
+	Moderate A
+	Center
+	Moderate B
+	Extreme B
+	Organization
+	Scale of Obligation
+	Atomic
+	Individual
+	Familial
+	Collective
+	Communal
+	Hierarchy
+	Ease of Social Movement
+	Fixed
+	Stratified
+	Ascribed
+	Mobile
+	Egalitarian
+	Authority
+	Legitimate Coercive Authority
+	Commanding
+	Authoritative
+	Statist
+	Popular
+	Libertarian
+	Relations
+	Social Trust
+	Impersonal
+	Contractual
+	Reciprocal
+	Personal
+	Kinship
+	Spirituality
+	Spiritual Embedding
+	Sacral
+	Devotional
+	Spiritual
+	Worldly
+	Materialist
+	Stability
+	Toleration of Change
+	Continuity
+	Traditional
+	Conservative
+	Adaptive
+	Experimental
+	Community
+	Moral Weight assignment
+	Parochial
+	Exclusionary
+	Particular
+	Inclusive
+	Universal
+	
+
+Organization
+The core mechanical theme is private incentive versus social obligation.
+
+Toward Atomic/Individual, people retain more of the rewards of personal economic success. That creates stronger incentives for entrepreneurship, capital accumulation and reinvestment, but also produces a weaker social floor. Poverty, inequality, and social disruption therefore have more potential to damage cohesion.
+
+
+Toward collective/communal, successful members face stronger expectations to distribute their surplus through the wider social network. Because families and individuals are not explicitly simulated, this can simply appear as a modifier to things like reinvestment rates, wealth concentration, cohesion loss, or poverty effects.
+
+
+Atomic -> Higher potential dynamism, weaker automatic social resilience
+Communal -> Stronger resilience and cohesion, weaker private accumulation and entrepreneurship
+
+
+This can significantly affect industrialization. A communal culture interferes particularly with the ability of private actors to retain the returns on investment, one of the prereqs for sustained endogenous capitalist development. Exceptional institutional arrangements may overcome that, but it is meant to be a genuine disadvantage.
+
+
+Atomic - If people manage success, then they have earned the right to keep their wealth by their own hard work and ambition. If they fall behind, well, they can pick themselves back up!
+Individual - We are a collective of individuals, to whom our duties are owed. We cheer and reward those who do great works, and aid those who, by no fault of their own, cannot.
+Familial - The family is the most important social unit of human civilization. Do the will of your father. Listen to the advice of your mother. And help your aunts and uncles and cousins whenever possible. And they shall help you in your time of need.
+Collective - If society is to mean anything, it means that we live together, fight together, and die together. We bore you and raised you, and now you shall offer yourself to everyone else to provide for their needs as well.
+Communal - We are but part of a greater whole. Individual needs and wants must be sacrificed to make society function. Our ups and downs are shared, so we can all bear the weight together.
+
+
+Hierarchy
+Hierarchy principally determines mobility between Pop Types:
+Slaves <-> Commoners <-> Elites
+
+
+Importantly, this is not an evenly spaced gradient.
+Fixed -> Makes essentially all social mobility difficult
+Stratified -> Strongly preserves social strata. Entry into and exit from Elite status are both difficult .
+Ascribed -> maintains a meaningful difference between Elites and everyone else, but permits substantially more actual movement between social positions
+Mobile -> Makes social advancement and decline much easier and treats achieved status as normal
+Egalitarian -> Minimizes legitimate formal barriers between strata
+
+
+Positions directly provide the base transition values, rather than applying modifiers afterward. For example, under otherwise identical conditions upward elite mobility might have values like:
+Fixed 3 -> Stratified 12 -> Ascribed 25 ->...
+
+While downward Elite mobility could have a different curve:
+Fixed 4 -> Stratified 8 -> Ascribed 20 ->...
+
+This gives both sides strategic uses. High mobility increases opportunities, improves utilization of ambitious/talented populations, and encourages advancement. But it also allows populations to become elites more quickly and therefore accelerate elite overproduction.
+
+
+Low mobility can stave off elite overproduction by preventing successful non-elites from entering the elite class, while simultaneously producing frustrated aspirants and wasting human potential.
+
+
+A culture’s Hierarchy Value should also affect how legitimate these barriers feel. Low mobility causes less grievance in a society that sees fixed ranks as normal than in a Mobile or Egalitarian society.
+
+
+Fixed - Our place in society is given to us at birth, and there is honor in fulfilling the role into which we were born. A stable society depends upon each person knowing where they belong.
+Stratified - Society functions because different classes fulfill different roles. Advancement may sometimes be deserved, but too much movement up and down the pyramid threatens the whole structure.
+Ascribed - Birth and station deserve respect, but ambition must not be denied. Those who prove themselves worthy should have the opportunity to rise.
+Mobile - Merit, ability, and achievement ought to determine your lot in life. Birth may provide a beginning, but it is fine if they may fall.
+Egalitarian - All men are created equal. No person possesses an inherent right to stand above another merely because of birth, wealth, or station.
+
+
+Authority
+Authority governs the cultural legitimacy of coercive collective action.
+
+
+Toward commanding/authoritative, governments can impose obligations with less cultural resistance. Towards popular/libertarian, coercive action requires progressively stronger justification and tends to create greater resistance.
+
+
+This is not a government size axis. A culture can possess a large and powerful state while remaining culturally Libertarian (USA). Coercion will carry greater political/cultural costs.
+
+
+Authority should interact strongly with a country Civics and Institutions. A country whose political organization conflicts sharply with its culture’s Authority  Value may be maintainable, but with increased costs.
+
+
+Commanding - Those placed above us are meant to command, and those below are meant to obey. Order is preserved when everyone performs their duty without constant bickering and questioning of their betters.
+Authoritative - Those entrusted with authority generally know how best to exercise it. Their judgement deserves deference, though even a rightful authority can occasionally overstep its bounds.
+Statist - Public authority is necessary for an orderly society, and its legitimate commands should generally be obeyed. When power is abused, the answer is to correct the abuse, not reject authority itself.
+Popular - Authority is legitimate because the people have entrusted it to those who govern. A state that loses the consent of its people loses the foundation of its right to rule.
+Libertarian - Power must always justify itself before it intrudes upon the lives of ordinary people. We cannot assume that those above us will protect our interests… people must remain capable of protecting themselves and one another whether the powers at be find that acceptable or not.
+
+
+Relations
+Relations governs how scalable trust is.
+
+
+At Kinship/Personal end, cooperation works extremely well through personal relationships, family, patronage, and direct social ties. Such societies can operate with very lightweight formal administration at small scales. The weakness appears as the polity grows. It becomes increasingly difficult to govern millions of strangers through personal relationships.
+
+
+At the Contractual/Impersonal end, people are more willing to cooperate through explicit rules, offices, procedures, contracts, and institutions even when the individuals involved do not personally know one another.
+
+
+The historic human baseline may sit at the extreme Kinship end here as early human political organization overwhelmingly relied upon personal and kin relationships.
+
+
+Impersonal - We do not need to know one another personally in order to cooperate. If everyone follows the same trusted rules and procedures, even complete strangers can depend upon one another.
+Contractual - People with different interest can still work together when their obligations are clearly agreed upon. Contracts, negotiation, and impartial judgement may very well allow mere acquaintances to cooperate without needing personal loyalty.
+Reciprocal - Respect should be answered with respect, generosity with generosity, and loyalty with loyalty. Trust grows from the knowledge that what we offer others will be returned in kind.
+Personal - Trust is built between people who know one another. I can depend upon you because I know your character, and you can depend upon me because you know mine.
+Kinship - Those we can truly depend upon are our close of kin and those among whom we have been raised. Blood and belonging create obligations no stranger can easily replace.
+
+
+Spirituality
+Spirituality changes the relative importance of material conditions versus spiritual/symbolic order in satisfaction, cohesion, and legitimacy.
+
+
+Sacral/Devotional cultures can tolerate relatively poor material more easily if sacred order, rituals, and religious institutions and culturally important spiritual expectations are satisfied. Their vulnerability lies in religious disruption, desecration, or lack of fulfillment of spiritual duties.
+
+
+Worldly/Materialist cultures place substantially more weight on measurable material outcomes. Prosperity, consumption, services, and improving living standards become stronger sources of satisfaction and legitimacy, whilst economic deterioration becomes harder to compensate for with religion.
+
+
+Spiritual societies endure poverty better, but have certain spiritual expectations.
+Materialist societies exploit prosperity better, but can suffer worse in bad times.
+
+
+Sacral - The sacred order of the world must be honored. Rituals must be maintained. Rulers shall follow their duties. We must stay aligned to the divine even when matters become difficult.
+Devotional - Material concerns have their place, but they are temporary. What ultimately matters is our relationship with the divine and the spiritual obligations that give life meaning.
+Spiritual - We are a spiritual people, and our faith and traditions remain central to who we are. Yet the needs of this world matter as well, and neither should be neglected.
+Worldly - There may be realities beyond what we can see and touch, but we live and die in the material world. So while spiritual concerns deserve respect, they cannot eclipse practical every-day needs.
+Materialist - What matters most is the world we can observe, understand, and improve. Spiritual questions may interest some, but they should not distract us from the realities that shape human life.
+
+
+Stability
+Stability is a culture’s attitude towards change, and determines cultural inertia.
+
+
+Toward Continuity/Traditional, cultures preserve Traits exceptionally well. Cultural reforms are harder, foreign influence penetrates less, low-Affinity Traits persist longer, and cultural identity shifts less. Technology also spreads more slowly. However they also receive additional trait points.
+
+
+Towards Adaptive/Experimental, cultures alter themselves more readily. Reform is easier, new cultural practices spread faster, and traits can respond much more dynamically to changing Affinity. This involves automatic Trait turnover. An experimental society has faster research speed and an additional trait slot.
+
+
+A Trait with low Affinity may drop automatically, and vice-versa with a high Affinity Trait emerging without explicit player approval. This means Adaptive/Experimental, whilst lowering Legacy costs to reform & making it easier to occur can be genuinely bad for a player who wants to preserve an old configuration. Meanwhile Continuity may preserve traditions far beyond their original context.
+
+
+Stability also affects how disruptive Culture changes are. Large jumps can instill unrest & result in culture splitting.
+
+
+Continuity - The traditions of our ancestors have carried us this far and must be preserved. We are merely their custodians, entrusted to pass what we inherited onward unchanged.
+Traditional - Tradition is not the worship of ashes, but the preservation of the fire. Customs may change in form when necessary, but the inheritance at their heart must endure.
+Conservative - Change is dangerous when pursued carelessly, but refusing all change can leave a society too brittle to survive. We should preserve what works and alter only what necessity demands.
+Adaptive - Traditions that no longer serve us should be discarded, and useful ideas should not be rejected merely because they are unfamiliar. Survival belongs to those capable of adapting without losing themselves.
+Experimental - Progress cannot be made by fearing every unfamiliar path. We should test new ideas, abandon what fails, and continually seek better ways to live.
+
+
+Community
+Community determines the culture’s moral recognition radius. It affects which other populations are regarded as legitimate recipients of moral concern.
+
+
+Parochial primarily recognizes one’s own country only.
+Exclusionary extends it to the same civilization.
+Particular recognizes a broader range, with an ability to “pick and choose.”
+Inclusive generally recognizes outsiders as legitimate peoples, though sufficiently objectionable cultures, religions, or Traits may fall outside that boundary.
+Universal recognizes all cultures.
+
+
+This affects the cultural/political cost of:
+* Slavery
+* Forced assimilation
+* Expulsion
+* Persecution
+* Exploitation
+* Collective Punishment
+* Massacres/Genocide
+* Cultural Restrictions
+* Treatment of conquered peoples
+
+
+They do not become mechanically impossible at high Community values. Rather, carrying them out is significantly more difficult. More CW, unrest, legitimacy loss, refusal, elite opposition, etc.
+
+
+Assimilation may be difficult for Parochial and Exclusionary cultures, but easy for Inclusive, though more difficult for Universal.
+
+
+Parochial - Our first obligations are to ourselves. Outsiders are strangers and are not to be considered or trusted.
+Exclusionary - There are peoples beyond our own whom we can recognize and respect, but most stand outside the bounds of civilized society. We owe little to those barbarians who reject the standards by which proper peoples live.
+Particular - The world contains many peoples, each with their own ways and worth. Some are familiar enough to understand and respect, and the rest are either savages or too alien to be of concern.
+Inclusive - Civilized life is not the possession of a single people. Many different cultures are worthy of tolerance and respect, though some are simply beyond the pale.
+Universal - Every human being possesses moral worth by merit of being human. We may condemn their actions, oppose their beliefs, or even wage war against them, but they remain, ultimately, human.
+Cultural Traits
+While values provide the general cultural environment, traits provide the bespoke ideas that distinguish one culture from another.
+
+
+Ex: Militarism, Legalism, Aristocratic Society, Go-Getter Attitude, Honor Culture, Maritime Tradition, Experimentalism, Clan Society
+
+
+Traits generally require either their selection conditions to be fulfilled or for the Trait to exist in a parent culture involved in the new culture’s creation.
+
+
+Each culture has a trait capacity and slots. Each trait consumes one and only one slot, but may consume capacity (or give it back) at varying rates (like Stellaris species traits). A minor trait might only be 1 point, a major one is 2, and a build-defining trait is 3. Meanwhile Burdens (negative traits) might give 1 or 2 points back.
+
+
+Affinity
+Traits have preferred Value positions on one or more axes. Affinity represents how intensely a culture expresses a Cultural Trait. It is derived from distance from its preferred Value position, 
+
+
+Affinity affects:
+* Legacy acquisition & drop cost
+* Strength of Trait effects, positive and negative
+
+
+High affinity isn’t simply “more bonus”, it means the culture expresses the Trait more intensely.
+
+
+Trait Object
+* Cost (Minor: 1 / Major: 2 / Defining: 3 / Burden: -1 or -2)
+* Hard Value Reqs
+* Preferred Values
+* Affinity inputs
+* Positive adjustable effects
+* Negative adjustable effects
+* Unadjustable effects
+* Inheritance rules
+* Whether it can be reacquired from cultural memory
+* Trait Prereqs/Upgrade Chain
+* Acquisition Conditions
+* Behavior Effects
+Cultural Evolution
+Simplification: All cultural traits/values are on the civilization-level, so the only valid note here is cultural reform. Splitting and hybridization will not occur. The following is kept for safekeeping.
+
+
+Values are changed principally through:
+
+
+Ethnogenesis - Creation of a new daughter culture
+Hybridization - Creation from two parent cultures
+Cultural Reform - Deliberate restructuring of an existing culture
+
+
+A cultural split inherits heavily from its parent. A hybrid must retain at least one Trait from each parent, while receiving access to both parents’ cultural Trait pools.
+
+
+A major reform of a geographically enormous or internally divergent culture can itself cause cultural splitting rather than successfully transforming the whole population.
+
+
+Cultures, therefore, have Heartlands which anchor identity and help determine where reform, ethnogenesis, assimilation, and cultural persistence are strongest.
+
+
+Newly created cultures do not instantly replace their parents. Ethnogenesis causes a temporary period of accelerated cultural conversion that may last decades. Rival civilizations can potentially initiate competing ethnogenesis during that window (with regards to Hybridization), with the dominant emerging culture assimilating the weaker one.
+
+
+Declined cultures likewise assimilate away much faster, while providing some Legacy upon retirement.
+Trait List
+
+
+Self-Made Ethos: Defining (3)
+Personal advancement is regarded as something to be pursued rather than awaited. Individuals readily abandon inherited circumstances in search of land, work, wealth, and status, while failure to provide avenues for advancement is regarded as a defect of society rather than simply one’s lot in life.
+
+
+Hard Value Reqs
+Hierarchy: not Fixed or Stratified
+Authority: not Commanding
+Stability: not Continuity
+
+
+Preferred Values
+Organization: Atomic
+Hierarchy: Egalitarian
+Authority: Libertarian
+Stability: Experimental
+
+
+Acquisition Conditions
+        Culture has substantial population on the frontier
+        Large amount of economic opportunity relative to established population
+
+
+Affinity Inputs:
+        Wealthy population
+        High voluntary migration
+        Large frontier population
+        Upward Mobility
+
+
+Adjustable Effects:
+        Entrepreneurship - Elite pops substantially more willing to commit wealth toward starting or expanding economic activity upon opportunity to do so
+        Opportunity Migration - Pops respond to migration pressures much more
+        Increased Social Mobility - Pops raise & lower in status much more strongly when permitted
+        Frontier Development - Frontiers are settled faster
+        Frustrated Expectations - Increased unrest from falling wages, unemployment, low social mobility, elite overproduction
+
+
+Behavior Effects:
+        More inclined toward:
+* Settling new locations
+* Encouraging migration
+* Prioritizing the economy
+* Opening routes for migration
+* Accepting disruption
+* Pursuing space ventures
+
+
+Cultural Memory: Yes
+
+
+Self-Made Ethos: Defining (3)
+Scholarly Bureaucracy: Defining (3)
+Noblesse Oblige: Defining (3)
+Caste System: Defining (3)
+Warrior Society: Defining (3)
+Pastoral Nomadism: Defining (3)
+Diaspora: Defining (3)
+God-Ruler: Defining (3)
+
+
+Sacred Law: Major (2)
+Common Law: Major (2)
+Civil Law: Major (2)
+Voluntary Association: Major (2)
+Clan Confederation: Major (2)
+Honor Culture: Major (2)
+Legalism: Major (2)
+Martial Caste: Major (2)
+Monumentality: Major (2)
+Migratory: Major (2)
+
+
+Armed Populace: Minor (1)
+Commercial Society: Minor (1)
+Aristocratic Society: Minor (1)
+Republican Virtue: Minor (1)
+National Exceptionalism: Minor (1)
+Mass Culture: Minor (1)
+Maritime Tradition: Minor (1)
+Militarism: Minor (1) 
+Hospitality Code: Minor (1)
+Horse Culture: Minor (1)
+Rhetorical Debate: Minor (1)
+Ritual Kingship: Minor (1)
+Local Assemblies: Minor (1)
+Monastic Tradition: Minor (1)
+Ancestor Veneration: Minor (1)
+Deification: Minor (1)
+
+
+Consumer Culture: Burden (-1)
+Blood Feuds: Burden (-1)
+Conspicuous Consumption: Burden (-1)
+Factionalism: Burden (-1)
+Face Saving: Burden (-1)
+Ritual Sacrifice: Burden (-1)
+Ascetic Ideal: Burden (-1)
+
+
+Human Sacrifice: Burden (-2)
+Purity Obsession: Burden (-2)
+
+
+
+
+Barbarians
+A unique civilization that owns no innovation generation, has minimal traits, and cannot be played. They represent all civilizations that could otherwise not be included.
+________________
+Civilization Choices:
+Civilization Traits Design Philosophy: Make at least one “obviously good” action mediocre, and at least one “obviously bad” action good.
+
+
+* Mesopotamian
+   * Kittum - Stability is achieved by making rules explicit, public, and fixed. Legitimacy flows from clarity rather than consensus
+* Egyptian
+   * Ma’at - Social order is preserved by maintaining equilibrium, disruption is more dangerous than stagnation.
+   * Social reforms are twice as destabilizing, legacy from continuity is doubled
+* Levantine
+   * Koloniá - Security and prosperity come from relationships and connectivity rather than depth of control
+   * * Hebraic
+   * People of the Covenant - Law, identity, and legitimacy persist independently of territory or sovereignty
+   * -50% Assimilation of others, but Hebraic pops do not passively assimilate. Gain legacy from the presence of Hebraic pops in foreign civilizations. Cohesion gain from foreign persecution is doubled.
+* Anatolian
+   * Land of a Thousand Gods - Continuity is maintained by absorbing, reinterpreting, and repurposing external traditions
+* Iranian
+   * Asha - The world is a contest between order and chaos, where alignment with truth grants legitimacy
+* Indic
+   * Dharma - Social order arises from fulfilling one’s role rather than enforcing equality
+* Sinitic
+   * Mandate of Heaven - Authority is conditional on delivering stability and prosperity. Failure justifies replacement.
+* Japanese
+   * Bushidō - Cultural emphasis on discipline, honor, duty, and self-mastery
+* Turkic
+   * Törü - Law and custom exist to be adapted, not fossilized
+* Mongolic
+   * Nökör - Authority flows from personal loyalty and shared success
+* Latin
+   * Civitas - Belonging is defined by legal status, not ancestry
+   * All accepted pops under a Latin Country can assimilate, regardless of cultural differences.
+* Hellenic
+   * Logos - Truth is discovered through reasoned debate and inquiry
+* Celtic
+   * Clú - Status is earned through personal reputation and honor, not institutional rank
+* Germanic
+   * Eigenständigkeit - Strong preference for personal space, household independence, and limits on imposed authority
+* Slavic
+   * Terpeniye - Society endures prolonged hardship far better than most
+* Arab
+   * Nasab - Social order is grounded in lineage, reputation, and personal honor rather than territory
+* Ethiopian
+   * Amba - Highland geography fosters isolation, continuity, and resistance to external domination
+* Sahelian
+   * Griot Memory - Social continuity and legitimacy are preserved through oral historians, genealogy, and living memory rather than written record
+* Nigerian
+   * Compound Society - Society is organized through dense, overlapping affiliations rather than singular hierarchy
+* Bantu
+   * Ubuntu - Social expansion favors incorporation and assimilation over exclusion or annihilation
+   * Assimilation of Barbarian pops is doubled, halved cohesion penalty from pop diversity
+* Mesoamerican
+   * Teotl Cycle - Cosmic balance is maintained through continual reciprocal action.
+* Andean
+   * Ayni - Reciprocity and coordination across ecological extremes
+* Mississippian
+   * Ritual Landscape - Social order is expressed through sacred geography, seasonal movement, and ceremonial centers rather than permanent political institutions
+* Austronesian
+   * Wayfinding - Movement, navigation, and connection are normal conditions of life
+* Tai
+   * Kreng Jai - Social harmony and face-saving take precedence over rigid principle
+* Khmer
+   * Deveraja - Society expresses meaning, authority, and identity through large-scale, ordered construction
+   * Public works generate legitimacy and additional legacy
+________________
+
+
+Secular Cycles
+In theory, countries and/or regions are sorted into phases of what are called secular cycles. These are the following phases:
+* Expansion
+   * Vigorous population growth
+   * Stable prices and wages
+   * Few but growing Commoners, Few but growing Elites
+* Stagnation
+   * Population approaches carrying capacity, transition smooth
+   * Majority of commoners  experience economic difficulty
+   * Elites enjoy golden age
+   * Many and stagnant Commoners, Many and growing Elites
+* Crisis
+   * Transition from stagnation can be abrupt
+   * Pandemics, extreme famine, or state collapse followed by civil war
+   * Extended period of time that can last one or more human generations
+   * Many but shrinking Commoners, Many but shrinking Elites
+* Depression
+   * Smooth transition
+   * Characterized by endemic civil conflict
+   * Ends when elites are pruned by internal conflict and popular misery has ended so new secular cycle can begin
+   * If no functioning state can reemerge, it transitions into an “intercycle”
+   * Strong elites can lengthen depression (e.g. Mamaluks)
+   * Few and stagnant Commoners, Many but shrinking Elites
+
+
+Typical periods of secular cycles lie in the range of 2-3 centuries in monogamous strong powers. Polygamy may result in elite reproduction rates so high that commoners do not even factor into the cycle. With foreign tribes conquering and ruling a settled state, depression state may be little to none (as old elites get replaced with fewer tribal elites). For these types of states a secular cycle may take only 1 century to complete.
+
+
+Secular Cycles in RF
+Secular cycles are emergent historical rhythms produced by four main variables: population pressure, elite overproduction, sociopolitical instability, and state capacity. These are derived from game-state truths and turned into a 0-1 scale. The game does not force countries through fixed phases, but instead the labels describe the dominant dynamic in a society.
+
+
+There are three phases:
+1. Prosperity
+2. Strain
+3. Fracture
+Prosperity
+Occurs when population pressure is low, elite overproduction is low, and unrest is low. State capacity increases during this time and it is the era of a general “golden age” for the people. Wages are high, population growth is strong, and the state tends to be looking to expand & grow.
+Strain
+Occurs when either population pressure or elite overproduction is high. Instability tends to rise, state capacity reaches its maximum, wages drop, the population suffers, and elites have a golden age… a “Gilded Age” of sorts. High arts & culture flourishes but you increasingly suffer famines & diseases. Elite overproduction puts strain on the state and makes it increasingly belligerent.
+Fracture
+Occurs when population pressure or elite overproduction is high but dropping. Instability reaches its peak, state capacity drops, possibly to zero, due to unrest & maintaining elite status. Four horsemen of the Apocalypse appear. When population pressure drops too low, that squeezes elites and causes endemic civil wars until elite overproduction clears out. Population is often unable to grow due to extreme instability. State tries to restart but often fails again with repeated waves of violence (Father-son cycles).
+________________
+Fall of Empires
+Should be clear when territories are unprofitable
+Administrative Regions becoming de-facto sovereign over time
+
+
+Insurgencies & Rebellions
+Resilience
+Country value. Answers how much unrest each owned location can tolerate before a revolt is possible.
+
+
+Determined by taking the minimum of the following:
+* Legitimacy
+* Elite Satisfaction
+* Control (weighted avg across locations)
+* Security (weighted avg across locations)
+Unrest & Rebel Movements
+Unrest is a location value. Determines how uppity a location is. Is not exclusive to revolts to break away but includes any popular discontent.
+
+
+High unrest can cause the following problems:
+* Decrease security and control in the location
+* Create attritional costs to state resources
+* Affect logistics for nearby military forces
+
+
+When a location exceeds resilience (OR State Capacity) divided by two then a rebel movement forms.
+
+
+Whether the movement is a civil (war) movement or a secessionary movement is determined by the location’s loyalty. Over 50 loyalty turns into a civil movement, under 50 is a secession movement. Loyalty itself is determined by whether there are foreign cores, civilizational distribution and attitudes, and a few other things.
+
+
+Rebel movements, active on a per-country basis, track involved locations, can be interacted with directly by players, and can grow or shrink over time with eligible locations. The eligibility of a location is determined by the above conditions to create a rebel movement. Rebel movements only trigger a revolt should any location exceed the owner’s resilience.
+
+
+If the average control of the rebelling locations is low enough (<25%) then the rebel movement may secede without causing a war, though the former owner will receive a casus beli. Should the average control be near zero (<10%) then they will not receive a casus beli.
+
+
+If a Civil rebellion fires, and the capital province has joined the movement, has Unrest in excess of Resilience, and Elite Satisfaction is below a critical threshold, then instead of firing a civil war a Coup d’Etat occurs, instantly changing out the ruling regime. This, however, will generate a Shock event that will reduce resilience, so it may end up creating a counter-civil war.
+
+
+There can also be a unique situation where low average control can result in fragmentation. How much it fragments depends on the cohesion of the population.
+World & Time
+Time
+Starts in 1000 BC, ends in 2000 AD
+Monthly ticks
+* Subdivided into 3: early, mid, late
+* Only for military
+* AI calculations subdivided throughout year to ease yearly tick performance
+
+
+Yearly ticks
+* Just about everything
+
+
+Speeds:
+* 1: ⅓ Month per second
+* 2: 1 Month per second
+* 3: 3 Months per second
+* 4: 6 Months per second
+* 5: As fast as possible
+
+
+Map
+Locations
+* Basic territory unit of the game
+* Has:
+   * Terrain (Climate/Vegetation/Topography)
+   * Pops
+   * Security
+   * Control
+   * Cultivated/Pastoral/Urban land
+
+
+Tiers:
+* Locations
+   * Atomic territorial unit
+   * ~4000 total
+* Regions
+   * ~100 total
+   * 25-100 locations
+* Continents
+   * 6 total
+Terrain
+Terrain should not merely result in “-33% food” modifiers, but determine what is possible. Deserts may support tiny subsistence, and mining, but not massive grain agriculture without sufficient infrastructure. Forested regions can support a lot of people but are bad for steppe-style pastoral cavalry & herding. Mountains are not merely “bad terrain” but have low caps.
+
+
+Arable/Pastoral Capacity, Construction Cost, Transportation throughput, disease pressure, security vulnerability, resource nodes, district types, district caps. Not just percentage modifiers.
+
+
+Port Suitability
+* Tier 0: Only small vessels (No port)
+* Tier 1: Bad harbor (Build medium-sized vessels - limited capacity or terrible conditions)
+   * Expensive to build a port
+   * Limited naval capacity
+* Tier 2: Decent Harbor (Build large-sized vessels, may require some engineering)
+   * Expensive to build a port
+   * Moderate naval capacity
+* Tier 3: Natural Harbor (Natural location for a port)
+   * Large naval capacity
+* Tier 4: World Harbor (God has designed this place to be a port)
+   * Cheap to build a port
+   * Unlimited naval capacity
+
+
+Climates:
+* Tropical (Af, Am)
+   * Cultivated output bonus
+* Savannah (Aw, As)
+* Desert (BWh, BWk)
+   * Agriculture penalty
+* Steppe (BSh, BSk)
+   * Pastoral output bonus
+* Mediterranean (Csa, Csb, Csc)
+   * Agriculture output bonus
+* Subtropical (Cwa, Cfa)
+   * Cultivated output bonus
+* Oceanic (Cwb, Cwc, Cfb, Cfc)
+   * Cultivated output bonus
+* Continental (Dsa, Dwa, Dfa, Dsb, Dwb, Dfb)
+* Subpolar (Dsc, Dsd, Dwc, Dwd, Dfc, Dfd)
+   * Agriculture penalty
+* Polar (ET, EF)
+   * Agriculture penalty
+
+
+Vegetation
+* Barren
+   * Incapable of cultivated land. 
+   * Pastoral penalty
+   * Can be brought up to Sparse with Geoengineering depending on climate
+* Sparse
+   * Cultivated land partially possible, extremely expensive
+   * Can be brought up to Lush with Geoengineering
+* Lush
+   * Cultivated land easy
+* Forested
+   * Cultivated land possible, expensive. 
+   * Pastoral penalty.
+   * Additional investment cost
+   * Can be cut down to Lush
+* Jungle
+   * Cultivated land possible, extremely expensive. 
+   * Pastoral penalty.
+   * Extreme investment cost
+   * Can be cut down to Forested
+
+
+Topography
+* Dunes
+   * Extremely difficult to invest in. little space (assumed oasis). Difficult to navigate.
+* Flatland
+   * Easy to invest in. Lots of space.
+* Hills
+   * Moderately difficult to invest in, plenty of space. Hard to navigate.
+   * Can be flattened with Geoengineering
+* Mountains
+   * Hard to invest in, little space. Extremely difficult to navigate.
+* Wetlands
+   * Extremely difficult to invest in, decent amount of space. Extremely difficult to navigate.
+   * Possible to drain to Flatland with Waterworks
+* Sea
+   * Cheap & easy to navigate
+* Ocean
+   * Can only traverse with Shipbuilding
+* Deep Ocean
+   * Can only traverse with Navigation
+________________
+Pops
+Live in locations.
+Each “pop” is a group of people defined as having a type and civilization. All other characteristics would be a % of the total (e.g. literacy) and would not divide a pop into separate groups.
+They can range from a size of 1 to 2^64-1.
+
+
+They have a standard of living determined by:
+* Wealth per capita (mainly)
+* Food access
+* Goods access
+* Security
+
+
+SOL drives:
+* Population growth
+* Unrest
+* Migration
+* Class mobility
+* Civilizational treasury contribution (partly)
+
+
+Types:
+* Slaves
+   * Work jobs for free. All wealth surplus goes to owners
+   * Preferred before commoners
+   * Receive only subsistence
+* Commoners
+   * Can work for wages
+* Elites
+   * Does not work. 
+   * Own all districts & receive surplus
+   * Generates elite pressure when numbers exceed elite opportunities
+
+
+Diseases
+* Also should gate foreign civs from colonizing territory (disease resistance)
+
+
+There is a carrying capacity. Carrying capacity is determined by how many people a location can support before the population starts starving to death.
+________________
+Economy
+Goods
+Goods are produced on-time. There is no stockpiling and if they are not used they are discarded.
+
+
+Goods are agglomerated per location, per region (in each country), and then per country. Effective distance to the capital of the region and then to the capital of the country determines how much is transported. Trade, then, can be conducted between countries for food, with the cost of import being the price of food multiplied by effective distance.
+
+
+Food
+Food is literally food. It provides the baseline for carrying capacity. Grown on Cultivated Land and Raised on Pastoral Land.
+
+
+Food demand is determined by the quantity of the population. High food demand relative to supply induces population stress. Having more food demand than supply creates a famine. As such, it is very important to keep food supply higher than food demand at all times, though in pre-modern societies this will be rather difficult.
+
+
+Consumables
+Consumables represent general urban manufactured goods. They are produced on Urban Land.
+
+
+Consumables demand depends on wealth per capita. The wealthier a pop is, the more goods they will demand. Relative goods demand changes the wealth output of urban land. High goods demand increases its wealth output whilst low goods demand decreases it. In addition to that, a low or negative goods balance will make wealthier pops more upset, being compoundingly worse in materialistic societies.
+
+
+Wealth
+Wealth is generated by all productive activities, and represents the effective surplus generated from economic activity. In a way it represents GDP. Unlike the other two goods types, it cannot be traded directly, though it is used in trade. 
+
+
+Upon production, wealth is distributed between the elites and the commoners in that location. This is apportioned by the wage share, which is itself determined by the relative amount of population compared to opportunities in the location. Slaves do not earn wages.
+
+
+Wealth can either be consumed or be invested. This can be sourced from either commoners, elites, or the state. This is then divided into local investment, which seeks returns from the originating location, or mobile investment, which enters a country-wide pool and can be placed anywhere in the country. Wealth mobility is based upon tech, infrastructure, control, security, culture, and country policy. The country-wide pool then allocates investment according to expected returns with other factors like security, control, access, and other modifiers.
+
+
+Whether sourced locally or nationally, wealth is invested into either Rural Capital or Urban Capital. Rural Capital boosts Cultivated & Pastoral Land output (though weighted Cultivated) and is used to maintain Cultivated Land, whilst Urban Capital is used to boost & maintain Urban Land. The amount to reinvest is determined by a few factors, notably security, country-level incentives, and culture-wide attitudes. Invested Capital may be raided during times of war.
+Land
+Each location has a certain amount of arable land. It gets divided into three types:
+* Cultivated Land
+* Pastoral Land
+* Urban Land
+
+
+Pastoral Land is the default land type. When cultivated or urban land is destroyed, it becomes pastoral. It sustains moderate levels of food production and very little wealth production and requires no capital for upkeep and is free to convert to.
+
+
+Cultivated Land is the secondary rural land type. In order to create Cultivated Land out of Pastoral Land, wealth must be injected to create it. Cultivated Land produces large amounts of food and a moderate amount of wealth, but it does have capital upkeep. It is vulnerable to disruption in the form of looting, perpetually low security, among other things.
+
+
+Urban Land is the final land type. It takes a lot of wealth to create, has a lot of capital upkeep, produces no food, but produces a lot of wealth. Urban land is the most vulnerable to disruption. It also produces goods. It can receive a proximity bonus of “economies of scale” when located near other urban centers.
+
+
+To note, Urban and Cultivated Land not only have upkeep but also require a set amount of capital investment to be maintained. Technology can increase the “capital intensity” of land which will increase the benefits, maintenance, and requirements of capital.
+Infrastructure
+Each location also has infrastructure in ports, roads, and railways. These take large amounts of capital to build, but they reduce effective distance. Ports decrease effective distance from land-to-sea and sea-to-land. Roads and Railways reduce effective distance overland, with railways being *far* more expensive to build, *far* more effective, and more expensive to maintain but not to the degree they are more expensive to build.
+
+
+Multiple levels of infrastructure can be stacked, but they lose effectiveness with each additional level. Though, to note, ports can reduce land-sea cost to near zero, at which point the cost will mostly lie in sea-to-sea costs. Railways, likewise, can reduce land-to-land connections to near-zero, but roads are far less effective.
+
+
+They are maintained by the country. Lack of infrastructure maintenance will see them deteriorate over time. 
+
+
+Location Tiers
+Locations may be a set of different tiers: Rural, Town, City, and Metropolis.
+
+
+Rural locations tend towards local investment & low migration connection (save for a lot of available land). They also cannot have Urban Land, with Urban Land requiring Town tier or higher. Otherwise Urban Capital would be the pool that then creates the Town.
+
+
+Urban locations are not merely locations that happen to have urban land, but rather unlock the ability for more Urban Capital investment. Requirements include population, Urban Capital, food access, security, and more. Urban locations pool migration & investment together.
+
+
+Upgrading requires exceeding the threshold and paying a one-time cost. Demotion occurs after enough capital and land is lost to demote the city.
+Labor & Production
+Land & Capital determine productive capacity. That determines potential jobs
+
+
+Workers distributed according to pull, generated from jobs + wealth expectation + other modifiers.
+
+
+Output = nonlinear scale of production (so more workers than jobs does not mean zero marginal output).
+Security
+Security % is the answer to the question “Can people safely live, safely live, invest, farm, trade, & store wealth here?” It effectively determines the time horizon for investment.
+
+
+Low security not only acts as a gate against investment, but also as an attritional modifier on capital beyond the % of land being used for productive purposes. 90% security guards 90% of land, but any productive land beyond that faces (proportional) attrition. As such, land with low security may sustain economic activity for short periods (e.g. safe country experiencing a short brutal war, like the Franco-Prussian War), but sustained pressure may cause permanent damage.
+
+
+Looting & Pillaging may raid existing capital, converting existing capital into money for the invaders (like Meiou and Taxes for EU4).
+
+
+Control
+Control is the effective administrative control of the state over the location. It determines how many taxes may be collected and low enough control may result in the location becoming a new country upon revolt.
+
+
+Migration
+Population responds to labor scarcity & on-the-ground conditions. Migration happens with two things: push & pull factors.
+
+
+Push factors include:
+* Wages below expectations
+* Excessive population pressure
+* Insecurity
+* Famine
+* Unrest or persecution
+
+
+Pull factors include:
+* Wages above expectation
+* Low population pressure
+* Available land
+* Favorable policies
+
+
+Migration is then increased/mitigated by effective distance, terrain, cultural traits, wealth of pop, country policies, and cultural similarities.
+
+
+Elite Opportunities
+Elites are per location, with a civilization. Elite opportunities then are generated into two pools:
+
+
+Local elite opportunities are generated by the local economy. Each land type produces elite opportunities. These go to local elites, with the civilizational distribution reflecting the local population, laws, and cultural values.
+
+
+State elite opportunities are generated by the country via patronage, bureaucracy, and the military. They are nationally funded and nationally competitive, with access favoring the primary civilization though the degree other civ pops can take advantage depending on values. 
+
+
+As such, on the location level, elite opportunities = local opportunities + accessible state opportunities. But the access weight would depend on civilization eligibility, control, and geographic modifiers (capital location/region).
+________________
+
+
+Warfare
+What is the smallest military model that makes empires rise, overextend, fracture, and leave successors?
+
+
+Three main concepts:
+1. Force - How much violence the state can project
+2. Logistics - How far the state can effectively project its violence 
+3. Pressure - How much violence the country must absorb or suppress
+
+
+The thinking should be “My empire is powerful near the core, weak at the frontiers, and too expensive to hold together.”
+
+
+Army - How much land power the country has
+* Has a base strength value
+* Deteriorates with distance
+Navy - How much sea power the country has
+* Extends reach across sea zones (decreasing effective distance)
+* Protects coastal commerce & security
+* Enables overseas war
+Logistics - How far the country can project power
+* Deployment consumes a certain amount of logistics
+* Logistic cost = amount * distance. 
+* A small expeditionary force halfway across the world may be more expensive than sustaining a large force nearby.
+* Individual for each theater commitment, but summed for general territory maintenance
+* More logistics is burdened, the worse that sustaining long-distance operations gets. (So expeditionaries are disproportionately affected)
+* Very likely logistics will be overburdened in most circumstances until the industrial era
+* Sourced from infrastructure, military institutions, doctrine, and industrial base. Logistics cost may be reduced from local support & bases
+Military Burden - How expensive the military is relative to the state
+* Should be clear how much each operation costs
+* More logistics strain = more costly
+* Maintaining land requires a certain amount of army, naval power and logistics
+* Inability to sustain the necessary burden results in security & control issues
+
+
+Map
+Instead of armies as pieces, you have a military control overlay where each empire exerts pressure.
+Every location has a state:
+* Protected
+* Exposed
+* Overextended
+* Contested
+* Uncontrolled
+The more a country tries to claim, the more their logistics & army get stretched. Pressure can have meaningful effects on the location’s security. It may even exude into adjacent territory depending on the situation (e.g. if that country claims the territory, nomad states, so on).
+
+
+To prevent blobbing, things like power getting weaker the further you are from the core, the fact every frontier creates additional burden, and that conquest should be easy but it's more expensive to hold territory.
+Doctrines & Types
+Land & Naval doctrines are set per country and determine a few things:
+* Implied unit composition
+* Preferred terrain
+* Battle tactics
+* Mobility
+* Siege ability
+* Cost
+* Vulnerabilities (Rock paper scissors type matchups)
+* Sea control
+* Raiding ability
+* Expeditionary ability
+
+
+Line Warfare may struggle in irregular terrain. Steppe Warfare beats Levy Infantry in open fields, but Line Warfare may beat Steppe Warfare.
+Wars & Theaters
+A theater is a region where military force is actively contested. They can be created by:
+* Contested border region
+* Rebellions
+* Invasions/Naval Landings
+* Civil Wars
+* Normal Wars
+Countries commit forces to theaters. Players may influence or override country behavior with CW, but normal AI handles it.
+
+
+There are two main layers:
+1. Attritional Warfare
+Daily and monthly background fighting. This can slowly change the front over time, but isn’t naturally decisive. It favors the “status quo”, defined as the current balance of power (this doesn’t mean the front-line doesn’t move, but rather the current momentum stays roughly the same).
+2. Major Battles
+These are decisive engagements where both sides commit heavily and the result may massively swing the result. Ideally there might be anywhere between 2 to 12 per theater. Small wars may be decided by one battle. Battles do not *have* to be turning points (e.g. Verdun) but should be most of the time.
+
+
+In theaters with naval warfare, in order to exact landings, naval superiority must be achieved. Theaters should also remain focused, but general enough so you don’t end up with dozens of them. For a WW2 example, Europe would comprise the North African theater, Italian theater, French/Western theater, the short-lived Polish theater, the short-lived Balkan theater (for the invasion of Yugoslavia & Greece), and the Eastern Front theater. Theaters should also be allowed to merge, though with some “stickiness” as to the splitting/joining of theaters to prevent theaters from constantly splitting/rejoining with minor frontline changes. The Pacific might turn into a Burmese Theater, a China theater, a Manchuria theater, an Indonesian/South Pacific theater, and a Central/North Pacific theater. So whilst the Pacific example may have a South Pacific and North Pacific theaters that would be adjacent, they’d be too large to have as one large theater. Burma and China would also be separate due to terrain. Manchuria, finally, because of a separate war.
+
+
+Each theater would have a commitment level, which determines how much army/navy capacity is sent, how much risk is accepted, and how vulnerable other areas become. The commitment level would depend on war aims & reasons
+
+
+War Diplomacy
+War Aims & War Reasons are state-machines designed to help the AI figure out what they want and how much they’re willing to commit to a war.
+
+
+AIs should not ask “Can I win” but rather “Is it still worth it given what I’m aiming for?”. Escalation can occur by adding aims which can escalate commitment by causing reevaluation of the war reasons. Partial success may impact legitimacy for the one who over-promised. To prevent overcommitment, particularly by the AI, there would be an amount the AI would be willing to actually commit. A cost they’re willing to bear out. 
+
+
+There are three main pieces:
+* War Aims (What are the aims of the war. Conquest, raiding, etc)
+* War Reasons (Why are we fighting? Existential, monetary gain, etc)
+* Commitment Level (How much are we putting into this war)
+
+
+War Aims & Reasons are static, pending player interference. But commitment level can be dynamic. If an AI is losing a war, then it will evaluate whether increasing its commitment is worth the cost, and it will evaluate it against the reason. So if an AI is just seeking loot, then it may not increase commitment. Higher commitment makes an AI not merely more willing to commit troops, but also take financial & political risks like going into debt or raising taxes.
+
+
+Raiding not requiring declaration of war?
+________________
+Innovation
+Innovation is a civilization-level mechanic. It is accumulated from every source and the player chooses a technology to research from among a set of weighted random choices (Basically the Stellaris system). Each tech may have a variety of bonuses to accelerate or slow down research. 
+
+
+There is also a “tech spread” slot which will randomly pick a technology you have not researched and someone close-by has researched and begin automatically researching it for you. Diffusion does speed up through the game, but being in contact with a source may lend you that tech within 50 years. 
+
+
+Ages
+Ages are categories of proverbial breakthroughs in sociological and technological progress. Each has a set of starting & spread conditions. 
+
+
+
+
+Ages:
+* Antiquity (1000 BC - ~400 AD)
+   * Early Game starting age
+   * City States & Early Empires
+   * Axial Religions
+* Imperiality (~500 BC - ~1500 AD)
+   * Polity scaling
+   * Logistics
+   * Administration
+   * Pre-Gunpowder Military
+* Commerciality (~1000 AD - ~1800 AD)
+   * Economic scaling
+   * Better economics
+   * Ocean-going sailing vessels
+* Modernity (1600 AD - present)
+   * Breakaway - traditional barriers get broken down
+   * Begins with scientific advancement
+   * By Industrial Revolution, encompasses all areas
+
+
+To unlock Imperiality, either you need a country with more than 1 million people or you need to be Buddhist. It has no spread conditions (so it spreads to anyone who can reach you).
+
+
+To unlock Commerciality, you need either the Meritocracy or Education techs AND conduct significant trade. It does not spread to Nomads.
+
+
+To unlock Modernity, you need Experimentalism, Fallibility, and Laws of Nature cultural traits and the Metallurgy, Global Trade, and Newspapers technologies. You also need 50% literacy, Centers of Learning, Independent Scholarship in any country. It can only spread to settled states.
+________________
+Campaign Structure
+Insert setup, progression, end date, scoring, and postgame history
+________________
+
+
+Deferred Mechanics
+Map Generation
+Deferred for now.
+
+
+First civilization to settle a location names it
+Regions would have their own names
+
+
+Generated in two phases:
+1. Geological History Simulation (Coarse, in time steps)
+2. Finalization Pass (high res detailing at a chosen date)
+
+
+Primary
+Planet Parameters
+* Random Seed
+* Planet radius
+* Gravity
+* Rotation speed
+* Axial tilt
+* Length of year
+* Distribution of land/ocean
+
+
+Tectonic Plates
+* Tiles generated follow certain set of rules
+* Plate boundaries - convergent, divergent, transform
+* Subduction mechanics (Volcanic arcs, mountain ranges, ocean trenches)
+* Crust thickness (continental vs oceanic)
+* Hotspots & plumes
+* Continental drift cycle - plates shift each tick (1 myr)
+* Direction, speed, rotation, elevation/thickness
+   * Can have a deep ocean, or shallow sea
+   * Africa is high continent (Flat coastlines, lots of steppe, shallow oceanic climate regions, low port suitability)
+   * Europe/America are low-lying (lots of coasts, good port suitability, high oceanic neighbors so navigable w lots of islands)
+
+
+Mountain/Coastline Generation/Manipulation
+* Generate mountains, coastlines, and ridges from movement of tectonic plates
+* Stratovolcano arcs at subduction zones
+* Shield volcanoes at hotposts
+* Ash fallout distribution (soil fertility)
+
+
+Ocean Circulation/Currents
+* From tectonic plates, generating very basic coasts
+* Thermohaline circulation (cold/salty sinks, warm surface flows)
+* Wind-driven gyres (Pacific/Atlantic gyres)
+* Upwelling Zones (important for fish)
+
+
+Atmospheric Circulation/Wind Pattern
+* Hadley/Ferrel/Polar cells generation
+* Trade winds / westerlies / polar winds
+* Monsoonal systems based on landmass heat capacity
+* Rain shadows from mountains
+
+
+Climate Zones (result of wind + current + tilt)
+* Temperature Map
+* Rainfall map
+* Seasonality (wet vs dry seasons)
+* Biome Assignment based on Whittaker temperature/precipitation grid
+
+
+Vegetation Assignment
+* Result of Soil quality, climate zone, topography
+* Historic vegetation would impact coal/oil reserves
+
+
+Secondary
+Erosion & Sediment Transport <<<
+River Networks <<<
+Glaciation <<</Ice Ages
+
+
+Tertiary
+Geological resource formation
+Soil fertility model (final pass)
+Sea Level & Coastline Evolution
+Additional terrain detailing (Fjords, Calderas, etc.)
+
+
+Map Initialization
+Terrain types (topography, climate, vegetation)
+Location/Region map
+* Using river lines and mountain ridges as natural dividing lines
+* Watersheds demarking inland provinces
+* Probably group primary regions, then subdividing to smaller regions, then individual locations
+* Poisson/Voronoi seed
+* Varying locality density based on climate, topography, vegetation
+   * Subpolar Hudson bay should be way less dense than Mediterranean Italy
+   * Jungle Congo should be less dense than Lush Mesopotamia
+   * Himalayas should be less dense than Pampas plain
+Multiplayer
+Religion
+Religions are their own entities that are missionary, universal, and are not tied to a single civilization. There are four religions (in order of appearance):
+1. Buddhism
+2. Christianity
+3. Islam
+4. Atheism
+
+
+They each have their own unique mechanics, interactions, effects, and focus. They can also evolve, internally, over time.  
+Buddhism
+The biggest aspect of Buddhism is it is syncretic. It grants bonuses without replacing your core culture’s religious traits.
+
+
+Start of Buddhism:
+1. Region in the “fracture” phase
+2. There must be a recent shattered empire
+3. Preference for Indic Civilization
+4. Needs Philosophy tech
+
+
+There are various schools of Buddhism available that can be embraced…
+1. Theravada
+2. Mahayana
+3. Vajrayana
+   1. Dalai Lama
+Christianity
+Christianity is the first religion where you would have to abandon the religious traits you have and take Christianity’s effects. “Take it or leave it” mentality. It’s the most powerful religion, but it provides the most constraints.
+
+
+Start of Christianity: 
+1. Civilization under a foreign empire
+2. Said empire needs to be in its “prosperity” phase
+3. It needs to be after a certain date/time
+4. Religion ought to be monotheistic or messianic
+5. Strong preference for the Hebraic Civilization
+6. Civilization needs Moralism
+
+
+Christianity grows under persecution. However, Christianity also only tends to spread to or from settled states.
+
+
+Upon adoption, Ecclesiastical Church springs up. This however doesn’t last long and schisms can break apart Christianity into various sects/denominations.
+
+
+Each denomination will have relations with the other to determine how close they are. 
+
+
+The adopted values of each denomination can change over time. Banning familial marriages, promoting love-marriages, slave abolitionism, priests not marrying, so on.
+Islam
+The unifying-conquest religion. It provides a strong expansion spike, bridges tribals & settled, creates religious and political legitimacy through the Caliphate, and greatly increases the ability to integrate foreign lands. Like Christianity, it is take-it or leave-it.
+
+
+Start of Islam:
+1. Tribal/Nomadic? Civilization bordering/in a Christian area
+2. Unifies areas not under settled states
+3. Large boost to cohesion & conquest
+
+
+Caliphate
+Atheism
+The most flexible of the religions. Its primary aim is the improvement of material conditions (which is where legacy mostly originates from for Atheist states) whilst removing the positive cohesion effects that religion provides.
+
+
+Start of Atheism:
+1. Need Secularism
+
+
+Secularism is a toned down version of Atheism which can be adopted by any other religion on top of their normal religious mechanics. It unlocks some of the benefits of Atheism, whilst mitigating its worst effects. In a way, it’s Atheism-lite.
+________________
+Visuals
+UI/UX
+Affordances & Signifiers
+* Ex: Having 3 buttons but put a container around 2, you know 2 are related, and if you gray out one you know it’s not available
+* Button press states
+* Hover States
+* Tooltips (Tooltips in Tooltips)
+Visual Hierarchy
+* Size (more important = larger)
+* Position (more important = near the top)
+* Color (colorful is important, b&w is not)
+* Images/Icons wherever possible
+Typography
+* 4 point grid system (because things can always be split in half)
+* Pick *one* font for the UI
+   * Sans Serif font?
+* 6 font sizes: 64 px, 42 px, 32 px, 20 px, 16 px, 14 px
+* Information dense: 24 px, 20 px, 18 px, 16 px, 14 px, 12 px
+Color Theory
+* Color for purpose
+* One primary color?
+* Blue: trust        
+* Green: success
+* Red: danger/urgent
+* Yellow: warning
+Shadows
+* If shadow is the first thing you notice, you’re not using it right
+Icons & Buttons
+* Make icons same size as the line height (not font size)
+* Padding for buttons: double padding height for the padding width
+Feedback & States
+* When the user does *ANYTHING* there should be a response  
+* Button States: Default, Hovered, Pressed, Disabled, Loading (sometimes)
+* Input States: Default, Focus, Error State, Warning States
+* Success messages
+* Microanimations on scroll/swipe
+* Every interaction needs a response
+* Ex: Replace “copy to clipboard” button with a chip that says “copied!”
+Overlays
+* Black & White gradient
+* Progressive blur
+Sound Effects
+* Unique sound effects for important buttons
+* General sound effects for every button (hover, pressed, unpressed)
+Make UI that makes the game look instantly recognizable (rather than just copy & paste)
+Important menus should open quickly, not slowly
+
+
+Important Notes from Paradox/Others
+* Whenever possible use icons, or more dense information formats (e.g. Pie chart over list)
+* Try to avoid text where unnecessary (think do like Stellaris, not EU5), but do use text for displaying numbers or important details (e.g. primary title in CK3, dynasty name)
+* Incorporate graphical elements that work with the feel of that UI (CK3 crusade/war window)
+* Empty space is sometimes necessary
+* Break up UI windows so it’s not one long monotonous list (CK3 character window)
+* Add minor shader detailing to progress bars, important buttons. Make important buttons stand out (without garish colors)
+* Pick a theme that works, and adhere to it
+* Colored numbers/text with the color of the stat (e.g. Civ VI’s science/faith/culture/gold)
+* Rich Tooltips (Sukitract’s Simple UI Adjustments, Meiou & Taxes)
+* On-map displays whenever possible (so long as it’s not cluttered)
+* Additional UI inspiration: Unity of Command II
+Map
+Empires of History:
+https://steamcommunity.com/sharedfiles/filedetails/?id=3288407594&searchtext=
+  
+Enhanced Papermap:
+https://steamcommunity.com/sharedfiles/filedetails/?id=3600623918&searchtext=
