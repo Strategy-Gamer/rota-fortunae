@@ -27,7 +27,7 @@ from new_model import FinalSim
 TRACK = ["phase", "P", "E", "U", "U_e", "S", "legitimacy", "security", "treasury",
          "elites", "population", "overprod_ratio", "felt_overproduction", "birth_rate", "death_rate",
          # instruments for the causal-chain verifier (exposed by new_model.py):
-         "w", "w0", "wage_share", "ew_inverse", "immis",
+         "w", "w0", "wage_share", "ew_inverse", "immis", "land_area", "land_productivity",
          "revenue", "expenses", "suppression", "suppression_cost", "patronage_paid", "army_shortfall",
          "elite_births", "elite_up", "elite_down", "elite_cull", "elite_net",
          # crises/events layer:
@@ -342,24 +342,166 @@ def trace_first_crisis(hist, pre=6, post=70):
             trace(hist, a - pre, a + post); return
     print("  (no post-warmup crisis found)")
 
-def sweep(param_grid, steps=4000, seed=31, n=None, metric=None, show=15):
-    """Random grid sweep. param_grid={name:[values]}. metric(hist)->str; default flags stuck."""
-    import itertools, random
-    keys = list(param_grid); combos = list(itertools.product(*param_grid.values()))
-    random.seed(seed); random.shuffle(combos)
-    if n:
-        combos = combos[:n]
-    metric = metric or (lambda h: "STUCK" if is_stuck(h) else "ok")
-    bad = []
-    for vals in combos:
-        params = dict(zip(keys, vals))
-        _, h = simulate(steps, **params)
-        if metric(h) != "ok":
-            bad.append((params, metric(h)))
-    print(f"sweep: {len(combos)} configs | {len(bad)} flagged ({round(100*len(bad)/len(combos),1)}%)")
-    for p, r in bad[:show]:
-        print(f"   {r}: {p}")
+def breakdown(h, window=2000):
+    """Classify a run's failure mode (the robustness metric). 'ok' = a healthy cycle.
+    Population is judged RELATIVE TO CARRYING CAPACITY (pop scales with land) so a large realm on
+    grown/rich land doesn't read as RUNAWAY."""
+    if is_stuck(h):
+        return "STUCK-" + {0: "pros", 1: "strain", 2: "frac"}[h["phase"][-1]]
+    pop = h["population"]
+    if "land_area" in h and "land_productivity" in h:                       # pop / carrying capacity
+        rel = [p / max(a * lp, 1e-9) for p, a, lp in zip(pop, h["land_area"], h["land_productivity"])]
+    else:
+        rel = pop
+    if min(rel[-window:]) < 0.05:   return "EXTINCT"
+    if max(rel) > 5.0:              return "RUNAWAY"
+    if len(cycle_bounds(h)) < 2:    return "NO-CYCLE"
+    return "ok"
+
+
+# Game conditions / modifiers a scenario would vary -- the robustness surface. Every axis here should keep
+# the cycle healthy across its whole range (OAT) and across random joint draws (sweep).
+GAME_GRID = {
+    # --- cycle core ---
+    "land_productivity":    [0.6, 1.0, 1.6],      # region richness
+    "land_area":            [0.6, 1.0, 1.6],      # region size
+    "tax_rate":             [0.15, 0.25, 0.35],   # extraction
+    "w0_target":            [0.4, 0.5, 0.6],      # conspicuous consumption (mobility zero-point)
+    "mu_0":                 [0.001, 0.002, 0.004],# upward mobility
+    "mu_down":              [0.02, 0.05, 0.10],   # downward mobility / social fluidity
+    "r_e_premium":          [0.015, 0.02, 0.03],  # aristocratic fertility
+    "max_birth":            [0.025, 0.030, 0.035],# commoner fertility
+    "child_mortality":      [0.30, 0.40, 0.50],   # aging / child mortality
+    # --- state / fiscal ---
+    "k_suppress":           [0.10, 0.20, 0.35],   # coercion cost
+    "suppress_reach":       [3.0, 5.0, 8.0],      # army effectiveness
+    "suppress_legit_floor": [0.5, 0.7, 1.0],      # suppression effectiveness at zero legitimacy
+    "treasury_years":       [3.0, 5.0, 8.0],      # war-chest depth
+    "k_absorb":             [1.0, 2.0, 4.0],      # office-pool absorption
+    "k_patronage":          [3.0, 5.0, 8.0],      # cost per office
+    # --- legitimacy resilience ---
+    "legit_floor":          [0.0, 0.2],
+    "legit_frag":           [0.15, 0.30],
+    "legit_unrest":         [0.15, 0.30],
+    # --- crisis + father-son lull layer ---
+    "civilwar_cull":        [0.005, 0.010, 0.02],
+    "coup_cull":            [0.02, 0.04, 0.08],
+    "coup_legit_shock":     [0.2, 0.4, 0.6],
+    "crisis_frac_mult":     [2.0, 4.0, 6.0],
+    "weary_gain":           [0.04, 0.06, 0.10],
+    "weary_relax":          [0.01, 0.02, 0.04],
+}
+
+
+def sweep(param_grid=None, steps=4000, seed=31, n=250, metric=None, show=15):
+    """Random JOINT sweep: n runs, each with every axis drawn independently (scales to any grid size).
+    Prints a failure tally. metric(h)->str (default breakdown). Returns the list of (result, params) breaks."""
+    import random
+    from collections import Counter
+    param_grid = param_grid or GAME_GRID
+    rng = random.Random(seed); keys = list(param_grid); metric = metric or breakdown
+    tally = Counter(); bad = []
+    for _ in range(n):
+        params = {k: rng.choice(param_grid[k]) for k in keys}
+        try:
+            _, h = simulate(steps, **params); r = metric(h)
+        except Exception as e:
+            r = "ERROR:" + type(e).__name__
+        tally[r] += 1
+        if r != "ok":
+            bad.append((r, params))
+    ok = tally.get("ok", 0)
+    print(f"joint sweep: {n} configs | {ok} ok ({round(100*ok/n,1)}%)")
+    for k, v in tally.most_common():
+        if k != "ok": print(f"   {v:4d}  {k}")
+    for r, p in bad[:show]:
+        print(f"   -> {r}: { {k: p[k] for k in p} }")
     return bad
+
+
+def sweep_axes(param_grid=None, steps=4000, metric=None):
+    """One-at-a-time: hold everything at default, vary ONE axis across its range. Answers 'does each
+    modifier, on its own, keep the cycle healthy?' -- isolates which axis (not which interaction) breaks."""
+    param_grid = param_grid or GAME_GRID
+    metric = metric or breakdown
+    print("OAT sweep (each axis alone, others default):")
+    flagged = []
+    for k, vals in param_grid.items():
+        results = []
+        for v in vals:
+            try:
+                _, h = simulate(steps, **{k: v}); r = metric(h)
+            except Exception as e:
+                r = "ERROR:" + type(e).__name__
+            results.append((v, r))
+        bad = [(v, r) for v, r in results if r != "ok"]
+        mark = "ok  " if not bad else "FAIL"
+        print(f"  [{mark}] {k:22s} " + "  ".join(f"{v}:{r}" for v, r in results))
+        if bad:
+            flagged.append((k, bad))
+    return flagged
+
+
+# ---------------------------------------------------------------- perturb-and-recover (mid-sim shocks)
+# Each perturbation is a fn(sim) applied at a chosen tick; then we check the cycle RESUMES (isn't broken).
+def proscription(frac=0.5):
+    """Sudden top-down elite cull (purge/conquest wipe of the top stratum)."""
+    def fn(s): s.elites = max(1e-6, s.elites * (1.0 - frac))
+    return fn
+
+def territory_loss(frac=0.3):
+    """Lose a share of land AND the population/elites on it (secession / defeat)."""
+    def fn(s):
+        s.land_area *= (1.0 - frac); s.population *= (1.0 - frac); s.elites *= (1.0 - frac)
+    return fn
+
+def land_gain(frac=0.3):
+    """Colonization / conquest of new land (population moves in more slowly than the land arrives)."""
+    def fn(s):
+        s.land_area *= (1.0 + frac); s.population *= (1.0 + 0.3 * frac)
+    return fn
+
+def unrest_spike(u=0.9):
+    """An exogenous shock to instability (assassination fallout, scandal)."""
+    def fn(s): s.U = u
+    return fn
+
+def param_step(**changes):
+    """A permanent step-change to any params (cultural / technological change)."""
+    def fn(s):
+        for k, v in changes.items(): setattr(s, k, v)
+    return fn
+
+
+def run_with_events(events, steps=6000, record=None, **overrides):
+    """Run a sim applying events={tick: fn(sim)} at those ticks. Returns (sim, hist)."""
+    record = record or TRACK
+    s = FinalSim()
+    for k, v in overrides.items():
+        if not hasattr(s, k): raise KeyError(f"FinalSim has no attribute '{k}'")
+        setattr(s, k, v)
+    hist = {a: [] for a in record}
+    for t in range(steps):
+        if t in events:
+            events[t](s)
+        s.step(t)
+        for a in record:
+            hist[a].append(getattr(s, a))
+    return s, hist
+
+
+def perturb_and_recover(perturb, at=2500, steps=6000, label="", **overrides):
+    """Apply `perturb` at tick `at`, then check the cycle RECOVERS afterward: not stuck, still completing
+    cycles, population not extinct. Returns a one-line verdict dict."""
+    _, h = run_with_events({at: perturb}, steps, **overrides)
+    post = {a: h[a][at:] for a in h}
+    stuck = len(set(post["phase"][-1200:])) == 1
+    cyc_after = len(cycle_bounds(post))
+    pop_lo = min(post["population"][-2000:])
+    ok = (not stuck) and cyc_after >= 2 and pop_lo > 0.05
+    print(f"  [{'ok  ' if ok else 'FAIL'}] {label or perturb.__name__:22s} "
+          f"post-shock: stuck={stuck}  cycles_after={cyc_after}  pop_floor={round(pop_lo,3)}")
+    return {"ok": ok, "stuck": stuck, "cycles_after": cyc_after, "pop_floor": pop_lo}
 
 
 if __name__ == "__main__":

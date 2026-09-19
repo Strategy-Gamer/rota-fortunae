@@ -60,7 +60,7 @@ class FinalSim:
         self.elites = 0.02
         self.land_area = 1.0
         self.land_productivity = 1.0          # raises carrying capacity as tech/land improve (static for now)
-        self.max_birth = 0.030
+        self.max_birth = 0.035
         self.min_birth = 0.015
         self.death_base = 0.01
         self.child_mortality = 0.4
@@ -76,7 +76,8 @@ class FinalSim:
         self._elite_owner = Pop("Elite", self.elites)
         self.location.add_pop(self._commoner)
         self.location.add_pop(self._elite_owner)
-        self.location.add_parcel(Parcel(CULTIVATED, area=1.0, owner=self._elite_owner))
+        self._parcel = Parcel(CULTIVATED, area=1.0, owner=self._elite_owner)
+        self.location.add_parcel(self._parcel)
         self.wage_share = 0
 
         # ---- state fiscal (treasury, no debt) ----
@@ -90,6 +91,7 @@ class FinalSim:
                                               #   break -- this is the "immense cost -> state failure" chain link.
                                               #   (>0.032 bifurcates: strain balloons to dominate the cycle)
         self.suppress_reach = 5.0             # coercive reach per unit revenue (caps crisis intensity)
+        self.suppress_legit_floor = 0.5       # suppression effectiveness at zero legitimacy (1.0 at full legit)
         self.mil_positions = 0.01             # officer corps -> baseline elite positions
         self.k_patronage = 5.0                # cost per patronage position
         self.k_absorb = 2.0                   # patronage absorbs a shrinking share of the surplus as it grows
@@ -227,6 +229,11 @@ class FinalSim:
     
     def _step_economy(self):
         # commoners work the land; read out Turchin's relative wage w and the inverse relative elite income
+        # land_area & land_productivity feed the economy each tick (parcel area + capital multiplier) so the labor
+        # market, output, and elite positions scale with the land -- else a poor/shrunk region's wages never fall
+        # (stuck), and mid-sim land changes (conquest/colonization/secession) wouldn't reach the economy.
+        self._parcel.area = self.land_area
+        self._parcel.capital = self.land_productivity
         self._commoner.amount = max(self.population, 1e-8)
         self.location.security = self.security
         econ = self.location.tick()
@@ -268,10 +275,12 @@ class FinalSim:
         patronage_jobs = patronage_paid / max(self.k_patronage, 1e-9)
         army_shortfall = max(0.0, army_cost - army_paid) / max(army_cost, 1e-9)
         patronage_shortfall = max(0.0, desired_patronage - patronage_paid) / max(desired_patronage, 1e-9)
-        # Coercive reach = the army the state can actually PAY. While the treasury holds reserves it funds a
-        # suppression bill bigger than current revenue; once empty, army_paid caps at revenue and any shortfall
-        # collapses coercion -> unrest erupts (the fiscal break, on the ground). Treasury depth = how long it holds.
-        suppression_capacity = self.suppress_reach * army_paid
+        # Coercive reach = the army the state can actually PAY, times its EFFECTIVENESS (scaled by legitimacy:
+        # a delegitimized state suppresses at only suppress_legit_floor strength even if solvent). While the treasury
+        # holds reserves it funds a suppression bill bigger than revenue; once empty, army_paid caps at revenue and
+        # any shortfall collapses coercion -> unrest erupts (the fiscal break, on the ground).
+        legit_effect = self.suppress_legit_floor + (1.0 - self.suppress_legit_floor) * self.legitimacy
+        suppression_capacity = self.suppress_reach * army_paid * legit_effect
 
         max_treasury = self.treasury_years * self.tax_rate * total_income
         self.treasury = min(max(self.treasury + revenue - army_paid - patronage_paid, 0.0), max_treasury)
@@ -312,9 +321,9 @@ class FinalSim:
         #alpha = alpha_0 + alpha_w * (self.w0_target - w) + alpha_e * (self.elites - f["elite_positions"])
 
         if self.phase != 2:
-            self.U += 0.1 * (self.w0_target - econ["w"]) + 0.4 * (self.elites - 2.0 * f["elite_positions"])
+            self.U += 0.1 * (self.w0_target - econ["w"]) + 0.1 * (f["felt_overproduction"] - 1.0)
         else:
-            self.U += 0.05 + 0.1 * (self.w0_target - econ["w"]) + 1.0 * (self.elites - (2 * self.U_e + 1.0) * f["elite_positions"])
+            self.U += 0.05 + 0.1 * (self.w0_target - econ["w"]) + 0.2 * (f["felt_overproduction"] - (2 * self.U_e + 0.5))
             if self.felt_overproduction < 1.1:
                 self.U -= 0.1
             #self.U = min(self.U, 0.5)
@@ -325,7 +334,10 @@ class FinalSim:
 
         self.U = min(1.0, max(0.0, self.U))
 
-        self.U_e = self.U - 1.0 * f["suppression_capacity"]
+        # suppression is PER CAPITA: coercive reach (revenue-funded, scales with pop) must be measured against
+        # the populace it polices, else a big/rich realm's suppression dwarfs the bounded [0,1] unrest and pins
+        # U_e=0 forever (large-scale states could never fracture). Dividing by pop makes it scale-invariant.
+        self.U_e = self.U - f["suppression_capacity"] / max(self.population, 1e-9)
         self.U_e = min(1.0, max(0.0, self.U_e))
 
     # ------------------------------------------------------------------ crises / events
