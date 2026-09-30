@@ -10,16 +10,32 @@
 > bridge), `03` (map design), `04` (systematizing variables). Where a decision
 > departs from a note, it's called out — usually because note `01`/`04` predate the
 > decision to put the authoritative simulation in C++.
+>
+> **Status — Milestone 2 in progress.** Milestone 1 (the command spine) is done: the
+> `MapState`→`SimWorld` transition, C++ FNV-1a checksum (`get_state_hash`), scene/ownership
+> reorg (`GameSession` is the in-game root, `SimWorld` + `Map` its children), the `Game`
+> autoload command bus, and retirement of the GDScript sim
+> (`world_state`/`calendar`/`synch_clock`/`deterministic_session`) are all complete. The
+> command path is proven twice over — first via **time-control commands** (pause/speed),
+> and ownership now travels the full pipeline too (`make_set_location_owner` → `Game.submit`
+> → scheduled → C++); the direct `set_location_owner` mutation is retired and the prediction
+> stubs are deleted. Two decisions changed during implementation: **prediction is cut**
+> (§4.3) and a **dirty-flag refresh** pattern was adopted (§6.5). **Milestone 2** adds the
+> first real simulation systems (population/productivity/wealth), day/year tick cadence, real
+> speed presets, a query layer, and a location UI panel — broken into five ordered steps in
+> §10. The only M1 leftover is the unwired border shader, deferred to map work (§9).
 
 ---
 
-## 0. The three decisions this doc is built on
+## 0. The decisions this doc is built on
 
 1. **The authoritative simulation lives in C++; networking stays in GDScript.**
-2. **First milestone = route one real command end-to-end** (GDScript → tick loop →
-   C++ execution → checksum), proving the whole seam on a vertical slice.
+2. **Prove it on a vertical slice first** (GDScript → tick loop → C++ execution →
+   checksum) before broadening. ✓ done (Milestone 1).
 3. **Systematization is deferred.** Adopt the integer **ID registry** now; *design*
    the stat/modifier engine (§7) but do not build it until real mechanics demand it.
+4. **No prediction** (§4.3) — input latency + immediate feedback instead; add bespoke
+   prediction per-action only if one ever feels laggy.
 
 ---
 
@@ -53,10 +69,10 @@
 ```
 GDScript ─ presentation & coordination
   UI · input · camera · map rendering glue
-  DeterministicSession (netcode: scheduling, ordering, transport, tick frontier)
-  Command factory · submission validation · prediction
+  GameSession (netcode: scheduling, ordering, transport, tick frontier)
+  Command factory · submission validation   ·   Game autoload (command bus + world read accessor)
         │
-        │  coarse calls: execute_command(type_id, payload) · queries · get_state_hash()
+        │  coarse calls: execute_command(type_id, actor_civ, payload) · step_tick() · queries · get_state_hash()
         ▼
 C++ ─ SimWorld  (godot::Node, the ONLY registered bridge class)
   owns one  rota::World
@@ -88,10 +104,12 @@ C++ ─ SimWorld  (godot::Node, the ONLY registered bridge class)
 
 ---
 
-## 3. Naming & the `SimWorld` transition
+## 3. Naming & the `SimWorld` transition — ✓ done (Milestone 1)
 
-- The C++ node currently named **`MapState`** becomes **`SimWorld`** — it has
-  outgrown "map state" (it already owns countries + politics + map modes).
+*This section records a completed transition; kept for context.*
+
+- The C++ node formerly named **`MapState`** is now **`SimWorld`** — it had
+  outgrown "map state" (it owns countries + politics + map modes).
 - `SimWorld` owns one `rota::World` struct aggregating all stores:
   ```cpp
   struct World {
@@ -113,11 +131,12 @@ C++ ─ SimWorld  (godot::Node, the ONLY registered bridge class)
 
 ---
 
-## 4. The command pipeline (the milestone target)
+## 4. The command pipeline — ✓ built (Milestone 1)
 
-This is the vertical slice we build first. The netcode half already exists in
-[`deterministic_session.gd`](../project/Scripts/deterministic_session.gd); the new
-work is redirecting execution into C++.
+This was Milestone 1's vertical slice, now built. The netcode half lives in
+[`game_session.gd`](../project/Scripts/game_session.gd); execution is redirected into C++
+via `SimWorld.execute_command`. It stays documented here because every future mechanic is
+"add another handler" on this exact path.
 
 ```
 UI / AI
@@ -136,11 +155,11 @@ World state changes · derived palette marked dirty
 sim_world.get_state_hash()  → desync check   ← checksum computed in C++
 ```
 
-**Definition of done for Milestone 1:** clicking a location issues an
-`ASSIGN_OWNERSHIP` command that travels the full path above (not the current direct
-`set_location_owner` call from `main.gd`), executes inside C++ on its scheduled tick,
-updates the political map, and contributes to a C++-side checksum. Everything after
-that (more command types, economy, pops) is "add another handler."
+**Milestone 1 outcome (achieved):** clicking a location issues a `set_location_owner`
+command that travels the full path above (no longer a direct C++ mutation), executes
+inside C++ on its scheduled tick, updates the political map, and contributes to the
+C++-side checksum. Everything after this (more command types, economy, pops) is "add
+another handler."
 
 ### 4.1 Command handler split (the part the notes don't resolve)
 
@@ -152,11 +171,13 @@ Because execution moved to C++, the note-01 "handler" concept splits by concern:
 | Submission validation (format/permission/spoof) | GDScript | Cheap, pre-network |
 | **Authoritative execution** | **C++** | Mutates the authoritative world |
 | Execution validation (is this legal *against world state*?) | **C++** | Needs world state |
-| Prediction (immediate UI effect + reconciliation) | GDScript | Presentation only |
 
-Registry pattern applies on **both** sides: GDScript has a `type_id → {factory,
-predictor}` table; C++ has a `type_id → execute_fn` dispatch. Neither side uses a
-giant `match`.
+**Dispatch lives in C++ only.** `rota::core::command::execute_command` looks up
+`type_id` in a file-local `unordered_map<int, ExecuteFn>` (anonymous namespace in
+`command.cpp`) and calls the handler — no giant `match`. GDScript just *builds* commands
+via a factory (`command.gd`); with prediction cut (§4.3) there is **no** GDScript
+predictor registry, so the "dual registries" idea is dropped — one C++ dispatch table
+is all that's needed.
 
 ### 4.2 Command type-IDs are a cross-language contract (a real pitfall)
 
@@ -177,33 +198,45 @@ desyncs**, the worst kind of bug. Rules:
 - Keep payloads simple and serializable: integers and IDs. No Godot object state in
   a command payload (it has to survive the network and a save file).
 
-### 4.3 Prediction (note 01, adopted as-is)
+### 4.3 No prediction (decision — supersedes note 01's prediction section)
 
-Predicted UI value = `confirmed value + effects of ordered unresolved local commands`,
-**recalculated** from confirmed state whenever anything changes — never incrementally
-undone. A prediction is removed when the command **executes** (not when merely
-accepted/scheduled), so the UI never jumps. Confirmed values come from cheap C++
-getters. Invariant: *with zero pending commands, displayed == confirmed.*
+**Prediction is cut.** For a pausable grand-strategy game, commands land in 1–2 ticks
+(tens of ms) — imperceptible — so the complexity and the "looked-like-it-worked-then-
+didn't" jank of optimistic prediction aren't worth it. Factorio and Paradox both use
+plain *input latency*, not prediction.
+
+- **Default:** UI reads confirmed state via `Game.world.get_X()`; it catches up within a
+  couple ticks and nobody notices.
+- **Immediate feedback ≠ prediction:** acknowledge the *input* (button depress, "queued"
+  marker, ghost outline) without faking the *result*. Simple, never wrong.
+- **Bespoke only:** add prediction for a *single* action (unit move, building ghost)
+  only if that specific interaction ever feels laggy — note 01's "bespoke presentation."
+
+This removes the `displayed = confirmed + pending` facade, the GDScript predictor
+registry, and the whole prediction subsystem. ✓ The dead prediction stubs in
+`game_session.gd` (`_apply_prediction`, `predicted_test_value`, `pending_issued`) have
+been deleted.
 
 ---
 
 ## 5. The simulation-backend seam
 
-`DeterministicSession` talks to the world through a narrow interface, so the netcode
+`GameSession` talks to the world through a narrow interface, so the netcode
 never hard-codes C++ specifics and the loop stays independently testable:
 
 ```
-SimulationBackend (conceptual)
-  execute_command(type_id, payload) -> bool
-  step_tick()                          # advance one sim tick (calendar, systems)
-  get_state_hash() -> int              # C++ checksum of authoritative state
-  # + read-only query getters for UI/prediction
+SimulationBackend (conceptual) — implemented by SimWorld
+  execute_command(type_id, actor_civ, payload) -> bool
+  step_tick()                          # advance one sim tick (clock heartbeat + systems)
+  get_state_hash() -> int              # C++ FNV-1a checksum of authoritative state
+  take_render_dirty() -> int           # presentation refresh hints (§6.5)
+  # + read-only query getters for UI
 ```
 
-Implementation is `SimWorld` (C++). The seam exists so that: (a) the command loop can
-be unit-tested against a trivial fake, and (b) `DeterministicSession` depends on an
-interface, not on C++ internals. This is note 01's "SimulationBackend" and note 02's
-"bridge" — **they are the same seam**; don't build two.
+Implementation is `SimWorld` (C++), fronted GDScript-side by the `Game` autoload.
+`GameSession` drives *when* (`_physics_process` → `step_tick`) and owns command
+ordering; `SimWorld` owns *what happens* and holds state. This is note 01's
+"SimulationBackend" and note 02's "bridge" — **the same seam**; don't build two.
 
 ---
 
@@ -217,6 +250,35 @@ interface, not on C++ internals. This is note 01's "SimulationBackend" and note 
   with simulation data. Keep the stores separate (Geography vs Economy) exactly so
   this line stays crisp (note 02 §9).
 - The checksum must cover *all and only* authoritative state, in a fixed order.
+- **Hash per store** (`feed_hash(Hasher&)` on each store/component), composed in fixed
+  order by `SimWorld::get_state_hash`. Per-store hashes are what make Paradox-style
+  "which store desynced?" debugging possible later. Feed **fixed-width integers only**
+  (`uint32_t`/`uint64_t`, never `int`/`size_t`); bools as a byte; never floats.
+
+---
+
+## 6.5. Presentation refresh & map-mode ownership
+
+The sim mutates state in C++, but the map's palette/texture is rebuilt in **Godot** and
+won't know it's stale. The bridge is a **dirty flag**, not signals or session-side
+command inspection:
+
+- A C++ command handler marks what it changed: `world.render_dirty |= DIRTY_POLITICAL`.
+- After the tick, `GameSession` calls `sim_world.take_render_dirty()` (returns mask,
+  clears it) and tells the renderer; the renderer rebuilds **only if its active mode's
+  bit is set**. One coarse call per tick, no per-entity crossing.
+- **Dirty flags are presentation state — never hashed.** Peers may refresh at different
+  real-times without desyncing.
+
+**Map-mode ownership:**
+- **Palette generation = C++ query** (`map_modes.cpp`, reads whatever stores a mode
+  needs). C++ owns *what the palette is*.
+- **Active-mode selection + texture + shader = GDScript `MapRenderer`.** It owns *when
+  to show a mode and how to texture it*, pulling palettes via
+  `sim_world.create_map_mode_palette(mode)`.
+- **Cleanup owed:** the map-mode enum currently exists three times (GDScript enum, C++
+  enum, magic `if map_mode == 1`). Give it the same single-source-of-truth
+  `BIND_ENUM_CONSTANT` treatment as `CommandType` (§4.2).
 
 ---
 
@@ -260,41 +322,74 @@ command type-ID contract (§4.2) well-defined.
 
 ## 9. Debt to clear while restructuring
 
-From [`ARCHITECTURE.md`](ARCHITECTURE.md) §7 — fix these as the relevant code is
-touched during the `SimWorld` reorg, not as a separate sweep:
+Original list from [`ARCHITECTURE.md`](ARCHITECTURE.md) §7 — most cleared during the
+`SimWorld` reorg:
 
-1. `map.gd` calls `map_state.get_location_by_id(...)` — **not a bound method** (latent crash).
-2. `Geography.owner_id` — dead duplicate of `LocationPolitics.owner_country`; **delete** (violates §1 "one source of truth").
-3. Two conflicting `CountryID` typedefs (`int32_t` in geography vs `uint32_t` in countries) — consolidate.
-4. Dead `create_data_arrays`/`rgb_key` in `map.gd` (GDScript reimplementation of `MapBuilder`) — delete.
-5. Border shader never wired to `id_tex` — borders unrendered.
-6. `default_delay_ticks = 0` — set to ≥1 so the SP host player uses the same scheduled path (note 01).
+1. ✓ `get_location_by_id` latent crash — removed.
+2. ✓ `Geography.owner_id` dead duplicate — removed.
+3. ✓ conflicting `CountryID` typedefs — resolved (dead `rota::map::CountryID` deleted).
+4. ✓ dead `create_data_arrays`/`rgb_key` in `map.gd` — removed.
+5. ⬜ **Border shader never wired to `id_tex`** — borders still unrendered.
+   **Deferred** to the next round of map work (bundled with the §6.5 map-mode cleanup).
+6. ✓ `default_delay_ticks` now ≥1.
+
+Cleared during the Milestone 1 tidy:
+- ✓ **Ownership now travels the command path** (`make_set_location_owner` → `Game.submit`
+  → scheduled → C++); the direct `set_location_owner` mutation is retired, so commands are
+  the only write path.
+- ✓ Dead prediction stubs in `game_session.gd` deleted (§4.3).
+
+Known latent determinism risk (not blocking, no cross-platform MP yet):
+- ⬜ **`Fixed64 × Fixed64` / `÷ Fixed64` fall back to a `double` computation** when
+  `__int128` is unavailable (pure MSVC `cl.exe`). mingw/clang provide `__int128` and take
+  the exact integer path, so the current toolchain is fine and
+  [`tests/fixed_decimal_test.cpp`](../tests/fixed_decimal_test.cpp) passes. But a
+  Windows-MSVC peer could desync against a Linux/mingw peer. Fix before any cross-platform
+  MP: a portable 128-bit multiply in `FixedDecimal.h`. (The `Fixed × int` overloads were
+  separately found dividing by `SCALE` and corrected — the source of the wealth/growth being
+  off by 1e6; the test file guards against regressions.)
 
 ---
 
 ## 10. Roadmap
 
-- **Milestone 1 — vertical slice (current focus).** Rename `MapState`→`SimWorld`;
-  add `execute_command` + `get_state_hash`; route `ASSIGN_OWNERSHIP` through the full
-  GDScript→C++ path; retire `world_state.gd` into the backend seam. Clear the §9 debt
-  that these files touch.
-- **Milestone 2 — command infrastructure.** Command factory + dual registries +
-  explicit type-ID contract; port `SET_PAUSED`/`SET_SPEED` through the new path;
-  rigorous prediction on a scalar test value (note 01 §prediction test cases).
-- **Milestone 3 — first real system.** Introduce an economy/population store
-  (`Fixed64`) and a `step_tick` system; ground it against the Secular Cycles model in
-  `Planning/`, one section at a time.
-- **Milestone 4 — a sim-driven map mode** (e.g. wealth-per-capita) to prove
-  sim→query→render end to end.
-- **Later, only when earned:** stat/modifier engine (§7); reverse-index caches
-  (country→locations, civ→countries) via rebuild, not maintained lists (note 02);
-  neighbor/adjacency graph; free-list entity deletion; the rest of note 04.
+- **Milestone 1 — vertical slice. ✓ COMPLETE.** `MapState`→`SimWorld`;
+  `execute_command` + `get_state_hash`; command spine proven via **time-control
+  commands**; scene/ownership reorg (`GameSession` root, `Game` autoload bus); GDScript
+  sim retired; debt §9 items 1–4,6 cleared. (Leftover tidy: ownership→command, unbind
+  mutator, delete prediction stubs — §9.)
+- **Milestone 2 — first real systems + location UI (IN PROGRESS).** Five ordered steps:
+  1. **Stores + start of the economy system.** New store(s) in a separate file, DoD/SoA:
+     `population` (`std::uint64_t`), `productivity` (`Fixed32`), `wealth` (`Fixed64`), per
+     location. An **economy system** (its own file, free functions over `World&`) computes
+     `wealth = productivity × population`. These *are* §7's "hardcode a handful of stats as
+     plain SoA arrays" — **not** the stat engine.
+  2. **Day/year rollover detection & execution.** *One* source of action for time
+     advancement that detects calendar rollovers and drives system execution **in a defined
+     order** — without intertwining the calendar with the systems it triggers. The calendar
+     reports "a day/year rolled over"; a separate tick-driver decides *what runs and when*.
+     A minimal ordered dispatch hook, **not** note 04's generic cadence engine.
+  3. **Tick-multiplier presets.** Real speeds 1–5 as `tick_multiplier` presets wired into
+     the time controls.
+  4. **Query layer + `build_location_summary`.** Stand up the query seam (free functions
+     that read across stores and format for UI) and the first real query,
+     `build_location_summary(World&, loc)`. First real read path *out* of C++.
+  5. **Location UI (Godot).** A location panel that reads through the `build_location_summary`
+     query via `Game.world`. First real presentation of live sim state.
+- **Milestone 3 — map modes + queries.** Consolidate the map-mode enum to one source of
+  truth (§6.5); wire the dirty-flag refresh; add a **sim-driven map mode** (wealth/pop)
+  to prove sim→query→render; stand up a proper query layer (location summary, ledger
+  page) as reads grow.
+- **Later, only when earned:** threading / within-tick job-splitting for expensive ticks
+  (deferred until a profiler shows a freeze; DOD structure makes it a drop-in);
+  stat/modifier engine (§7); reverse-index caches via rebuild (note 02); neighbor graph;
+  free-list entity deletion; the rest of note 04.
 
 ## 11. Explicitly NOT now (guard against scope creep)
 
-Stat/modifier/effect/trigger/scope engines · event bus · flow model · free-list
-deletion + generation counters · neighbor/border extraction · location→pixel reverse
-index · multiple Godot API objects (`world.map`, `world.countries`, …) · dedicated
-server mode. Each is noted so it isn't forgotten — none is a prerequisite for the
-milestones above.
+Prediction (cut, §4.3) · threading/job system (until profiled) · stat/modifier/effect/
+trigger/scope engines · event bus · flow model · free-list deletion + generation
+counters · neighbor/border extraction · location→pixel reverse index · multiple Godot
+API objects (`world.map`, `world.countries`, …) · dedicated server mode. Each is noted
+so it isn't forgotten — none is a prerequisite for the milestones above.
 ```

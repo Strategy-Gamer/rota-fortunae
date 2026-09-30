@@ -139,9 +139,8 @@ public:
     Fixed32& operator-=(int32_t rhs) { *this = *this - rhs; return *this; }
 
     Fixed32 operator*(int32_t rhs) const {
-        int64_t prod = static_cast<int64_t>(value) * rhs;
-        int64_t half = SCALE / 2;
-        int64_t res = (prod >= 0) ? ((prod + half) / SCALE) : ((prod - half) / SCALE);
+        // Whole-number multiply: rhs is unscaled, so scale raw directly (no /SCALE).
+        int64_t res = static_cast<int64_t>(value) * rhs;
         return from_raw(static_cast<storage_type>(res));
     }
     Fixed32& operator*=(int32_t rhs) { *this = *this * rhs; return *this; }
@@ -150,9 +149,8 @@ public:
         if (rhs == 0) {
             return from_raw((value >= 0) ? std::numeric_limits<storage_type>::max() : std::numeric_limits<storage_type>::min());
         }
-        int64_t num = value;
-        int64_t den = static_cast<int64_t>(rhs) * SCALE;
-        int64_t res = detail::round_div(num, den);
+        // Whole-number divide: divide the raw value by rhs (no scaling of the divisor).
+        int64_t res = detail::round_div(value, rhs);
         return from_raw(static_cast<storage_type>(res));
     }
     Fixed32& operator/=(int32_t rhs) { *this = *this / rhs; return *this; }
@@ -173,10 +171,9 @@ public:
     Fixed32& operator-=(int64_t rhs) { *this = *this - rhs; return *this; }
 
     Fixed32 operator*(int64_t rhs) const {
-        // For large rhs this will likely overflow range - documented behavior
-        int64_t prod = static_cast<int64_t>(value) * rhs;
-        int64_t half = SCALE / 2;
-        int64_t res = (prod >= 0) ? ((prod + half) / SCALE) : ((prod - half) / SCALE);
+        // Whole-number multiply: rhs is unscaled, so scale raw directly (no /SCALE).
+        // For large rhs this will likely overflow range - documented behavior.
+        int64_t res = static_cast<int64_t>(value) * rhs;
         return from_raw(static_cast<storage_type>(res));
     }
     Fixed32& operator*=(int64_t rhs) { *this = *this * rhs; return *this; }
@@ -185,11 +182,8 @@ public:
         if (rhs == 0) {
             return from_raw((value >= 0) ? std::numeric_limits<storage_type>::max() : std::numeric_limits<storage_type>::min());
         }
-        int64_t den = detail::safe_scale_whole<int32_t>(rhs, SCALE);
-        if (den == 0) { // underflowed to 0 from huge rhs? unlikely
-            return from_raw(0);
-        }
-        int64_t res = detail::round_div(value, den);
+        // Whole-number divide: divide the raw value by rhs (no scaling of the divisor).
+        int64_t res = detail::round_div(value, rhs);
         return from_raw(static_cast<storage_type>(res));
     }
     Fixed32& operator/=(int64_t rhs) { *this = *this / rhs; return *this; }
@@ -334,14 +328,13 @@ public:
     Fixed64& operator-=(int64_t rhs) { *this = *this - rhs; return *this; }
 
     Fixed64 operator*(int64_t rhs) const {
+        // Whole-number multiply: rhs is unscaled, so scale raw directly (no /SCALE).
 #if defined(__GNUC__) || defined(__clang__) || (defined(_MSC_VER) && defined(__SIZEOF_INT128__))
-        __int128 prod = (__int128)value * rhs;
-        __int128 half = SCALE / 2;
-        __int128 res128 = (prod >= 0) ? ((prod + half) / SCALE) : ((prod - half) / SCALE);
+        __int128 res128 = (__int128)value * rhs;
         return from_raw(static_cast<storage_type>(res128));
 #else
-        double approx = static_cast<double>(value) * rhs / SCALE;
-        return from_raw(static_cast<storage_type>(detail::round_div(static_cast<int64_t>(approx), 1)));
+        // int64 * int64 may overflow (wraps, documented). Prefer an __int128 build.
+        return from_raw(value * rhs);
 #endif
     }
     Fixed64& operator*=(int64_t rhs) { *this = *this * rhs; return *this; }
@@ -350,18 +343,8 @@ public:
         if (rhs == 0) {
             return from_raw((value >= 0) ? std::numeric_limits<storage_type>::max() : std::numeric_limits<storage_type>::min());
         }
-        int64_t den = rhs * SCALE;
-        if (den == 0) return from_raw(0);
-#if defined(__GNUC__) || defined(__clang__) || (defined(_MSC_VER) && defined(__SIZEOF_INT128__))
-        __int128 num = value;
-        __int128 d = den;
-        __int128 half = d / 2;
-        __int128 res128 = (num >= 0) ? ((num + half) / d) : ((num - half) / d);
-        return from_raw(static_cast<storage_type>(res128));
-#else
-        double approx = static_cast<double>(value) / den;
-        return from_raw(static_cast<storage_type>(detail::round_div(static_cast<int64_t>(approx), 1)));
-#endif
+        // Whole-number divide: divide the raw value by rhs (no scaling of the divisor).
+        return from_raw(detail::round_div(value, rhs));
     }
     Fixed64& operator/=(int64_t rhs) { *this = *this / rhs; return *this; }
 

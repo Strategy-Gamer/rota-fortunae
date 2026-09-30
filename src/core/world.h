@@ -3,6 +3,7 @@
 #include "../map/geography.h"
 #include "../countries/countries.h"
 #include "../countries/location_politics.h"
+#include "../economy/location_economy.h"
 #include "../time/calendar.h"
 #include "../time/synch_clock.h"
 
@@ -19,6 +20,7 @@ namespace rota::core {
         rota::map::Geography geography;
         rota::countries::CountryStore countries;
         rota::countries::LocationPolitics location_politics; 
+        rota::economy::LocationEconomy location_economy; 
         // location_economy, location_secular_cycles, country_economy, so on
 
         rota::time::Calendar calendar; 

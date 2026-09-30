@@ -14,20 +14,20 @@ void Calendar::clear(){
     day_of_year = 0;
     tick_accumulation = 0;
     tick_multiplier = 1;
-    paused = false;
+    paused = true;
 }
 
-void Calendar::advance(){
-    if (paused) return;
+uint32_t Calendar::advance(){
+    if (paused) return 0;
 
     tick_accumulation += tick_multiplier;
 
     // Should result in floor(tick_acc/THRESHOLD)
     std::uint32_t days_advanced = tick_accumulation / ADVANCE_THRESHOLD;
-    if( days_advanced == 0 ) return;
+    if( days_advanced == 0 ) return 0;
     
     tick_accumulation -= ADVANCE_THRESHOLD * days_advanced;
-    add_date(0, days_advanced);
+    return days_advanced;
 };
 
 std::uint32_t Calendar::get_year() const{
@@ -57,6 +57,10 @@ void Calendar::set_tick_multiplier(std::uint32_t new_multiplier){
 
 void Calendar::set_paused(bool paused_state){
     paused = paused_state;
+
+    // Reset tick accumulation upon pausing so you don't end up in a situation where
+    // unpausing on speed 1 *immediately* rolls over the date. Especially for multiplayer.
+    if(paused) tick_accumulation = 0;
 };
 
 void Calendar::add_date(std::uint32_t add_years, std::uint32_t add_days){

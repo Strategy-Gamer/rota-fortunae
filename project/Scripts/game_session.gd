@@ -15,6 +15,8 @@ extends Node2D
 
 @export var locationMapPath: String = "res://MapData/uk_eu5.png"
 
+signal render_dirty(mask)
+
 # Command queuing (shared for simplicity in skeleton; in real MP each peer has its own pending)
 var pending_confirmed: Dictionary = {}  # tick -> Array[Dictionary] (sorted on execution)
 var command_log: Array[Dictionary] = []  # For replay/debug
@@ -27,13 +29,14 @@ var next_local_seq: int = 0
 var last_executed_tick: int = -1
 
 var ticks_paused: bool = false
+var selected_location: int = -1
 
 signal command_executed(tick: int, cmd: Dictionary)
 signal state_hash_reported(tick: int, hash_value: int)
 signal desync_detected(tick: int, expected: int, actual: int)
 
 func _ready() -> void:
-	Game.bind(self, sim_world)
+	Game.bind(self, sim_world, map)
 	map.load_map(locationMapPath) 
 
 func _physics_process(_delta: float) -> void:
@@ -41,22 +44,6 @@ func _physics_process(_delta: float) -> void:
 	if ticks_paused:
 		return
 	_on_tick(sim_world.get_tick())
-
-func _unhandled_input(event):
-	if event is InputEventMouseMotion:
-		# Update hovered ID in map
-		map.set_hovered_location(map.get_location_at_mouse())
-	elif event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			# Update selected ID in map
-			var location_id = map.get_location_at_mouse()
-			map.set_selected_location(location_id)
-			if $CanvasLayer/Topbar.set_ownership_toggle and location_id >= 0:
-				Game.submit(Command.make_set_location_owner(location_id, 0))
-				map.map_renderer.set_map_mode($CanvasLayer/Topbar.mapmode)
-			if $CanvasLayer/Topbar.remove_ownership_toggle and location_id >= 0:
-				Game.submit(Command.make_set_location_owner(location_id, 1))
-				map.map_renderer.set_map_mode($CanvasLayer/Topbar.mapmode)
 
 func _on_tick(tick: int) -> void:
 	"""Fixed timestep heartbeat."""
@@ -70,7 +57,9 @@ func _on_tick(tick: int) -> void:
 		_client_process_tick(tick)
 	
 	var dirty = sim_world.take_render_dirty()
-	if dirty != 0: map.on_render_dirty(dirty)
+	if dirty != 0: 
+		render_dirty.emit(dirty)
+		map.on_render_dirty(dirty)
 
 func _host_process_tick(tick: int) -> void:
 	# Execute scheduled commands on our (authoritative) world

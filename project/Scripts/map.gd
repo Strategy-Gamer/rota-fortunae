@@ -9,6 +9,12 @@ class_name GameMap
 @onready var map_renderer: MapRenderer = $MapRenderer
 @onready var location_map: Sprite2D = $MapRenderer/LocationMap
 
+signal hover_changed(location_id: int)
+signal selection_changed(location_id: int)
+
+var hovered_location_id: int = -1
+var selected_location_id: int = -1
+
 func _ready():
 	map_renderer.sim_world = sim_world
 	pass
@@ -16,9 +22,21 @@ func _ready():
 func _process(_delta: float) -> void:
 	pass
 
-func _unhandled_input(_event: InputEvent) -> void:
-	pass
-
+func _unhandled_input(event):
+	if event is InputEventMouseMotion:
+		# Update hovered ID in map
+		set_hovered_location(get_location_at_mouse())
+	elif event is InputEventMouseButton:
+		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
+			# Update selected ID in map
+			var location_id = get_location_at_mouse()
+			set_selected_location(location_id)
+			#if $CanvasLayer/Topbar.set_ownership_toggle and location_id >= 0:
+				#Game.submit(Command.make_set_location_owner(location_id, 0))
+				#map_renderer.set_map_mode($CanvasLayer/Topbar.mapmode)
+			#if $CanvasLayer/Topbar.remove_ownership_toggle and location_id >= 0:
+				#Game.submit(Command.make_set_location_owner(location_id, 1))
+				#map_renderer.set_map_mode($CanvasLayer/Topbar.mapmode)
 # Scenario initialization functions
 func create_random_scenario(seed: int = 0) -> void:
 	# Creates random scenario on the map
@@ -35,14 +53,18 @@ func create_random_scenario(seed: int = 0) -> void:
 # Location selection functions
 
 func set_hovered_location(location_id: int) -> void:
-	if map_renderer.hovered_location_id == location_id:
+	if hovered_location_id == location_id:
 		return
-
+	hovered_location_id = location_id
 	map_renderer.set_hovered_location(location_id)
+	hover_changed.emit(location_id)
+	
 func set_selected_location(location_id: int) -> void:
-	if map_renderer.selected_location_id == location_id:
+	if selected_location_id == location_id:
 		return
+	selected_location_id = location_id
 	map_renderer.set_selected_location(location_id)
+	selection_changed.emit(location_id)
 
 func get_location_at_px(pos: Vector2i) -> int:
 	return sim_world.get_location_id_at_pixel(pos)

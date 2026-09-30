@@ -94,6 +94,8 @@ public:
     Ref<Image> create_id_image() const;
     Ref<Image> create_palette_image() const;
 
+    Dictionary get_location_summary(int location_id) const;
+
     int take_render_dirty();
     int64_t get_state_hash();
 

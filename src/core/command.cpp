@@ -1,6 +1,7 @@
 #include "command.h"
 #include "world.h"
 #include "../godot/sim_world.h"
+#include "../time/time_progression.h"
 
 namespace rota::core::Command {
     namespace{
@@ -24,10 +25,8 @@ bool execute_command(rota::core::World& world, int actor_civ, int type, const go
 }
 
 bool cmd_step_clock(rota::core::World& world, int actor_civ, const godot::Dictionary& payload){
-    // Carbon copy of sim_world.step_tick
-
     world.synch_clock.step();
-    world.calendar.advance();
+    rota::time::TimeProgression::on_tick(world);
     return true;
 }
 

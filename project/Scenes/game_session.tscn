@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://c15twdv8e65uk"]
+[gd_scene load_steps=7 format=3 uid="uid://c15twdv8e65uk"]
 
 [ext_resource type="Script" uid="uid://c1ip8rt4k604e" path="res://Scripts/game_session.gd" id="1_q4g1x"]
 [ext_resource type="PackedScene" uid="uid://dcq7npan0lnsi" path="res://Scenes/map.tscn" id="2_q4g1x"]
 [ext_resource type="Script" uid="uid://crht3smjxauja" path="res://Scenes/map_camera.gd" id="3_ke43x"]
 [ext_resource type="PackedScene" uid="uid://cgc5cjsx4o66v" path="res://Scenes/menu.tscn" id="4_mabpb"]
 [ext_resource type="PackedScene" uid="uid://bk7ptb8ho7rof" path="res://Scenes/topbar.tscn" id="5_0gxyp"]
+[ext_resource type="PackedScene" uid="uid://bl5hyg5yf0kh7" path="res://Scenes/selected_location.tscn" id="6_ke43x"]
 
 [node name="GameSession" type="Node2D"]
 script = ExtResource("1_q4g1x")
@@ -25,3 +26,9 @@ script = ExtResource("3_ke43x")
 visible = false
 
 [node name="Topbar" parent="CanvasLayer" instance=ExtResource("5_0gxyp")]
+
+[node name="Selected Province" parent="CanvasLayer" instance=ExtResource("6_ke43x")]
+visible = false
+
+[connection signal="render_dirty" from="." to="CanvasLayer/Selected Province" method="_on_game_session_render_dirty"]
+[connection signal="selection_changed" from="Map" to="CanvasLayer/Selected Province" method="_on_map_selection_changed"]

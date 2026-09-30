@@ -21,8 +21,8 @@ public:
 
     void clear();
 
-    // Advances time by current speed
-    void advance();
+    // Advances sub-day accumulator by current speed. Returns days-advanced count.
+    uint32_t advance();
 
     // Returns current year. For those living under rocks.
     std::uint32_t get_year() const;

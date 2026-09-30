@@ -5,6 +5,8 @@
 #include "../map/map_modes.h"
 #include "../core/command.h"
 #include "../core/hash.h"
+#include "../time/time_progression.h"
+#include "../queries/location_summary.h"
 
 #include <algorithm>
 #include <godot_cpp/core/class_db.hpp>
@@ -150,6 +152,8 @@ void SimWorld::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("create_palette_image"), &SimWorld::create_palette_image);
 
+    ClassDB::bind_method(D_METHOD("get_location_summary", "location_id"), &SimWorld::get_location_summary);
+
     ClassDB::bind_method(D_METHOD("take_render_dirty"), &SimWorld::take_render_dirty);
     ClassDB::bind_method(D_METHOD("get_state_hash"), &SimWorld::get_state_hash);
 }
@@ -161,10 +165,8 @@ bool SimWorld::execute_command(CommandType type_id, int actor_civ, const Diction
 }
 
 bool SimWorld::step_tick(){
-    // Carbon copy of cmd_step_clock
-
     world.synch_clock.step();
-    world.calendar.advance();
+    rota::time::TimeProgression::on_tick(world);
     return true;
 }
 
@@ -319,9 +321,9 @@ void SimWorld::build_from_image(const Ref<Image>& image) {
             godot_bytes.ptr(),
             static_cast<std::size_t>(godot_bytes.size())
         );
-        world.location_politics.initialize(
-            world.geography.location_count()
-        );
+        uint32_t location_count = world.geography.location_count();
+        world.location_politics.initialize(location_count);
+        world.location_economy.initialize(location_count);
     } catch (const std::exception& exception) {
         UtilityFunctions::push_error(exception.what());
     }
@@ -462,6 +464,20 @@ bool SimWorld::validate_location_id(
     );
 }
 
+Dictionary SimWorld::get_location_summary(int location_id) const {
+    if (location_id < 0 || location_id >= world.geography.location_count())
+        return Dictionary();
+    auto s = rota::queries::build_location_summary(world, location_id);
+    Dictionary d;
+    d["population"]        = (int64_t)s.population;
+    d["wealth"]            = s.wealth.to_double();
+    d["productivity"]      = s.productivity.to_double();
+    d["wealth_per_capita"] = s.wealth_per_capita.to_double();
+    d["owner_country"]     = s.owner_country;
+    return d;
+}
+
+
 int SimWorld::take_render_dirty(){
     int d = world.render_dirty;
     world.render_dirty = 0;
@@ -479,6 +495,8 @@ int64_t SimWorld::get_state_hash(){
     h.feed(world.countries.count());
     for (auto alive : world.countries.alive)                h.feed(alive);
     for (auto color : world.countries.display_color_rgb)    h.feed(color);
+
+    world.location_economy.feed_hash(h);
 
     return static_cast<int64_t>(h.value());
 }

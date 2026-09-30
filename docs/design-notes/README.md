@@ -21,6 +21,8 @@ back to the note.
 - **02** — Data-oriented design in Godot (ChatGPT). SoA stores, IDs-not-pointers, stores/systems/queries/bridge layering, the C++ map-state port. Distilled into `DESIGN.md` §2–3, §8.
 - **03** — Map design principles. (Not yet distilled.)
 - **04** — Systematizing game variables (ChatGPT). Stat/modifier engine, effects/triggers/scope, ID registry. Distilled into `DESIGN.md` §7–8 — engine deferred, ID registry adopted.
+- **05** — DoD storage techniques (video + annotations). Swap-remove, sparse-set/slot-map ids, out-of-band, batched deletes. Exploratory — ties to `DESIGN.md` §10 "later, when earned"; **not** for countries/locations, revisit for the first high-churn store.
+- **06** — opengs map techniques (MIT GDScript repo, mined). Curved country labels (quadratic regression), GPU JFA→SDF borders/selection/fade, LUT+palette map modes (validates §6.5). Techniques not code — presentation, so float/no determinism. Revisit for labels + the unwired border shader (§9).
 
 > Broader game design lives in a separate Google Doc (not on git). The multiplayer
 > chat's generated code is already in the repo, so only the design reasoning was pasted.
