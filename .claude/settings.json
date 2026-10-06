@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(g++ -std=c++17 -O2 -Wall -Wextra -I. tests/fixed_math_test.cpp src/utility/FixedMath.cpp -o /tmp/fixed_math_test)",
+      "Bash(/tmp/fixed_math_test)",
+      "Bash(echo \"exit=$?\")",
+      "Bash(rm -f /tmp/fixed_math_test)"
+    ]
+  }
+}

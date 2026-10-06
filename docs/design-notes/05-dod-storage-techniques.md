@@ -3,7 +3,13 @@
 Source: a YouTube DoD walkthrough (watched 2026-08), + annotations for **our** C++/SoA
 context. **Exploratory — not adopted yet.** Ties into `DESIGN.md` §10 "Later, only when
 earned" (entity deletion, threading). Revisit when we have a store that actually churns
-(pops, units, projectiles), **not** for countries/locations, which are few and long-lived.
+(pops, units, projectiles).
+
+> **Update (2026-09):** this note originally assumed "countries/locations don't churn." That
+> premise has changed — **countries are now created and destroyed** (empires rise/fall,
+> fragment, get conquered). See the revised *When this becomes real* section below: countries
+> are now a **low-churn** store that needs a free-list + tombstone + generation, but still
+> **not** the dense/swap-remove machinery. Locations remain stable (never deleted).
 
 ## The video's benchmark (AoS → progressively DoD)
 
@@ -115,7 +121,22 @@ behavior as the next frontier. For us that's the **already-deferred** bucket
 
 ## When this becomes real for RF
 
-- **Now:** nothing. Countries/locations don't churn; a free-list isn't even needed yet.
-- **First trigger:** the first store with lots of create/destroy per tick (likely pops, or
-  transient events/orders). At that point: SoA + sparse-set ids + swap-remove + batched
-  deletes, in that order. Out-of-band only if profiling says the alive/dead branch matters.
+Three tiers by churn (pick the lightest that fits):
+
+- **Locations — stable, never deleted.** Plain SoA vector indexed by `LocationID`. No free-list,
+  no generation. Nothing from this note applies.
+- **Countries — LOW churn, stable IDs (current work).** Created/destroyed by rise/fall, but few
+  (≤~500 alive) with wide rows, and **referenced by ID-as-index** (`owner_country[loc]` indexes
+  the country arrays). So: keep the SoA vector indexed by `CountryID`, add a **free-list** (reuse
+  dead slots → array size tracks *peak simultaneous*, not cumulative), an `alive` **tombstone**,
+  and a **generation** counter (the sparse-set's stale-reference guard, kept even though we don't
+  dense-pack — reserve now, wire `{id,gen}` handles into commands later). **Do NOT** dense-pack /
+  swap-remove / out-of-band: reordering would break the ID-as-index references, and the rows are
+  too wide / too few to benefit. Canonicalize dead slots (reset on destroy) so the checksum is
+  history-independent. `CountryStore` is the sole ID authority; sibling per-country stores
+  (`SecularCycle`, …) are passive parallel arrays kept in lockstep by `create/destroy_country`
+  **systems**.
+- **First HIGH-churn store (future — pops, units, transient events/orders).** *Here* the full kit
+  earns its place: SoA + **sparse-set ids + swap-remove + batched deletes**, in that order.
+  Out-of-band only if profiling says the alive/dead branch matters. These are *not* referenced by
+  ID-as-index the way countries are, so dense reordering is fine.
