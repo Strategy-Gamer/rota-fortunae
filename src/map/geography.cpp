@@ -13,6 +13,9 @@ void Geography::clear() {
     centroid_x.clear();
     centroid_y.clear();
     kind.clear();
+    terrain.clear();
+    metres_per_pixel_x.clear();
+    metres_per_pixel_y.clear();
     neighbor_offset.clear();
     neighbors.clear();
     neighbor_distance.clear();

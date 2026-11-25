@@ -76,16 +76,37 @@ LocationData MapBuilder::parse_location_data(
 ) {
     LocationData data;
 
+    static const std::pair<const char*, Terrain> terrain_names[] = {
+        { "grasslands", Terrain::Grasslands }, { "farmlands", Terrain::Farmlands },
+        { "steppe", Terrain::Steppe }, { "savannah", Terrain::Savannah },
+        { "drylands", Terrain::Drylands }, { "coastline", Terrain::Coastline },
+        { "coastal_desert", Terrain::CoastalDesert }, { "desert", Terrain::Desert },
+        { "woods", Terrain::Woods }, { "forest", Terrain::Forest },
+        { "jungle", Terrain::Jungle }, { "marsh", Terrain::Marsh },
+        { "hills", Terrain::Hills }, { "highlands", Terrain::Highlands },
+        { "mountain", Terrain::Mountain }, { "glacier", Terrain::Glacier },
+    };
+    static_assert(sizeof(terrain_names) / sizeof(terrain_names[0]) == static_cast<std::size_t>(Terrain::Count) - 1, "name every terrain");
+
     for (const auto& row : parse_rows(locations_text)) {
-        if (row.size() != 3) {
-            throw std::invalid_argument("Location rows need color;name;kind");
+        if (row.size() != 6) {
+            throw std::invalid_argument("Location rows need color;name;kind;terrain;metres_per_pixel_x;metres_per_pixel_y");
         }
-        LocationKind kind;
-        if (row[2] == "land") kind = LocationKind::Land;
-        else if (row[2] == "sea") kind = LocationKind::Sea;
-        else if (row[2] == "impassable") kind = LocationKind::Impassable;
-        else throw std::invalid_argument("Unknown location kind: " + row[2]);
-        data.kinds.emplace_back(parse_color(row[0]), kind);
+        LocationData::Location location{ parse_color(row[0]), LocationKind::Land, Terrain::None, 0, 0 };
+        if (row[2] == "sea") location.kind = LocationKind::Sea;
+        else if (row[2] == "impassable") location.kind = LocationKind::Impassable;
+        else if (row[2] != "land") throw std::invalid_argument("Unknown location kind: " + row[2]);
+
+        if (location.kind == LocationKind::Land) {
+            for (const auto& [name, terrain] : terrain_names) {
+                if (row[3] == name) location.terrain = terrain;
+            }
+            if (location.terrain == Terrain::None) throw std::invalid_argument("Unknown terrain: " + row[3]);
+        }
+
+        location.metres_per_pixel_x = static_cast<std::uint32_t>(std::stoul(row[4]));
+        location.metres_per_pixel_y = static_cast<std::uint32_t>(std::stoul(row[5]));
+        data.locations.push_back(location);
     }
 
     for (const auto& row : parse_rows(straits_text)) {
@@ -188,9 +209,17 @@ void MapBuilder::build_from_rgb8(
         return found->second;
     };
 
-    geography.kind.assign(geography.location_count(), LocationKind::Land);
-    for (const auto& [color, kind] : data.kinds) {
-        geography.kind[location_of(color)] = kind;
+    const std::uint32_t count = geography.location_count();
+    geography.kind.assign(count, LocationKind::Land);
+    geography.terrain.assign(count, Terrain::Grasslands);
+    geography.metres_per_pixel_x.assign(count, 1000);
+    geography.metres_per_pixel_y.assign(count, 1000);
+    for (const LocationData::Location& location : data.locations) {
+        const LocationID id = location_of(location.color);
+        geography.kind[id] = location.kind;
+        geography.terrain[id] = location.terrain;
+        geography.metres_per_pixel_x[id] = location.metres_per_pixel_x;
+        geography.metres_per_pixel_y[id] = location.metres_per_pixel_y;
     }
 
     std::vector<std::pair<LocationID, LocationID>> straits;
@@ -276,7 +305,10 @@ void MapBuilder::build_adjacency(
             std::int64_t dx = std::abs(static_cast<std::int64_t>(geography.centroid_x[id]) - geography.centroid_x[other]);
             dx = std::min<std::int64_t>(dx, width - dx); // across the east-west seam
             const std::int64_t dy = static_cast<std::int64_t>(geography.centroid_y[id]) - geography.centroid_y[other];
-            geography.neighbor_distance[i] = isqrt(static_cast<std::uint64_t>(dx * dx + dy * dy));
+            // each end's scale covers its half of the edge
+            const std::int64_t mx = dx * (geography.metres_per_pixel_x[id] + geography.metres_per_pixel_x[other]) / 2;
+            const std::int64_t my = dy * (geography.metres_per_pixel_y[id] + geography.metres_per_pixel_y[other]) / 2;
+            geography.neighbor_distance[i] = (isqrt(static_cast<std::uint64_t>(mx * mx + my * my)) + 500) / 1000;
         }
     }
 }

@@ -256,7 +256,10 @@ Choose the lightest storage that fits each store's churn (design-notes/05):
 
 - **Locations: stable, never deleted.** A plain SoA vector indexed by `LocationID`. They come
   from the map image, and two files beside it (`<map>_locations.txt`, `<map>_straits.txt`) give
-  each one's kind and the strait crossings. **Only land is ever owned.** Sea is crossed, never
+  each one's kind, terrain and scale, and the strait crossings. **The EU4 map has no consistent
+  projection** (Europe is drawn large, South America squished), so each location carries its own
+  metres per pixel in x and y, estimated from a local fit to known places; adjacency edges are in
+  km from those. **Only land is ever owned.** Sea is crossed, never
   held, and it stays in the adjacency graph so routes and fronts can cross water (Ireland, Corsica);
   impassable land is neither owned nor crossed. The world wraps east-west. Adjacency and kinds are
   map input like geometry (§6): not hashed, built in a fixed order.
@@ -311,9 +314,10 @@ The game separates them (per `Planning/Rota Fortunae_ Civilizations.txt`):
   are split by each location's share of the country's elites, because they are nationally
   competitive.
 - **Control scales the state's reach** (not in FinalSim). Each location's control is
-  1 at its owner's capital and falls with effective distance: the shortest path over the owner's
-  land and the sea, where sea edges cost more and foreign or impassable land is never crossed
-  ([`control.cpp`](../src/countries/control.cpp)). Collection, the per-capita suppression a location
+  1 at its owner's capital and halves every fixed effective distance (about the two weeks' travel
+  that bounded pre-modern empires): the shortest path over the owner's land and the sea, where
+  each km costs by terrain (mountains and jungle several times open ground, sea like open ground)
+  and foreign or impassable land is never crossed ([`control.cpp`](../src/countries/control.cpp)). Collection, the per-capita suppression a location
   receives, and its elites' weight in the competition for state positions are all multiplied by
   it, so the frontier pays less, is policed less and is shut out of the court. Control is
   recomputed each year from ownership, capitals and the map; it is never stored. A capital is

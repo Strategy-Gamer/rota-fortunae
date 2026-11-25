@@ -18,6 +18,16 @@ enum class LocationKind : std::uint8_t {
     Impassable = 2
 };
 
+// A land location's terrain, as in EU4's categories. None for sea and impassable land.
+enum class Terrain : std::uint8_t {
+    None,
+    Grasslands, Farmlands, Steppe, Savannah, Drylands, Coastline,
+    CoastalDesert, Desert,
+    Woods, Forest, Jungle, Marsh,
+    Hills, Highlands, Mountain, Glacier,
+    Count
+};
+
 struct Geography {
     std::uint32_t width = 0;
     std::uint32_t height = 0;
@@ -31,12 +41,17 @@ struct Geography {
     std::vector<std::int32_t> centroid_x;
     std::vector<std::int32_t> centroid_y;
     std::vector<LocationKind> kind;
+    std::vector<Terrain> terrain;
+
+    // Ground distance of one pixel step at the location, since the map has no single projection
+    std::vector<std::uint32_t> metres_per_pixel_x;
+    std::vector<std::uint32_t> metres_per_pixel_y;
 
     // Neighbors of id are neighbors[neighbor_offset[id] .. neighbor_offset[id + 1]), ascending.
     // Includes sea and impassable locations, and straits between land across the water.
     std::vector<std::uint32_t> neighbor_offset;
     std::vector<LocationID> neighbors;
-    std::vector<std::uint32_t> neighbor_distance; // centroid to centroid in pixels, parallel to neighbors
+    std::vector<std::uint32_t> neighbor_distance; // centroid to centroid in km, parallel to neighbors
 
     [[nodiscard]]
     std::uint32_t location_count() const noexcept {
