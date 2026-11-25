@@ -19,17 +19,18 @@ Fixed64 milli(std::int64_t m) { return Fixed64::from_raw(m * 1000); }
 const Fixed64 ZERO;
 const Fixed64 ONE(1);
 
-// Per war-year on a front, scaled by the place's effective unrest: fighting is as fierce as the
-// people there are mobilized
-const Fixed64 FRONT_ELITE_LOSS = milli(125);
+// Per war-year, scaled by the war's intensity. Armies are raised everywhere, so elites fall across
+// the whole country, and most of all where a front changes hands.
+const Fixed64 WAR_ELITE_LOSS = milli(40);
+const Fixed64 SACK_ELITE_LOSS = milli(150);
+
+// Per war-year where the armies are, scaled by the place's effective unrest: fighting and foraging
+// are as fierce as the people there are mobilized
 const Fixed64 FRONT_COMMONER_LOSS = milli(80);
 const Fixed64 FRONT_SECURITY_LOSS = milli(300);
-const Fixed64 FRONT_TAKE = milli(500);      // chance a front falls, times the enemy's share of strength
-const Fixed64 SACK_ELITE_LOSS = milli(150); // on top, where a front changes hands
+const Fixed64 PILLAGE_COMMONER_LOSS = milli(30); // behind the rebels' lines, where their armies live off the land
 
-// Per war-year behind the rebels' lines, where their armies live off the land
-const Fixed64 PILLAGE_ELITE_LOSS = milli(65);
-const Fixed64 PILLAGE_COMMONER_LOSS = milli(30);
+const Fixed64 FRONT_TAKE = milli(500); // chance a front falls, times the enemy's share of strength
 
 const std::uint32_t REBEL_COLOR = 0xC0 | (0x20 << 8) | (0x20 << 16); // crimson, packed r | g << 8 | b << 16
 
@@ -44,6 +45,10 @@ bool chance(Fixed64 p, std::uint64_t key) {
 
 bool at_war(const rota::core::World& w, CountryID c) {
     return w.country_state.crises[c][CRISIS_CIVIL_WAR].active != 0;
+}
+
+Fixed64 intensity(const rota::core::World& w, CountryID c) {
+    return w.country_state.crises[c][CRISIS_CIVIL_WAR].intensity;
 }
 
 // Rebels rise in every location more restless (effective unrest) than the country's commoner-weighted
@@ -141,12 +146,10 @@ WarYear run_civil_wars(rota::core::World& w) {
     const LocationID location_count = w.geography.location_count();
     const std::uint64_t year = w.calendar.get_year();
 
-    WarYear out{ std::vector<Fixed64>(location_count, ONE), std::vector<Fixed64>(location_count, ONE) };
+    WarYear out{ std::vector<Fixed64>(location_count, ONE), std::vector<Fixed64>(location_count, ONE), {} };
 
-    // The war lasts as long as its crisis. Once that runs out (its duration or the war-weariness lull)
-    // with both sides still holding land, it ends in a stalemate: the rebels' land returns when they
-    // are swept away at the day's end. While it lasts, a crushed or victorious rising is followed by
-    // a new one.
+    // A crisis that ran out (its duration or the war-weariness lull) with both sides still holding
+    // land ends in a stalemate: the rebels' land returns when they are swept away at the day's end
     std::vector<CountryID> rebels = rebel_sides(w);
     std::vector<CountryID> igniting;
     for (CountryID c = 0; c < rebels.size(); c++) {
@@ -161,9 +164,10 @@ WarYear run_civil_wars(rota::core::World& w) {
 
     rebels = rebel_sides(w);
     const CountryID slot_count = static_cast<CountryID>(rebels.size());
-    const auto fighting = [&](CountryID c) {
-        return w.countries.is_valid(c) && rebels[c] != INVALID_COUNTRY_ID && at_war(w, c);
+    const auto warring = [&](CountryID c) {
+        return w.countries.is_valid(c) && w.countries.rebels_against[c] == INVALID_COUNTRY_ID && at_war(w, c);
     };
+    const auto fighting = [&](CountryID c) { return warring(c) && rebels[c] != INVALID_COUNTRY_ID; };
 
     // Each side fights with the elites of the land it holds
     std::vector<std::int64_t> loyal_strength(slot_count, 0);
@@ -174,30 +178,24 @@ WarYear run_civil_wars(rota::core::World& w) {
         (politics.occupier[loc] == rebels[c] ? rebel_strength : loyal_strength)[c] += eco.elites[loc];
     }
 
-    const auto devastate = [&](LocationID loc, Fixed64 x) {
-        out.elite_keep[loc] = ONE - FRONT_ELITE_LOSS * x;
-        out.commoner_keep[loc] = ONE - FRONT_COMMONER_LOSS * x;
-        Fixed64& security = w.location_secular_cycle.security[loc];
-        security = std::max(ZERO, security - FRONT_SECURITY_LOSS * x);
-    };
-
-    std::vector<std::uint8_t> has_front(slot_count, 0);
     std::vector<LocationID> taken;
     for (LocationID loc = 0; loc < location_count; loc++) {
         const CountryID c = politics.owner_country[loc];
-        if (!fighting(c)) continue;
-        const Fixed64 x = w.location_secular_cycle.effective_unrest[loc];
+        if (!warring(c)) continue;
+        const Fixed64 x = intensity(w, c);
+        out.elite_keep[loc] = ONE - WAR_ELITE_LOSS * x;
+        if (!fighting(c)) continue; // a war no rebels could rise for is fought at court
+
+        const Fixed64 fierceness = w.location_secular_cycle.effective_unrest[loc];
         const bool rebel_held = politics.occupier[loc] == rebels[c];
         if (!is_front(w, loc)) {
-            if (rebel_held) {
-                out.elite_keep[loc] = ONE - PILLAGE_ELITE_LOSS * x;
-                out.commoner_keep[loc] = ONE - PILLAGE_COMMONER_LOSS * x;
-            }
+            if (rebel_held) out.commoner_keep[loc] = ONE - PILLAGE_COMMONER_LOSS * fierceness;
             continue;
         }
 
-        has_front[c] = 1;
-        devastate(loc, x);
+        out.commoner_keep[loc] = ONE - FRONT_COMMONER_LOSS * fierceness;
+        Fixed64& security = w.location_secular_cycle.security[loc];
+        security = std::max(ZERO, security - FRONT_SECURITY_LOSS * fierceness);
 
         const std::int64_t total = loyal_strength[c] + rebel_strength[c];
         if (total <= 0) continue;
@@ -213,16 +211,7 @@ WarYear run_civil_wars(rota::core::World& w) {
     }
     if (!taken.empty()) w.render_dirty |= rota::core::DIRTY_POLITICAL;
 
-    // A war with no front this year (no rebels can rise, or none can reach the regime) is fought in
-    // the capital
-    for (CountryID c = 0; c < slot_count; c++) {
-        const LocationID capital = w.countries.capital[c];
-        if (w.countries.is_valid(c) && at_war(w, c) && !has_front[c] && capital != rota::map::INVALID_LOCATION_ID) {
-            devastate(capital, w.location_secular_cycle.effective_unrest[capital]);
-        }
-    }
-
-    // A rising ends when it takes the capital or holds nothing
+    // The war is decided when the rebels take the capital or hold nothing
     std::vector<std::uint32_t> rebel_held(slot_count, 0);
     for (LocationID loc = 0; loc < location_count; loc++) {
         const CountryID c = politics.owner_country[loc];
@@ -232,7 +221,10 @@ WarYear run_civil_wars(rota::core::World& w) {
         if (!fighting(c)) continue;
         const LocationID capital = w.countries.capital[c];
         const bool capital_taken = capital != rota::map::INVALID_LOCATION_ID && politics.occupier[capital] == rebels[c];
-        if (capital_taken || rebel_held[c] == 0) mark_destroy_country(w, rebels[c]);
+        if (capital_taken || rebel_held[c] == 0) {
+            mark_destroy_country(w, rebels[c]);
+            out.decided.push_back(c);
+        }
     }
     return out;
 }

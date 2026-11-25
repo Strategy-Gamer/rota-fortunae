@@ -333,8 +333,8 @@ The game separates them (per `Planning/Rota Fortunae_ Civilizations.txt`):
   country without one, and with no control anywhere. Where the capital moves instead is undecided.
 - **Crises are per country.** One set of crises and one war-weariness lull per country; revolt and
   coup hit every owned location by the same fraction, while a civil war's deaths come from the
-  fighting on the map (below). They are **load-bearing**: with the crisis rates at zero, FinalSim
-  never leaves fracture.
+  fighting on the map (below). Crises speed the way out of fracture but aren't the only one: with
+  the crisis rates at zero every country still leaves it (FinalSim never did; see overshoot below).
 - **Unowned land sits out** the cycle entirely until a country owns it.
 
 **Step order** keeps FinalSim's sequence as linear passes. Each location pass streams through the
@@ -350,26 +350,30 @@ A year's crises fold into one factor per country, so each location is touched on
 them. The one-year lags are the review-critical part: security, the army bill, collection and
 legitimacy read *last* year's `U_e`; fracture unrest reads last year's phase.
 
-**Civil war on the map** ([`civil_war.cpp`](../src/countries/civil_war.cpp)). The civil-war crisis
-decides when a war runs and for how long; the map decides who dies. Rebels rise in every location
-more restless than the country's average (never the capital) and occupy it. Each year every front
-(land of one side touching the other's over a border, a strait or one stretch of sea) is
-devastated and may fall, with a chance set by the enemy's share of the two sides' elites, and the
-land behind the rebels' lines is pillaged. A rising that takes the capital or loses all its land
-ends, and a new one rises while the crisis lasts; when the crisis runs out, the rebels' land
-returns (the hook for secession). Three traps; done the other way, each leaves some countries in
-fracture for centuries:
-- **Wars must last their crisis.** The crisis's duration is what clears a fracture; ending the war
-  at the first decisive result cut that short.
-- **Rebels rise wherever unrest is, the core included.** Overproduction often piles up near the
-  capital; risings weighted toward the frontier left those court pockets untouched, and their
-  unrest alone kept the country's mean above the fracture exit.
-- **Devastation scales with the place's own `U_e`, not the crisis's country-wide intensity.** Once
-  most of a country calms, intensity is small, so a lingering overproduced pocket would barely be
-  touched while still holding the mean up.
+**Overshoot mortality** (not in FinalSim). Births already fall as population nears the cap that
+security allows, but past it FinalSim's deaths don't rise, so an insecure, overfull country barely
+shrinks (about −0.1% a year). Its wage then stays low, commoners keep being promoted into the elite,
+and it settles into a permanent fracture. Deaths therefore rise with the population beyond that
+cap. That alone lets every country leave fracture with the crises off, at roughly the phase split
+the crises used to produce.
 
-Civil wars clear harder than the old uniform cull: across eight seeds countries spend about 30% of
-years in fracture (the cull gave about 50%), with as many phase changes as before.
+**Civil war on the map** ([`civil_war.cpp`](../src/countries/civil_war.cpp)). The civil-war crisis
+decides when a war starts and how long it may last; the map decides where it is fought. Rebels rise
+in every location more restless than the country's average (never the capital) and occupy it.
+Each war year:
+- **Elites fall across the whole country**, by the war's intensity, since armies are raised
+  everywhere; most of all where a front changes hands.
+- **Commoners fall where the armies are:** on every front (land of one side touching the other's
+  over a border, a strait or one stretch of sea), which may also fall to the enemy by its share of
+  the two sides' elites, and behind the rebels' lines, where they live off the land. These scale
+  with the place's own `U_e`: fighting is as fierce as the people there are mobilized.
+- **A decisive result ends the war** and its crisis: the rebels take the capital, or hold nothing.
+  The crisis's cooldown leaves room for several wars in one fracture. If the crisis runs out first,
+  the rebels' land returns (the hook for secession).
+
+Elite deaths are a small part of how a fracture clears: demotion, once the wage recovers, removes
+several times more. What shortens fracture is mostly commoner losses (the crises' and the war's),
+which raise the wage.
 
 **Units.** Population is in **whole people** at `LOCATION_CAPACITY` per location (FinalSim's cap of
 1). Absolute parameters (`army_base`, `mil_positions`) scale per unit of capacity, so apart from

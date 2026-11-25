@@ -30,6 +30,7 @@ const Fixed64 MAX_BIRTH = milli(35);
 const Fixed64 MIN_BIRTH = milli(15);
 const Fixed64 DEATH_BASE = milli(10);
 const Fixed64 CHILD_MORTALITY = milli(400);
+const Fixed64 OVERSHOOT_MORTALITY = milli(10); // extra deaths per unit of population beyond the effective cap
 const Fixed64 SECURITY_RECOVERY = milli(20);
 const Fixed64 SECURITY_FLOOR = milli(500);
 
@@ -222,7 +223,8 @@ void population_and_economy(const Pass& p) {
         Fixed64 t = std::clamp(rel - milli(500), ZERO, ONE);
         t = t * t * (Fixed64(3) - t * 2);
         const Fixed64 birth = std::max(MAX_BIRTH - (MAX_BIRTH - MIN_BIRTH) * t, MIN_BIRTH);
-        const Fixed64 death = DEATH_BASE + CHILD_MORTALITY * birth;
+        // beyond what security lets the land carry, famine and disease cull the surplus
+        const Fixed64 death = DEATH_BASE + CHILD_MORTALITY * birth + OVERSHOOT_MORTALITY * std::max(ZERO, rel - ONE);
         eco.commoners[loc] = to_heads(heads(pop) + (birth - death) * pop, p.key(STREAM_POPULATION, loc), 0);
 
         const std::int64_t workers = workers_at(eco, loc);
@@ -534,6 +536,11 @@ void run_secular_cycle(rota::core::World& world) {
     unrest(pass);
     each_country([&](CountryID c, CountryYear& cy) { crises(world, pass.year, c, cy); });
     const rc::WarYear war = rc::run_civil_wars(world);
+    for (const CountryID c : war.decided) { // won outright, so the crisis ends early
+        rc::Crisis& cr = world.country_state.crises[c][rc::CRISIS_CIVIL_WAR];
+        cr.active = 0;
+        cr.cooldown = CRISIS_CFG[rc::CRISIS_CIVIL_WAR].cool;
+    }
     crisis_effects_and_elites(pass, war);
     each_country([&](CountryID c, CountryYear& cy) { phase(world, c, cy); });
 }

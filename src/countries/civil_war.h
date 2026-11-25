@@ -14,12 +14,12 @@ namespace rota::countries {
 struct WarYear {
     std::vector<Fixed64> elite_keep;    // per LocationID: the share of elites the fighting spares
     std::vector<Fixed64> commoner_keep; // per LocationID
+    std::vector<CountryID> decided;     // countries whose war was won outright this year
 };
 
-// One year of civil war on the map, run after the crises roll and before the elite pass. A war
-// lasts as long as its civil-war crisis: rebels rise, every front is fought, and a rising that takes
-// the capital or loses all its land is followed by another until the crisis runs out. Fronts are
-// devastated, and the land behind the rebels' lines is pillaged.
+// One year of civil war on the map, run after the crises roll and before the elite pass: rebels
+// rise where a civil-war crisis just began, every front is fought, and a war ends when a side wins
+// or the crisis runs out. Elites die across the warring country; commoners where the armies are.
 WarYear run_civil_wars(rota::core::World& w);
 
 // The rebel side fighting each country, indexed by CountryID; INVALID_COUNTRY_ID at peace
