@@ -18,7 +18,12 @@ namespace fm = rota::fmath;
 static int g_pass = 0, g_fail = 0;
 static const double TOL = 1e-4;
 
+// Digest of every result, printed at the end. g++ and MSVC must print the same value.
+static uint64_t g_digest = 14695981039346656037ULL;
+
 static void check(const char* label, double got, double expected, double tol = TOL) {
+    const int64_t raw = (int64_t)llround(got * Fixed64::SCALE);
+    for (int i = 0; i < 8; i++) { g_digest ^= ((uint64_t)raw >> (i * 8)) & 0xFF; g_digest *= 1099511628211ULL; }
     double err = std::fabs(got - expected);
     if (err <= tol) { ++g_pass; }
     else { ++g_fail; std::printf("FAIL: %-26s got %.8f  expected %.8f  (err %.2e)\n",
@@ -34,6 +39,9 @@ int main() {
     check("sqrt(0.25)",   fm::sqrt(F(0.25)).to_double(),  0.5);
     check("sqrt(1000)",   fm::sqrt(F(1000.0)).to_double(),std::sqrt(1000.0), 1e-2);
     check("sqrt(0)",      fm::sqrt(F(0.0)).to_double(),   0.0);
+    // raw*SCALE exceeds 64 bits from here up; the old MSVC path overflowed
+    check("sqrt(1e9)",    fm::sqrt(F(1e9)).to_double(),   std::sqrt(1e9),  2e-6);
+    check("sqrt(5e12)",   fm::sqrt(F(5e12)).to_double(),  std::sqrt(5e12), 2e-6);
 
     // ---- exp ----
     for (double x : {-12.0, -3.0, -1.0, -0.5, 0.0, 0.5, 1.0, 3.0, 10.0, 12.0}) {
@@ -82,6 +90,7 @@ int main() {
     Fixed64 mobility = F(0.002) * F(0.3) * F(0.6);
     check("mobility increment", mobility.to_double(), 0.002 * 0.3 * 0.6, 5e-6);
 
+    std::printf("digest: %016llx\n", (unsigned long long)g_digest);
     std::printf("\n%d passed, %d failed\n", g_pass, g_fail);
     return g_fail;
 }

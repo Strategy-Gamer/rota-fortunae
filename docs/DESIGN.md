@@ -173,14 +173,14 @@ sync clock; they agree on the sim's outcome by date.
 - **Derived data is not hashed**, for example `location_count`. Neither are presentation state
   such as render-dirty flags, or cold archives such as dead-country records.
 
-**Trap: MSVC takes a different fixed-point path.** `Fixed64 × Fixed64` and `÷ Fixed64` use
-`__int128` where it exists (gcc, clang) and fall back to `double` where it doesn't. **The game DLL
-is built by SCons with MSVC, which has no `__int128`, so the game currently runs the `double`
-fallback.** The standalone tests in `tests/` build with g++ and take the exact integer path, so they
-don't cover the code the game runs. This doesn't affect single-machine determinism, but it can
-desync an MSVC peer against a gcc/clang peer. Fix it with a portable 128-bit multiply/divide (MSVC
-intrinsics) before any cross-platform multiplayer, or before porting cycle math that leans on large
-products.
+**One integer code path on every compiler.** The game DLL builds with MSVC, which has no
+`__int128`, while the standalone tests build with g++. `Fixed64` multiply and divide (and
+`fmath::sqrt`) therefore use `detail::U128`, a 128-bit type built from 64-bit halves, on every
+compiler. **Never add `__int128`, compiler-specific branches or floats to fixed-point math**: two
+paths means two answers, and the tests would only prove one of them. Both test files print a
+digest of their results; after any fixed-point change, run them under g++ *and* MSVC and confirm
+the digests match. Products wider than 64 bits take a slower long-division path (about 7× the
+common case); that is fine at yearly cadence.
 
 ---
 
@@ -355,7 +355,6 @@ migration) · partial-map re-evaluation on territory change.
   cleanup.
 - **The map-mode enum exists three times** (GDScript enum, C++ enum, a magic `if map_mode == 1`).
   Give it the same single-source `BIND_ENUM_CONSTANT` treatment as `CommandType`.
-- **MSVC fixed-point fallback** (§6).
 - **Sim systems include the Godot bridge header** (`sim_world.h`) only for render-dirty bits. This
   pulls godot-cpp into code that should be pure C++, and blocks compiling the sim without Godot.
   The runner doesn't need that fixed (it runs inside Godot); a native C++ runner or C++ tests would.

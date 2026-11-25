@@ -10,6 +10,10 @@
 //     g++ -std=c++17 -O2 -I. tests/fixed_decimal_test.cpp -o fixed_decimal_test && ./fixed_decimal_test
 // Exit code is 0 on success, non-zero (number of failures) otherwise.
 //
+// The game builds with MSVC, so also run it there (from a vcvars64 shell) and compare the printed
+// digest with g++'s. Matching digests mean both compilers produce identical Fixed64 results:
+//     cl /nologo /EHsc /std:c++17 /I. tests\fixed_decimal_test.cpp && fixed_decimal_test.exe
+//
 // Assertions compare raw_value() (the underlying scaled integer) for EXACTNESS.
 // to_double() is used only in failure messages, never in a pass/fail decision.
 
@@ -97,7 +101,7 @@ int main() {
 
     // The actual economy use: wealth = productivity(Fixed32->Fixed64) * population(int).
     // productivity 2.5, population 10,000,000,000 -> wealth 25,000,000,000.
-    // Exercises the __int128 path (raw = 2.5e16, well within int64).
+    // Raw = 2.5e16, well within int64.
     CHECK_RAW("F64 wealth 2.5*1e10",
               Fixed64(Fixed32::from_raw(2500)) * int64_t(10000000000LL),
               25000000000000000LL);
@@ -131,6 +135,64 @@ int main() {
     CHECK_RAW("F64->F32 exact",     static_cast<Fixed32>(Fixed64::from_raw(1005000)), 1005);
     CHECK_RAW("F64->F32 round up",  static_cast<Fixed32>(Fixed64::from_raw(1005500)), 1006);
     CHECK_RAW("F64->F32 round dn",  static_cast<Fixed32>(Fixed64::from_raw(1004499)), 1004);
+
+    // ---- Rounding with negative operands (half away from zero, like round_div) ----
+    CHECK_RAW("F64 -1.5e-6*1.0",    Fixed64::from_raw(-3) * Fixed64::from_raw(500000), -2);
+    CHECK_RAW("F64 neg divisor",    Fixed64::from_raw(7) / Fixed64::from_raw(-4000000), -2);   // -1.75 -> -2
+    CHECK_RAW("F64 neg/neg",        Fixed64::from_raw(-5) / Fixed64::from_raw(-2000000), 3);   // 2.5 -> 3
+
+    // ---- Battery: exactness across magnitudes + cross-compiler digest -----------
+    // Inputs span tiny to int64 extremes. With __int128 available (g++/clang) every result is checked
+    // against an exact reference; on every compiler the results feed a digest that must match g++'s.
+    {
+        std::uint64_t rng = 0x9E3779B97F4A7C15ULL;
+        auto next = [&rng]() {
+            std::uint64_t z = (rng += 0x9E3779B97F4A7C15ULL);
+            z = (z ^ (z >> 30)) * 0xBF58476D1CE4E5B9ULL;
+            z = (z ^ (z >> 27)) * 0x94D049BB133111EBULL;
+            return z ^ (z >> 31);
+        };
+        const int shifts[] = { 1, 20, 32, 40, 44, 52, 62 };   // keeps that many low bits
+        auto sample = [&]() {
+            const int bits = shifts[next() % (sizeof shifts / sizeof shifts[0])];
+            std::int64_t v = static_cast<std::int64_t>(next() >> (64 - bits));
+            return (next() & 1) ? -v : v;
+        };
+
+        std::uint64_t digest = 14695981039346656037ULL;
+        auto feed = [&digest](std::int64_t v) {
+            for (int i = 0; i < 8; i++) { digest ^= (static_cast<std::uint64_t>(v) >> (i * 8)) & 0xFF; digest *= 1099511628211ULL; }
+        };
+
+        const std::int64_t extremes[] = { 0, 1, -1, 999999, 1000000, -1000000,
+            std::numeric_limits<std::int64_t>::max(), std::numeric_limits<std::int64_t>::min() + 1 };
+        int mismatches = 0;
+        for (int i = 0; i < 200000; i++) {
+            const std::int64_t a = i < 64 ? extremes[i % 8] : sample();
+            const std::int64_t b = i < 64 ? extremes[i / 8] : sample();
+            const std::int64_t divisor = b == 0 ? 1 : b;
+            const std::int64_t mul = (Fixed64::from_raw(a) * Fixed64::from_raw(b)).raw_value();
+            const std::int64_t div = (Fixed64::from_raw(a) / Fixed64::from_raw(divisor)).raw_value();
+            feed(mul);
+            feed(div);
+#if defined(__SIZEOF_INT128__)
+            auto ref = [](std::int64_t x, std::int64_t y, std::int64_t d) {
+                const __int128 n = static_cast<__int128>(x) * y;
+                const bool neg = (n < 0) != (d < 0);
+                const unsigned __int128 un = n < 0 ? -static_cast<unsigned __int128>(n) : static_cast<unsigned __int128>(n);
+                const unsigned __int128 ud = d < 0 ? -static_cast<unsigned __int128>(static_cast<__int128>(d)) : static_cast<unsigned __int128>(d);
+                const unsigned __int128 q = (un + ud / 2) / ud;
+                return static_cast<std::int64_t>(static_cast<std::uint64_t>(neg ? -q : q));
+            };
+            if (mul != ref(a, b, Fixed64::SCALE) || div != ref(a, Fixed64::SCALE, divisor)) {
+                if (++mismatches <= 5) std::printf("FAIL: battery a=%lld b=%lld mul=%lld div=%lld\n",
+                                                   (long long)a, (long long)b, (long long)mul, (long long)div);
+            }
+#endif
+        }
+        if (mismatches == 0) ++g_pass; else ++g_fail;
+        std::printf("battery digest: %016llx\n", static_cast<unsigned long long>(digest));
+    }
 
     // ---- Summary -----------------------------------------------------------------
     std::printf("\n%d passed, %d failed\n", g_pass, g_fail);

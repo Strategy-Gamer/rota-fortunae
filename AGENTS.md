@@ -92,9 +92,12 @@ The tools work but aren't on PATH. Run these from the repo root:
   prints the final year, and with `runs` above 1 it checks determinism (exit code 1 if runs
   diverge). A few hundred years takes milliseconds.
 - **Standalone C++ tests:** each file in `tests/` has its compile line in its header (g++ from
-  `C:/msys64/mingw64/bin`). Put binaries in the scratchpad, not the repo. g++ and the MSVC game
-  build take different `Fixed64` code paths (`docs/DESIGN.md` §6), so a passing g++ test doesn't
-  prove the game's math.
+  `C:/msys64/mingw64/bin`). Put binaries in the scratchpad, not the repo.
+- **MSVC (the game's compiler):** run `cl` from a shell set up by `"C:/Program Files
+  (x86)/Microsoft Visual Studio/18/BuildTools/VC/Auxiliary/Build/vcvars64.bat"`. That script
+  needs `C:/Program Files (x86)/Microsoft Visual Studio/Installer` on PATH. After a fixed-point
+  change, build the `tests/` files with both compilers and check that the printed digests match
+  (`docs/DESIGN.md` §6).
 
 ## Verifying
 

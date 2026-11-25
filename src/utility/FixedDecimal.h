@@ -14,8 +14,7 @@
 //
 // WARNING: Arithmetic can overflow the storage type (wraps in 2's complement, which is deterministic but loses correctness).
 //          Keep values within representable range for your game systems. Consider saturation in hot paths if needed.
-//          For MSVC portability with Fixed64 mul/div: __int128 is used (supported in recent MSVC/clang-cl or use /Zc:__int128).
-//          If compiling without __int128, replace the __int128 sections with a portable 128-bit mul/div implementation.
+//          Fixed64 mul/div use detail::U128 on every compiler, never __int128 or floats, so all builds agree.
 
 namespace rota {
 
@@ -35,6 +34,61 @@ inline int64_t round_div(int64_t num, int64_t den) {
         res = -res;
     }
     return res;
+}
+
+// Unsigned 128-bit value from 64-bit halves. Every compiler takes this path (MSVC has no __int128),
+// so Fixed64 results are bit-identical across builds.
+struct U128 {
+    uint64_t hi = 0;
+    uint64_t lo = 0;
+};
+
+inline U128 mul_u64(uint64_t a, uint64_t b) {
+    const uint64_t a_lo = a & 0xFFFFFFFFULL, a_hi = a >> 32;
+    const uint64_t b_lo = b & 0xFFFFFFFFULL, b_hi = b >> 32;
+    const uint64_t ll = a_lo * b_lo;
+    const uint64_t lh = a_lo * b_hi;
+    const uint64_t hl = a_hi * b_lo;
+    const uint64_t mid = (ll >> 32) + (lh & 0xFFFFFFFFULL) + (hl & 0xFFFFFFFFULL);
+    return U128{ a_hi * b_hi + (lh >> 32) + (hl >> 32) + (mid >> 32), (mid << 32) | (ll & 0xFFFFFFFFULL) };
+}
+
+inline U128 add_u64(U128 a, uint64_t b) {
+    U128 r{ a.hi, a.lo + b };
+    if (r.lo < a.lo) r.hi++;
+    return r;
+}
+
+// Full 128-bit quotient of n / d, d != 0
+inline U128 div_u64(U128 n, uint64_t d) {
+    if (n.hi == 0) return U128{ 0, n.lo / d };
+
+    // Long division over the low half; rem < d holds throughout
+    U128 q{ n.hi / d, 0 };
+    uint64_t rem = n.hi % d;
+    for (int i = 63; i >= 0; i--) {
+        const bool carry = (rem >> 63) != 0; // rem << 1 overflows, so it certainly exceeds d
+        rem = (rem << 1) | ((n.lo >> i) & 1);
+        if (carry || rem >= d) {
+            rem -= d;
+            q.lo |= 1ULL << i;
+        }
+    }
+    return q;
+}
+
+inline uint64_t magnitude(int64_t v) {
+    return v < 0 ? 0 - static_cast<uint64_t>(v) : static_cast<uint64_t>(v);
+}
+
+// a * b / d, rounded half away from zero, exact for every int64 input (d != 0).
+// A result outside int64 wraps to its low 64 bits, like plain integer overflow.
+inline int64_t mul_div_round(int64_t a, int64_t b, int64_t d) {
+    const bool negative = ((a < 0) != (b < 0)) != (d < 0);
+    const uint64_t ud = magnitude(d);
+    const U128 n = add_u64(mul_u64(magnitude(a), magnitude(b)), ud / 2);
+    const uint64_t q = div_u64(n, ud).lo;
+    return static_cast<int64_t>(negative ? 0 - q : q);
 }
 
 // Safe scaled value computation for comparisons/ops with large ints (prevents signed overflow UB)
@@ -283,17 +337,7 @@ public:
     Fixed64 operator-() const { return from_raw(-value); }
 
     Fixed64 operator*(Fixed64 rhs) const {
-#if defined(__GNUC__) || defined(__clang__) || (defined(_MSC_VER) && defined(__SIZEOF_INT128__))
-        __int128 prod = (__int128)value * rhs.value;
-        __int128 half = SCALE / 2;
-        __int128 res128 = (prod >= 0) ? ((prod + half) / SCALE) : ((prod - half) / SCALE);
-        return from_raw(static_cast<storage_type>(res128));
-#else
-        // Portable fallback: may lose precision for very large values (>~2^53). Prefer __int128 build.
-        // For full portability implement 128-bit mul here using high/low 32-bit parts.
-        double approx = (static_cast<double>(value) * rhs.value) / SCALE;
-        return from_raw(static_cast<storage_type>(detail::round_div(static_cast<int64_t>(approx), 1)));
-#endif
+        return from_raw(detail::mul_div_round(value, rhs.value, SCALE));
     }
     Fixed64& operator*=(Fixed64 rhs) { *this = *this * rhs; return *this; }
 
@@ -301,16 +345,7 @@ public:
         if (rhs.value == 0) {
             return from_raw((value >= 0) ? std::numeric_limits<storage_type>::max() : std::numeric_limits<storage_type>::min());
         }
-#if defined(__GNUC__) || defined(__clang__) || (defined(_MSC_VER) && defined(__SIZEOF_INT128__))
-        __int128 num = (__int128)value * SCALE;
-        __int128 den = rhs.value;
-        __int128 half = den / 2;
-        __int128 res128 = (num >= 0) ? ((num + half) / den) : ((num - half) / den);
-        return from_raw(static_cast<storage_type>(res128));
-#else
-        double approx = (static_cast<double>(value) * SCALE) / rhs.value;
-        return from_raw(static_cast<storage_type>(detail::round_div(static_cast<int64_t>(approx), 1)));
-#endif
+        return from_raw(detail::mul_div_round(value, SCALE, rhs.value));
     }
     Fixed64& operator/=(Fixed64 rhs) { *this = *this / rhs; return *this; }
 
@@ -329,13 +364,8 @@ public:
 
     Fixed64 operator*(int64_t rhs) const {
         // Whole-number multiply: rhs is unscaled, so scale raw directly (no /SCALE).
-#if defined(__GNUC__) || defined(__clang__) || (defined(_MSC_VER) && defined(__SIZEOF_INT128__))
-        __int128 res128 = (__int128)value * rhs;
-        return from_raw(static_cast<storage_type>(res128));
-#else
-        // int64 * int64 may overflow (wraps, documented). Prefer an __int128 build.
-        return from_raw(value * rhs);
-#endif
+        // Unsigned so overflow wraps (documented) instead of being UB.
+        return from_raw(static_cast<storage_type>(static_cast<uint64_t>(value) * static_cast<uint64_t>(rhs)));
     }
     Fixed64& operator*=(int64_t rhs) { *this = *this * rhs; return *this; }
 

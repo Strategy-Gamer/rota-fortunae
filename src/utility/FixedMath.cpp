@@ -9,27 +9,15 @@ const Fixed64 ONE = Fixed64(static_cast<int64_t>(1));
 const Fixed64 TWO = Fixed64(static_cast<int64_t>(2));
 const Fixed64 LN2 = Fixed64::from_raw(693147);          // 0.693147
 
-// Widest unsigned type for the sqrt intermediate. __int128 where available (matches
-// FixedDecimal); the uint64 fallback (MSVC w/o __int128) still covers the model's domain
-// (values < ~1e6, so raw*SCALE < 1e18 < uint64 max).
-#if defined(__SIZEOF_INT128__)
-using wide_t = unsigned __int128;
-constexpr wide_t SQRT_TOP_BIT = (wide_t)1 << 126;
-#else
-using wide_t = uint64_t;
-constexpr wide_t SQRT_TOP_BIT = (wide_t)1 << 62;
-#endif
-
-// Bit-by-bit integer sqrt (deterministic, no float).
-uint64_t isqrt_wide(wide_t n) {
-    wide_t res = 0, bit = SQRT_TOP_BIT;
-    while (bit > n) bit >>= 2;
-    while (bit) {
-        if (n >= res + bit) { n -= res + bit; res = (res >> 1) + bit; }
-        else                {                 res >>= 1; }
-        bit >>= 2;
+// floor(sqrt(n)), choosing result bits high to low (deterministic, no float)
+uint64_t isqrt_u128(rota::detail::U128 n) {
+    uint64_t res = 0;
+    for (int bit = 63; bit >= 0; bit--) {
+        const uint64_t candidate = res | (1ULL << bit);
+        const rota::detail::U128 sq = rota::detail::mul_u64(candidate, candidate);
+        if (sq.hi < n.hi || (sq.hi == n.hi && sq.lo <= n.lo)) res = candidate;
     }
-    return static_cast<uint64_t>(res);
+    return res;
 }
 
 } // namespace
@@ -38,8 +26,8 @@ uint64_t isqrt_wide(wide_t n) {
 Fixed64 sqrt(Fixed64 x) {
     int64_t r = x.raw_value();
     if (r <= 0) return Fixed64();
-    wide_t v = (wide_t)(uint64_t)r * (uint64_t)SCALE;
-    return Fixed64::from_raw(static_cast<int64_t>(isqrt_wide(v)));
+    const rota::detail::U128 v = rota::detail::mul_u64(static_cast<uint64_t>(r), static_cast<uint64_t>(SCALE));
+    return Fixed64::from_raw(static_cast<int64_t>(isqrt_u128(v)));
 }
 
 // exp(x): range-reduce x = n*ln2 + r (|r| <= ln2/2), exp = 2^n * exp(r); exp(r) by Taylor.
