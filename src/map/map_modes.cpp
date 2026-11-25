@@ -107,8 +107,11 @@ RGBImageData create_map_mode_palette(const rota::core::World& world, MapMode mod
 
         case MapMode::Control: {
             const std::vector<Fixed64> control = rota::countries::compute_control(world);
-            return paint(world, [&](LocationID loc, CountryID) {
-                return ramp(control[loc], rgb(0xF2, 0xEC, 0xDC), rgb(0x1E, 0x46, 0x78));
+            return paint(world, [&](LocationID loc, CountryID) { // dark red at none, yellow at half, blue at full
+                const Fixed64 c = control[loc];
+                return c < Fixed64::from_raw(Fixed64::SCALE / 2)
+                    ? ramp(c * 2, rgb(0x7A, 0x0E, 0x0E), rgb(0xF0, 0xD2, 0x3C))
+                    : ramp(c * 2 - Fixed64(1), rgb(0xF0, 0xD2, 0x3C), rgb(0x1E, 0x50, 0xB4));
             });
         }
 
