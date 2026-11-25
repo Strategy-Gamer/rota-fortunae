@@ -338,7 +338,9 @@ The game separates them (per `Planning/Rota Fortunae_ Civilizations.txt`):
   foreign, occupied or impassable land is never crossed
   ([`control.cpp`](../src/countries/control.cpp)). Collection, the per-capita suppression a
   location receives, and its elites' weight in the competition for state positions are all
-  multiplied by it, so the frontier pays less, is policed less and is shut out of the court.
+  multiplied by it, so the frontier pays less, is policed less and is shut out of the court. The
+  army's suppression bill likewise counts only the unrest it can reach; billed for the whole realm,
+  a sprawling state went bankrupt policing a frontier it couldn't touch and never calmed its core.
   Occupied land has none. Control is recomputed each year from ownership, occupation, capitals and
   the map; it is never stored. A capital is always owned by its country: losing it leaves the
   country without one, and with no control anywhere. Where the capital moves instead is undecided.
@@ -381,16 +383,26 @@ Each war year:
   The crisis's cooldown leaves room for several wars in one fracture. If the crisis runs out first,
   the rebels' land returns (the hook for secession).
 
-**Cycle length** (retuned since the port). The target is the full cycle of about 150 years that
-England, France and Rome show, driven by population and elites together. A cycle near 80 years
-would mean elites alone drive it, and FinalSim's values gave about 90. So outside fracture, unrest
-builds only slowly from low wages and felt overproduction. Strain then lasts decades while the
-elites multiply, and ends when patronage drains the treasury and the unpaid army stops
-suppressing. Over a cycle the elites swing about threefold or more, toward the fourfold seen
-historically. Coups and the war's commoner losses were halved once the base cycle could leave
-fracture on its own. The crises still shorten fracture: a country runs about 140 years per cycle
-with them off and about 115 with them on. Elite deaths are a small part of how a fracture clears:
-demotion, once the wage recovers, removes several times more.
+**Cycle shape** (retuned since the port; measure it with the cycle harness, §5). The target is the
+full cycle of about 150 years that England, France and Rome show, driven by population and elites
+together; one near 80 years would mean elites alone drive it, and FinalSim's values gave about 90.
+- **Strain lasts decades.** Outside fracture, unrest builds only slowly from low wages and felt
+  overproduction, so the elites multiply severalfold before patronage drains the treasury and the
+  unpaid army stops suppressing.
+- **A fracture runs for generations.** Population falls by about a quarter over it, gradually
+  rather than in its first decades, and the elites by about two thirds, mostly by demotion. Crises
+  are occasional: room for a few civil wars, not a revolt every few years.
+- **Order returns slowly afterwards.** Security recovers over generations, so the land refills
+  slowly and prosperity is long.
+
+**Falling population is what ends a fracture:** it raises the wage, which drives demotion and calms
+unrest. With gentle culling that exit has two knife edges. Once a location's felt overproduction
+nears 1, its fracture unrest settles close to the exit level, so whether the country's mean gets
+under it hangs on how many locations still sit above the calm band. And if security and population
+recover before the elites are cleared, the wage sags, demotion stalls just above the exit, and the
+fracture can last centuries. Fast security recovery and a narrow calm band both produced such
+traps. After retuning culling, unrest or security, check the harness's long fractures with the
+crises on and off.
 
 **Units.** Population is in **whole people** at `LOCATION_CAPACITY` per location (FinalSim's cap of
 1). Absolute parameters (`army_base`, `mil_positions`) scale per unit of capacity, so apart from

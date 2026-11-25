@@ -30,8 +30,8 @@ const Fixed64 MAX_BIRTH = milli(35);
 const Fixed64 MIN_BIRTH = milli(15);
 const Fixed64 DEATH_BASE = milli(10);
 const Fixed64 CHILD_MORTALITY = milli(400);
-const Fixed64 OVERSHOOT_MORTALITY = milli(10); // extra deaths per unit of population beyond the effective cap
-const Fixed64 SECURITY_RECOVERY = milli(20);
+const Fixed64 OVERSHOOT_MORTALITY = milli(5); // extra deaths per unit of population beyond the effective cap
+const Fixed64 SECURITY_RECOVERY = milli(5); // order returns over generations, and the land refills with it
 const Fixed64 SECURITY_FLOOR = milli(500);
 
 // Economy: one elite-owned cultivated parcel fills each location's land
@@ -67,6 +67,14 @@ const Fixed64 LEGIT_FRAG_TOLERANCE = milli(1500);
 
 // Unrest & phase
 const Fixed64 W0_TARGET = milli(500);
+const Fixed64 UNREST_WAGE = milli(20); // outside fracture, unrest builds slowly, so strain can last decades
+const Fixed64 UNREST_FELT = milli(15);
+const Fixed64 FRACTURE_UNREST_DRIFT = milli(50); // in fracture, mobilization feeds on itself
+const Fixed64 FRACTURE_UNREST_WAGE = milli(100);
+const Fixed64 FRACTURE_UNREST_FELT = milli(200);
+const Fixed64 FRACTURE_FELT_BASE = milli(500);
+const Fixed64 FRACTURE_CALM_FELT = milli(1150); // below this felt overproduction, fracture unrest ebbs
+const Fixed64 FRACTURE_CALM = milli(100);
 const Fixed64 IBN_MARGIN = milli(2000);
 const Fixed64 U_FRACTURE_ON = milli(250);
 const Fixed64 U_EXIT_THRESH = milli(100);
@@ -79,7 +87,7 @@ const Fixed64 MU_DOWN = milli(50);
 const Fixed64 K_ATTRITION = milli(10);
 
 // Crises
-const Fixed64 CRISIS_FRAC_MULT = milli(4000);
+const Fixed64 CRISIS_FRAC_MULT = milli(1500);
 const Fixed64 CRISIS_HAZARD_CAP = milli(500);
 const Fixed64 K_FAMINE = milli(60);
 const Fixed64 REVOLT_UNREST = milli(300);
@@ -97,9 +105,9 @@ struct CrisisConfig {
 };
 
 const CrisisConfig CRISIS_CFG[rc::CRISIS_COUNT] = {
-    { milli(120), 4, 10, 10 }, // revolt
-    { milli(100), 8, 20, 15 }, // civil war
-    { milli(80),  1, 3,  12 }, // coup
+    { milli(20),  4, 10, 10 }, // revolt
+    { milli(40),  8, 20, 15 }, // civil war
+    { milli(10),  1, 3,  12 }, // coup
 };
 
 // Keys for draws, so no two draws in a year share one
@@ -121,6 +129,7 @@ struct CountryYear {
     Fixed64 income;
     Fixed64 collected;
     Fixed64 unrest_burden; // last year's U_e x commoners
+    Fixed64 reached_unrest; // the same, weighted by control: what the army can be sent to put down
     Fixed64 wage_sum;
     Fixed64 immiseration_sum;
     Fixed64 security_sum;
@@ -259,6 +268,7 @@ void population_and_economy(const Pass& p) {
         cy.income += wealth;
         cy.collected += wealth * (ONE - last_unrest * COLLECTION_UNREST) * p.control[loc];
         cy.unrest_burden += last_unrest * workers;
+        cy.reached_unrest += last_unrest * p.control[loc] * workers;
         cy.wage_sum += w * workers;
         cy.immiseration_sum += immiseration * workers;
         cy.security_sum += security * workers;
@@ -278,7 +288,7 @@ void fiscal_and_legitimacy(rota::core::World& w, CountryID c, CountryYear& cy) {
     const Fixed64 absorb_fraction = ONE / (ONE + K_ABSORB * std::max(ZERO, cy.overproduction - ONE)); // patronage can't keep pace
     const Fixed64 desired_patronage = excess_elites * absorb_fraction * K_PATRONAGE;
     // the state pays to hold down mobilization POTENTIAL, so overproduction drains even a solvent treasury
-    const Fixed64 army_cost = ARMY_BASE * capacity + K_SUPPRESS * cy.unrest_burden;
+    const Fixed64 army_cost = ARMY_BASE * capacity + K_SUPPRESS * cy.reached_unrest;
 
     const Fixed64 funds = state.treasury[c] + revenue;
     const Fixed64 army_paid = std::min(army_cost, funds); // army is paid before patronage
@@ -329,11 +339,11 @@ void unrest(const Pass& p) {
         const Fixed64 felt = elites / (local_elite_positions(p.w, loc) + cy.state_share * p.control[loc] * elites); // local felt overproduction
         Fixed64 u = cyc.unrest[loc];
         if (!cy.fracture) {
-            u += milli(20) * (W0_TARGET - p.wage[loc]) + milli(15) * (felt - ONE); // slow, so strain can last decades
+            u += UNREST_WAGE * (W0_TARGET - p.wage[loc]) + UNREST_FELT * (felt - ONE);
         } else {
-            u += milli(50) + milli(100) * (W0_TARGET - p.wage[loc])
-                + milli(200) * (felt - (cyc.effective_unrest[loc] * 2 + milli(500)));
-            if (felt < milli(1100)) u -= milli(100);
+            u += FRACTURE_UNREST_DRIFT + FRACTURE_UNREST_WAGE * (W0_TARGET - p.wage[loc])
+                + FRACTURE_UNREST_FELT * (felt - (cyc.effective_unrest[loc] * 2 + FRACTURE_FELT_BASE));
+            if (felt < FRACTURE_CALM_FELT) u -= FRACTURE_CALM;
         }
         cyc.unrest[loc] = std::clamp(u, ZERO, ONE);
         cyc.effective_unrest[loc] = std::clamp(cyc.unrest[loc] - cy.suppression_per_worker * p.control[loc], ZERO, ONE);
