@@ -61,3 +61,8 @@ compile_commands.json
 # Cmake
 cmake-build*
 CMakeUserPresets.json
+
+# Cycle harness build and runs
+tools/cycle_harness/build/
+tools/cycle_harness/runs/
+__pycache__/

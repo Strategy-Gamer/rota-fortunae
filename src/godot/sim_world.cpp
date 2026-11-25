@@ -4,7 +4,6 @@
 #include "../map/map_images.h"
 #include "../map/map_modes.h"
 #include "../core/command.h"
-#include "../core/hash.h"
 #include "../time/time_progression.h"
 #include "../queries/location_summary.h"
 #include "../queries/country_summary.h"
@@ -581,21 +580,7 @@ int SimWorld::take_render_dirty(){
 }
 
 int64_t SimWorld::get_state_hash(){
-    rota::core::Hasher h;
-
-    world.synch_clock.feed_hash(h);
-    world.calendar.feed_hash(h);
-    h.feed(world.seed);
-
-    for (auto owner : world.location_politics.owner_country) h.feed(owner);
-    for (auto occupier : world.location_politics.occupier) h.feed(occupier);
-
-    world.countries.feed_hash(h);
-    world.country_state.feed_hash(h);
-    world.location_economy.feed_hash(h);
-    world.location_secular_cycle.feed_hash(h);
-
-    return static_cast<int64_t>(h.value());
+    return static_cast<int64_t>(rota::core::state_hash(world));
 }
 
 }

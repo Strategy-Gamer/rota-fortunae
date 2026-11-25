@@ -158,6 +158,17 @@ step through `TimeProgression::advance_day`, so **all per-day sim logic belongs 
 runner. The game and the runner can't be compared by hash, because the runner never advances the
 sync clock; they agree on the sim's outcome by date.
 
+**The cycle harness tunes the sim without Godot.**
+[`tools/cycle_harness`](../tools/cycle_harness/cycle.py) compiles the sim sources natively against
+the same map and scenario generator, runs many seeds in parallel, and reports the cycle's shape and
+the yearly flows in and out of commoners and elites by phase. It builds generated copies of the cycle
+and civil-war sources in which every `const Fixed64` reads an environment override, so any constant
+can be swept without a rebuild or a game change. With nothing overridden, its final state hash
+equals the playtest runner's for the same seed and years: check that after changing either. The
+flows come from the **cycle ledger** (`World::cycle_ledger`), which the cycle rewrites every year
+and nothing in the sim reads, so it is derived and unhashed; it doubles as the hook for showing
+those flows in game.
+
 ---
 
 ## 6. Determinism & the fixed-point line
@@ -168,11 +179,11 @@ sync clock; they agree on the sim's outcome by date.
   hashed. Don't promote geometry to fixed-point just because it shares a `LocationID` with sim
   data; keep the stores separate so this line stays crisp (note 02 §9).
 - The checksum covers *all and only* authoritative state, in a fixed order. **Each store has its
-  own `feed_hash(Hasher&)`**, composed in order by `SimWorld::get_state_hash`, which is what makes
+  own `feed_hash(Hasher&)`**, composed in order by `rota::core::state_hash`, which is what makes
   "which store desynced?" debuggable later. Feed **fixed-width integers only**: bools as a byte,
   never `int`/`size_t`, never floats.
-- **Derived data is not hashed**, for example `location_count`. Neither are presentation state
-  such as render-dirty flags, or cold archives such as dead-country records.
+- **Derived data is not hashed**, for example `location_count` or the cycle ledger. Neither are
+  presentation state such as render-dirty flags, or cold archives such as dead-country records.
 
 **One integer code path on every compiler.** The game DLL builds with MSVC, which has no
 `__int128`, while the standalone tests build with g++. `Fixed64` multiply and divide (and

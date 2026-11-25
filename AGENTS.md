@@ -50,8 +50,9 @@ write most of the code and the dev reads every diff.
 2. **Unstable iteration order.** Never let hash-map or hash-set order affect state. Loop over
    entities by ID.
 3. **A store that isn't wired in.** Every authoritative store goes in `World`, gets cleared in
-   `World::clear`, and is fed into `SimWorld::get_state_hash`. If it is left out of the hash, you
-   get silent desyncs later. Render-dirty flags are presentation state and are never hashed.
+   `World::clear`, and is fed into `rota::core::state_hash`. If it is left out of the hash, you
+   get silent desyncs later. Render-dirty flags are presentation state and the cycle ledger is
+   derived; neither is hashed.
 4. **Renumbering command IDs.** `CommandType` in `src/core/command.h` is a contract with
    GDScript. Add new IDs inside their domain range and never reuse or renumber one.
 5. **Two sources of truth.** Each fact has one authoritative array. Anything else (reverse
@@ -91,6 +92,12 @@ The tools work but aren't on PATH. Run these from the repo root:
   a seeded scenario and writes each country's yearly trajectory and the state hash to CSV. It
   prints the final year, and with `runs` above 1 it checks determinism (exit code 1 if runs
   diverge). A few hundred years takes milliseconds.
+- **Cycle harness** (for tuning the secular cycle): `py tools/cycle_harness/cycle.py run <name>
+  [--no-crises] [KNOB=VALUE ...]`, then `summary`, `compare` or `trace` on the run names. It
+  builds itself with g++, runs 4 seeds x 600 years in seconds, and reports the cycle's shape and
+  every population and elite flow by phase. Any `const Fixed64` in the cycle or civil-war source
+  is a knob; `knobs` lists them. With no knobs overridden, its printed hash must equal the
+  playtest runner's for the same seed and years.
 - **Standalone C++ tests:** each file in `tests/` has its compile line in its header (g++ from
   `C:/msys64/mingw64/bin`). Put binaries in the scratchpad, not the repo.
 - **MSVC (the game's compiler):** run `cl` from a shell set up by `"C:/Program Files
@@ -104,7 +111,8 @@ The tools work but aren't on PATH. Run these from the repo root:
 Prefer the checks that resemble play, in this order:
 
 1. **Run the playtest runner** over simulated years and read the trajectories. Try several
-   seeds, because behavior that only works on one seed isn't working.
+   seeds, because behavior that only works on one seed isn't working. For secular-cycle tuning,
+   use the cycle harness: read the flows before changing a rule, and check the crises-off run too.
 2. **Determinism:** run the runner with `runs=2` or more. For anything that touches commands or
    the tick loop, also boot the game headless.
 3. **Unit tests,** only for self-contained code with independently known answers. For example,

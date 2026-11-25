@@ -5,6 +5,7 @@
 #include "../countries/country_state.h"
 #include "../countries/location_politics.h"
 #include "../economy/location_economy.h"
+#include "../economy/cycle_ledger.h"
 #include "../economy/location_secular_cycle.h"
 #include "../time/calendar.h"
 #include "../time/synch_clock.h"
@@ -32,10 +33,14 @@ namespace rota::core {
         rota::countries::LocationPolitics location_politics;
         rota::economy::LocationEconomy location_economy;
         rota::economy::LocationSecularCycle location_secular_cycle;
+        rota::economy::CycleLedger cycle_ledger; // derived diagnostics, never hashed
 
         rota::time::Calendar calendar; 
         rota::time::SynchClock synch_clock; 
         
         void clear();
     };
+
+    // Every authoritative store, for desync checks
+    std::uint64_t state_hash(const World& world);
 }

@@ -142,6 +142,8 @@ struct CountryYear {
     Fixed64 unrest_gain;
 
     std::int64_t elites_after = 0;
+
+    CycleRecord record; // this year's flows, for the ledger
 };
 
 // Whole people from a fractional count: the fraction becomes one more person with that probability
@@ -223,9 +225,13 @@ void population_and_economy(const Pass& p) {
         Fixed64 t = std::clamp(rel - milli(500), ZERO, ONE);
         t = t * t * (Fixed64(3) - t * 2);
         const Fixed64 birth = std::max(MAX_BIRTH - (MAX_BIRTH - MIN_BIRTH) * t, MIN_BIRTH);
+        const Fixed64 natural_death = DEATH_BASE + CHILD_MORTALITY * birth;
         // beyond what security lets the land carry, famine and disease cull the surplus
-        const Fixed64 death = DEATH_BASE + CHILD_MORTALITY * birth + OVERSHOOT_MORTALITY * std::max(ZERO, rel - ONE);
-        eco.commoners[loc] = to_heads(heads(pop) + (birth - death) * pop, p.key(STREAM_POPULATION, loc), 0);
+        const Fixed64 overshoot_death = OVERSHOOT_MORTALITY * std::max(ZERO, rel - ONE);
+        eco.commoners[loc] = to_heads(heads(pop) + (birth - natural_death - overshoot_death) * pop, p.key(STREAM_POPULATION, loc), 0);
+        cy.record.births += birth * pop;
+        cy.record.natural_deaths += natural_death * pop;
+        cy.record.overshoot_deaths += overshoot_death * pop;
 
         const std::int64_t workers = workers_at(eco, loc);
         const std::int64_t elites = eco.elites[loc];
@@ -449,12 +455,16 @@ void crisis_effects_and_elites(const Pass& p, const rc::WarYear& war) {
         const Fixed64 positions = local_elite_positions(p.w, loc) + cy.state_share * p.control[loc] * elites_before;
 
         cyc.unrest[loc] = std::min(ONE, cyc.unrest[loc] + cy.unrest_gain);
+        const std::int64_t commoners = eco.commoners[loc];
         const Fixed64 commoner_keep = cy.commoner_keep * war.commoner_keep[loc];
         if (commoner_keep < ONE) {
-            eco.commoners[loc] = to_heads(commoner_keep * static_cast<std::int64_t>(eco.commoners[loc]),
-                p.key(STREAM_CRISIS_COMMONERS, loc), 0);
+            eco.commoners[loc] = to_heads(commoner_keep * commoners, p.key(STREAM_CRISIS_COMMONERS, loc), 0);
         }
         const Fixed64 elites = cy.elite_keep * war.elite_keep[loc] * elites_before;
+        cy.record.crisis_deaths += (ONE - cy.commoner_keep) * commoners;
+        cy.record.war_deaths += cy.commoner_keep * (ONE - war.commoner_keep[loc]) * commoners;
+        cy.record.elite_crisis_deaths += (ONE - cy.elite_keep) * elites_before;
+        cy.record.elite_war_deaths += cy.elite_keep * (ONE - war.elite_keep[loc]) * elites_before;
 
         // build by reproduction + upward mobility, clear by culling + downward mobility
         const Fixed64 e_biological = elites * legitimacy[c] * R_E_PREMIUM;
@@ -472,6 +482,9 @@ void crisis_effects_and_elites(const Pass& p, const rc::WarYear& war) {
 
         eco.elites[loc] = to_heads(elites + e_biological + e_mobility - e_attrition, p.key(STREAM_ELITES, loc), 1);
         cy.elites_after += eco.elites[loc];
+        cy.record.elite_births += e_biological;
+        if (e_mobility > ZERO) cy.record.promotions += e_mobility; else cy.record.demotions -= e_mobility;
+        cy.record.attrition += e_attrition;
     }
 }
 
@@ -543,6 +556,19 @@ void run_secular_cycle(rota::core::World& world) {
     }
     crisis_effects_and_elites(pass, war);
     each_country([&](CountryID c, CountryYear& cy) { phase(world, c, cy); });
+
+    world.cycle_ledger.countries.assign(slot_count, CycleRecord{});
+    each_country([&](CountryID c, CountryYear& cy) {
+        CycleRecord& r = cy.record;
+        r.wage = cy.wage_sum / cy.workers;
+        r.immiseration = cy.immiseration_sum / cy.workers;
+        r.security = cy.security_sum / cy.workers;
+        r.effective_unrest = cy.effective_unrest_sum / cy.workers;
+        r.overproduction = cy.overproduction;
+        r.felt_overproduction = cy.felt_overproduction;
+        r.army_shortfall = cy.army_shortfall;
+        world.cycle_ledger.countries[c] = r;
+    });
 }
 
 }
