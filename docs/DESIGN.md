@@ -179,8 +179,17 @@ sync clock; they agree on the sim's outcome by date.
 compiler. **Never add `__int128`, compiler-specific branches or floats to fixed-point math**: two
 paths means two answers, and the tests would only prove one of them. Both test files print a
 digest of their results; after any fixed-point change, run them under g++ *and* MSVC and confirm
-the digests match. Products wider than 64 bits take a slower long-division path (about 7× the
-common case); that is fine at yearly cadence.
+the digests match.
+
+**Keep hot-path products narrow.** Multiply and divide take a plain int64 path when the product
+fits in 64 bits, and the U128 path (with a 64-step long division) otherwise; both give the same
+exact result, so the choice is only about speed. Fine per country, ruinous per location: in the
+first cycle port, multiplying two headcounts as `Fixed64` sent ~6 operations per location-year down
+the long division and cost more than everything else combined. Keep headcounts as integers
+(`Fixed64 × int64` is one multiply), and form ratios before scaling. Likewise, don't evaluate a
+series (`exp`, `sqrt`) per location: sample the curve once with `fmath::SampledCurve`, and build
+that on first use, never during static init, because `fmath`'s constants live in another
+translation unit.
 
 ---
 
@@ -294,10 +303,17 @@ The game separates them (per `Planning/Rota Fortunae_ Civilizations.txt`):
   rates at zero, FinalSim never leaves fracture.
 - **Unowned land sits out** the cycle entirely until a country owns it.
 
-**Step order** keeps FinalSim's sequence. Countries are independent, so each one runs the whole
-year before the next (ascending `CountryID`; locations in ascending `LocationID`): population and
-economy per location → fiscal and legitimacy → unrest per location → crises → elites per location →
-phase. The one-year lags are the review-critical part: security, the army bill, collection and
+**Step order** keeps FinalSim's sequence as linear passes. Each location pass streams through the
+location arrays in `LocationID` order and reads or sums into its owner's row of a per-year
+`CountryYear` table. That table is small and hot, so a location's country fields sit together in
+one row instead of one array per field. The country steps run between the location passes, in
+ascending `CountryID`:
+
+population and economy (locations) → fiscal and legitimacy → unrest (locations) → crises →
+crisis effects and elites (locations) → phase.
+
+A year's crises fold into one factor per country, so each location is touched once for all of
+them. The one-year lags are the review-critical part: security, the army bill, collection and
 legitimacy read *last* year's `U_e`; fracture unrest reads last year's phase.
 
 **Units.** Population is in **whole people** at `LOCATION_CAPACITY` per location (FinalSim's cap of
@@ -320,8 +336,10 @@ stored remainder and no RNG stream whose call order matters. Crisis rolls use th
   instead (one person, for example).
 - Python's true division `/` and integer division `//` differ. `np.clip` becomes `std::clamp`.
 - **Checking the port against Python:** set the crisis rates to zero on both sides. That leaves
-  everything deterministic, and a country's yearly trajectory should then match FinalSim to four or
-  five significant figures. With crises on, compare statistics over many seeds (phase split,
+  everything deterministic, and a country's yearly trajectory should then track FinalSim closely:
+  population and elites to about four significant figures over the first two centuries, with
+  identical phases. Unrest is close to bang-bang, so near a sharp transition it can flip a year
+  early or late. With crises on, compare statistics over many seeds (phase split,
   period, population and elite ranges) instead, because the Python RNG differs.
 - Two traps from `Planning/limitations.md` still apply: population must approach carrying
   capacity, and suppression must not be so cheap that the crisis never fires.
