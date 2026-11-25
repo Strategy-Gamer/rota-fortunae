@@ -259,7 +259,8 @@ Choose the lightest storage that fits each store's churn (design-notes/05):
   each one's kind, terrain and scale, and the strait crossings. **The EU4 map has no consistent
   projection** (Europe is drawn large, South America squished), so each location carries its own
   metres per pixel in x and y, estimated from a local fit to known places; adjacency edges are in
-  km from those. **Only land is ever owned.** Sea is crossed, never
+  km from those. [`tools/eu4_import`](../tools/eu4_import/) writes both files from an EU4 install;
+  it and the EU4-derived data are temporary and go before release. **Only land is ever owned.** Sea is crossed, never
   held, and it stays in the adjacency graph so routes and fronts can cross water (Ireland, Corsica);
   impassable land is neither owned nor crossed. The world wraps east-west. Adjacency and kinds are
   map input like geometry (§6): not hashed, built in a fixed order.
