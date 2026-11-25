@@ -26,9 +26,9 @@ const Fixed64 SACK_ELITE_LOSS = milli(150);
 
 // Per war-year where the armies are, scaled by the place's effective unrest: fighting and foraging
 // are as fierce as the people there are mobilized
-const Fixed64 FRONT_COMMONER_LOSS = milli(80);
+const Fixed64 FRONT_COMMONER_LOSS = milli(40);
 const Fixed64 FRONT_SECURITY_LOSS = milli(300);
-const Fixed64 PILLAGE_COMMONER_LOSS = milli(30); // behind the rebels' lines, where their armies live off the land
+const Fixed64 PILLAGE_COMMONER_LOSS = milli(15); // behind the rebels' lines, where their armies live off the land
 
 const Fixed64 FRONT_TAKE = milli(500); // chance a front falls, times the enemy's share of strength
 

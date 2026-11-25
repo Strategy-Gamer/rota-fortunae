@@ -354,8 +354,7 @@ legitimacy read *last* year's `U_e`; fracture unrest reads last year's phase.
 security allows, but past it FinalSim's deaths don't rise, so an insecure, overfull country barely
 shrinks (about −0.1% a year). Its wage then stays low, commoners keep being promoted into the elite,
 and it settles into a permanent fracture. Deaths therefore rise with the population beyond that
-cap. That alone lets every country leave fracture with the crises off, at roughly the phase split
-the crises used to produce.
+cap. That alone lets every country leave fracture with the crises off.
 
 **Civil war on the map** ([`civil_war.cpp`](../src/countries/civil_war.cpp)). The civil-war crisis
 decides when a war starts and how long it may last; the map decides where it is fought. Rebels rise
@@ -371,9 +370,16 @@ Each war year:
   The crisis's cooldown leaves room for several wars in one fracture. If the crisis runs out first,
   the rebels' land returns (the hook for secession).
 
-Elite deaths are a small part of how a fracture clears: demotion, once the wage recovers, removes
-several times more. What shortens fracture is mostly commoner losses (the crises' and the war's),
-which raise the wage.
+**Cycle length** (retuned since the port). The target is the full cycle of about 150 years that
+England, France and Rome show, driven by population and elites together. A cycle near 80 years
+would mean elites alone drive it, and FinalSim's values gave about 90. So outside fracture, unrest
+builds only slowly from low wages and felt overproduction. Strain then lasts decades while the
+elites multiply, and ends when patronage drains the treasury and the unpaid army stops
+suppressing. Over a cycle the elites swing about threefold or more, toward the fourfold seen
+historically. Coups and the war's commoner losses were halved once the base cycle could leave
+fracture on its own. The crises still shorten fracture: a country runs about 140 years per cycle
+with them off and about 115 with them on. Elite deaths are a small part of how a fracture clears:
+demotion, once the wage recovers, removes several times more.
 
 **Units.** Population is in **whole people** at `LOCATION_CAPACITY` per location (FinalSim's cap of
 1). Absolute parameters (`army_base`, `mil_positions`) scale per unit of capacity, so apart from

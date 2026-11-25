@@ -84,8 +84,8 @@ const Fixed64 CRISIS_HAZARD_CAP = milli(500);
 const Fixed64 K_FAMINE = milli(60);
 const Fixed64 REVOLT_UNREST = milli(300);
 const Fixed64 CIVILWAR_CULL = milli(10);
-const Fixed64 COUP_CULL = milli(40);
-const Fixed64 COUP_LEGIT_SHOCK = milli(400);
+const Fixed64 COUP_CULL = milli(20);
+const Fixed64 COUP_LEGIT_SHOCK = milli(200);
 const Fixed64 WEARY_GAIN = milli(60);
 const Fixed64 WEARY_RELAX = milli(20);
 const Fixed64 WEARY_HIGH = milli(700);
@@ -323,7 +323,7 @@ void unrest(const Pass& p) {
         const Fixed64 felt = elites / (local_elite_positions(p.w, loc) + cy.state_share * p.control[loc] * elites); // local felt overproduction
         Fixed64 u = cyc.unrest[loc];
         if (!cy.fracture) {
-            u += milli(100) * (W0_TARGET - p.wage[loc]) + milli(100) * (felt - ONE);
+            u += milli(20) * (W0_TARGET - p.wage[loc]) + milli(15) * (felt - ONE); // slow, so strain can last decades
         } else {
             u += milli(50) + milli(100) * (W0_TARGET - p.wage[loc])
                 + milli(200) * (felt - (cyc.effective_unrest[loc] * 2 + milli(500)));
