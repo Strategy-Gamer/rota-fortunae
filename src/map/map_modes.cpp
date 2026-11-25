@@ -1,6 +1,7 @@
 #include "map/map_modes.h"
 
 #include "core/world.h"
+#include "countries/control.h"
 #include "economy/secular_cycle_system.h"
 
 #include <algorithm>
@@ -86,13 +87,14 @@ RGBImageData create_map_mode_palette(const rota::core::World& world, MapMode mod
             });
 
         case MapMode::EliteOverproduction: {
-            std::vector<std::int64_t> country_elites(world.countries.alive.size(), 0);
+            const std::vector<Fixed64> control = rota::countries::compute_control(world);
+            std::vector<Fixed64> reached_elites(world.countries.alive.size());
             for (LocationID loc = 0; loc < world.geography.location_count(); loc++) {
                 const CountryID owner = world.location_politics.get_owner(loc);
-                if (world.countries.is_valid(owner)) country_elites[owner] += eco.elites[loc];
+                if (world.countries.is_valid(owner)) reached_elites[owner] += control[loc] * static_cast<std::int64_t>(eco.elites[loc]);
             }
             return paint(world, [&](LocationID loc, CountryID c) {
-                const Fixed64 positions = rota::economy::elite_positions(world, loc, country_elites[c]);
+                const Fixed64 positions = rota::economy::elite_positions(world, loc, control[loc], reached_elites[c]);
                 const Fixed64 e = rota::economy::elite_overproduction_gauge(static_cast<std::int64_t>(eco.elites[loc]) / positions);
                 return ramp(e, rgb(0xF5, 0xF0, 0xE6), rgb(0xD2, 0x64, 0x00));
             });
@@ -102,6 +104,13 @@ RGBImageData create_map_mode_palette(const rota::core::World& world, MapMode mod
             return paint(world, [&](LocationID, CountryID c) {
                 return ramp(state.legitimacy[c], rgb(0x46, 0x28, 0x28), rgb(0x50, 0xBE, 0x8C));
             });
+
+        case MapMode::Control: {
+            const std::vector<Fixed64> control = rota::countries::compute_control(world);
+            return paint(world, [&](LocationID loc, CountryID) {
+                return ramp(control[loc], rgb(0xF2, 0xEC, 0xDC), rgb(0x1E, 0x46, 0x78));
+            });
+        }
 
         case MapMode::LocationColor:
         default: {

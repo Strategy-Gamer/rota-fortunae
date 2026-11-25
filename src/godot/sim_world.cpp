@@ -99,6 +99,7 @@ void SimWorld::_bind_methods() {
         { "MAP_POPULATION_PRESSURE", MapMode::PopulationPressure },
         { "MAP_ELITE_OVERPRODUCTION", MapMode::EliteOverproduction },
         { "MAP_LEGITIMACY", MapMode::Legitimacy },
+        { "MAP_CONTROL", MapMode::Control },
     };
     static_assert(sizeof(map_modes) / sizeof(map_modes[0]) == static_cast<std::size_t>(MapMode::Count), "bind every map mode");
     for (const auto& [name, mode] : map_modes) {
@@ -527,6 +528,7 @@ Dictionary SimWorld::get_location_summary(int location_id) const {
     d["unrest"]               = s.unrest.to_double();
     d["effective_unrest"]     = s.effective_unrest.to_double();
     d["security"]             = s.security.to_double();
+    d["control"]              = s.control.to_double();
     d["owner_country"]        = s.owner_country;
     return d;
 }

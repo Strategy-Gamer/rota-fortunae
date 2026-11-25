@@ -15,6 +15,7 @@ void Geography::clear() {
     kind.clear();
     neighbor_offset.clear();
     neighbors.clear();
+    neighbor_distance.clear();
 }
 
 }

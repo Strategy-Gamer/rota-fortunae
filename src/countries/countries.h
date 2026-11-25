@@ -1,5 +1,7 @@
 #pragma once
 
+#include "map/geography.h"
+
 #include <cstdint>
 #include <limits>
 #include <string>
@@ -34,6 +36,7 @@ struct CountryStore {
     std::vector<std::uint32_t> founded_year;
     std::vector<std::string> names;
     std::vector<std::uint32_t> display_color_rgb;
+    std::vector<rota::map::LocationID> capital; // always owned by the country, or INVALID_LOCATION_ID
     std::vector<std::uint32_t> location_count; // derived from owner_country
 
     // Not keyed by CountryID

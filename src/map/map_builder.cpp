@@ -1,6 +1,7 @@
 #include "map_builder.h"
 
 #include <algorithm>
+#include <cstdlib>
 #include <sstream>
 #include <stdexcept>
 #include <unordered_map>
@@ -17,6 +18,20 @@ std::uint32_t pack_rgb(
     return static_cast<std::uint32_t>(r) |
            (static_cast<std::uint32_t>(g) << 8U) |
            (static_cast<std::uint32_t>(b) << 16U);
+}
+
+// floor(sqrt(n)), digit by digit, so map distances are exact integers on every compiler
+std::uint32_t isqrt(std::uint64_t n) {
+    std::uint64_t root = 0;
+    for (std::uint64_t bit = std::uint64_t{ 1 } << 62U; bit != 0; bit >>= 2U) {
+        if (n >= root + bit) {
+            n -= root + bit;
+            root = (root >> 1U) + bit;
+        } else {
+            root >>= 1U;
+        }
+    }
+    return static_cast<std::uint32_t>(root);
 }
 
 // "#rrggbb" -> packed like display_color_rgb
@@ -252,6 +267,17 @@ void MapBuilder::build_adjacency(
     }
     for (std::uint32_t id = 0; id < count; ++id) {
         geography.neighbor_offset[id + 1] += geography.neighbor_offset[id];
+    }
+
+    geography.neighbor_distance.resize(edges.size());
+    for (LocationID id = 0; id < count; ++id) {
+        for (std::uint32_t i = geography.neighbor_offset[id]; i < geography.neighbor_offset[id + 1]; ++i) {
+            const LocationID other = geography.neighbors[i];
+            std::int64_t dx = std::abs(static_cast<std::int64_t>(geography.centroid_x[id]) - geography.centroid_x[other]);
+            dx = std::min<std::int64_t>(dx, width - dx); // across the east-west seam
+            const std::int64_t dy = static_cast<std::int64_t>(geography.centroid_y[id]) - geography.centroid_y[other];
+            geography.neighbor_distance[i] = isqrt(static_cast<std::uint64_t>(dx * dx + dy * dy));
+        }
     }
 }
 

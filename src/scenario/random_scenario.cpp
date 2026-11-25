@@ -65,6 +65,9 @@ void generate_random_scenario(
         rota::countries::set_location_owner(w, loc, countries[claim[loc]]);
         w.location_economy.commoners[loc] = start_commoners[claim[loc]];
     }
+    for (std::uint32_t i = 0; i < country_count; i++) {
+        w.countries.capital[countries[i]] = capitals[i];
+    }
 }
 
 }

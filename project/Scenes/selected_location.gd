@@ -20,6 +20,7 @@ func update_ui(selected_location: int):
 	$PanelContainer/VBoxContainer/Elites.text = "Elites: %d for %.0f positions (E %.2f)" % [summary.elites, summary.elite_positions, summary.elite_overproduction]
 	$PanelContainer/VBoxContainer/Density.text = "Density: %.2f of carrying capacity" % summary.population_density
 	$PanelContainer/VBoxContainer/Security.text = "Security: %.2f" % summary.security
+	$PanelContainer/VBoxContainer/Control.text = "Control: %.2f" % summary.control
 
 
 func _on_map_selection_changed(location_id: int) -> void:

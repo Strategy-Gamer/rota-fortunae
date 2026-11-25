@@ -2,6 +2,7 @@
 
 #include "core/rng.h"
 #include "core/world.h"
+#include "countries/control.h"
 #include "economy/economy_primitives.h"
 #include "utility/FixedMath.h"
 
@@ -114,6 +115,7 @@ struct CountryYear {
     std::int64_t locations = 0;
     std::int64_t workers = 0;
     std::int64_t elites = 0;
+    Fixed64 reached_elites; // elites weighted by control, who compete for the state's positions
     Fixed64 income;
     Fixed64 collected;
     Fixed64 unrest_burden; // last year's U_e x commoners
@@ -127,7 +129,7 @@ struct CountryYear {
     Fixed64 felt_overproduction; // elites over funded positions
     Fixed64 army_shortfall;
     Fixed64 suppression_per_worker;
-    Fixed64 state_share;         // state positions per elite, since they're nationally competitive
+    Fixed64 state_share;         // state positions per reached elite: nationally competitive, but the frontier is out of reach
     bool fracture = false;       // last year's phase, read by the unrest pass
 
     Fixed64 effective_unrest_sum;
@@ -184,6 +186,7 @@ struct Pass {
     rota::core::World& w;
     std::vector<CountryYear>& countries;
     std::vector<Fixed64>& wage; // per LocationID: Turchin's relative wage w
+    const std::vector<Fixed64>& control; // per LocationID, from this year's start
     std::uint64_t year;
 
     std::uint64_t key(std::uint64_t stream, std::uint64_t id) const {
@@ -243,8 +246,9 @@ void population_and_economy(const Pass& p) {
         cy.locations += 1;
         cy.workers += workers;
         cy.elites += elites;
+        cy.reached_elites += p.control[loc] * elites;
         cy.income += wealth;
-        cy.collected += wealth * (ONE - last_unrest * COLLECTION_UNREST);
+        cy.collected += wealth * (ONE - last_unrest * COLLECTION_UNREST) * p.control[loc];
         cy.unrest_burden += last_unrest * workers;
         cy.wage_sum += w * workers;
         cy.immiseration_sum += immiseration * workers;
@@ -285,7 +289,7 @@ void fiscal_and_legitimacy(rota::core::World& w, CountryID c, CountryYear& cy) {
 
     // felt overproduction is vs FUNDED positions: patronage placates the surplus until it goes unfunded
     state.state_positions[c] = MIL_POSITIONS * capacity + patronage_jobs;
-    cy.state_share = state.state_positions[c] / cy.elites;
+    cy.state_share = cy.reached_elites > ZERO ? state.state_positions[c] / cy.reached_elites : ZERO; // zero without a capital
     cy.felt_overproduction = cy.elites / (cy.baseline_positions + patronage_jobs);
     cy.fracture = state.phase[c] == rc::PHASE_FRACTURE;
 
@@ -313,7 +317,7 @@ void unrest(const Pass& p) {
         CountryYear& cy = p.countries[c];
 
         const std::int64_t elites = eco.elites[loc];
-        const Fixed64 felt = elites / (local_elite_positions(p.w, loc) + cy.state_share * elites); // local felt overproduction
+        const Fixed64 felt = elites / (local_elite_positions(p.w, loc) + cy.state_share * p.control[loc] * elites); // local felt overproduction
         Fixed64 u = cyc.unrest[loc];
         if (!cy.fracture) {
             u += milli(100) * (W0_TARGET - p.wage[loc]) + milli(100) * (felt - ONE);
@@ -323,7 +327,7 @@ void unrest(const Pass& p) {
             if (felt < milli(1100)) u -= milli(100);
         }
         cyc.unrest[loc] = std::clamp(u, ZERO, ONE);
-        cyc.effective_unrest[loc] = std::clamp(cyc.unrest[loc] - cy.suppression_per_worker, ZERO, ONE);
+        cyc.effective_unrest[loc] = std::clamp(cyc.unrest[loc] - cy.suppression_per_worker * p.control[loc], ZERO, ONE);
 
         cy.effective_unrest_sum += cyc.effective_unrest[loc] * workers_at(eco, loc);
     }
@@ -441,7 +445,7 @@ void crisis_effects_and_elites(const Pass& p) {
         // workers and positions as the economy and budget saw them, before this year's crises
         const std::int64_t workers = workers_at(eco, loc);
         const std::int64_t elites_before = eco.elites[loc];
-        const Fixed64 positions = local_elite_positions(p.w, loc) + cy.state_share * elites_before;
+        const Fixed64 positions = local_elite_positions(p.w, loc) + cy.state_share * p.control[loc] * elites_before;
 
         cyc.unrest[loc] = std::min(ONE, cyc.unrest[loc] + cy.unrest_gain);
         if (cy.commoner_keep < ONE) {
@@ -492,12 +496,12 @@ Fixed64 local_elite_positions(const rota::core::World&, LocationID) {
     return CULTIVATED_ELITE_OPPS * CAPACITY;
 }
 
-Fixed64 elite_positions(const rota::core::World& world, LocationID loc, std::int64_t country_elites) {
+Fixed64 elite_positions(const rota::core::World& world, LocationID loc, Fixed64 control, Fixed64 reached_country_elites) {
     const Fixed64 local = local_elite_positions(world, loc);
     const CountryID owner = world.location_politics.owner_country[loc];
-    if (!world.countries.is_valid(owner) || country_elites <= 0) return local;
+    if (!world.countries.is_valid(owner) || reached_country_elites <= ZERO) return local;
     const std::int64_t elites = world.location_economy.elites[loc];
-    return local + world.country_state.state_positions[owner] * elites / country_elites;
+    return local + world.country_state.state_positions[owner] * (control * elites / reached_country_elites);
 }
 
 Fixed64 population_pressure_gauge(std::int64_t commoners, std::int64_t capacity) {
@@ -516,7 +520,8 @@ void run_secular_cycle(rota::core::World& world) {
     const CountryID slot_count = static_cast<CountryID>(world.countries.alive.size());
     std::vector<CountryYear> countries(slot_count);
     std::vector<Fixed64> wage(world.geography.location_count());
-    const Pass pass{ world, countries, wage, world.calendar.get_year() };
+    const std::vector<Fixed64> control = rota::countries::compute_control(world);
+    const Pass pass{ world, countries, wage, control, world.calendar.get_year() };
 
     const auto each_country = [&](auto step) {
         for (CountryID c = 0; c < slot_count; c++) {

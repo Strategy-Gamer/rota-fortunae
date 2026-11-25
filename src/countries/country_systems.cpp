@@ -90,6 +90,9 @@ void set_location_owner(
 
     if (w.countries.is_valid(old_owner)) {
         w.countries.location_count[old_owner] -= 1;
+        if (w.countries.capital[old_owner] == location_id) {
+            w.countries.capital[old_owner] = rota::map::INVALID_LOCATION_ID;
+        }
     }
     if (w.countries.is_valid(country_id)) {
         w.countries.location_count[country_id] += 1;

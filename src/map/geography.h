@@ -36,6 +36,7 @@ struct Geography {
     // Includes sea and impassable locations, and straits between land across the water.
     std::vector<std::uint32_t> neighbor_offset;
     std::vector<LocationID> neighbors;
+    std::vector<std::uint32_t> neighbor_distance; // centroid to centroid in pixels, parallel to neighbors
 
     [[nodiscard]]
     std::uint32_t location_count() const noexcept {

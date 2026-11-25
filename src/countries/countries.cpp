@@ -23,6 +23,7 @@ CountryID CountryStore::allocate(
         founded_year.push_back(0);
         names.emplace_back();
         display_color_rgb.push_back(0);
+        capital.push_back(rota::map::INVALID_LOCATION_ID);
         location_count.push_back(0);
     }
 
@@ -45,6 +46,7 @@ void CountryStore::free(CountryID id) {
     founded_year[id] = 0;
     names[id].clear();
     display_color_rgb[id] = 0;
+    capital[id] = rota::map::INVALID_LOCATION_ID;
     location_count[id] = 0;
 
     free_list.push_back(id);
@@ -65,6 +67,7 @@ void CountryStore::clear() {
     founded_year.clear();
     names.clear();
     display_color_rgb.clear();
+    capital.clear();
     location_count.clear();
     free_list.clear();
     dead_countries.clear();
@@ -78,6 +81,7 @@ void CountryStore::feed_hash(rota::core::Hasher& h) const {
     for (size_t i = 0; i < slot_count; i++) h.feed(generation[i]);
     for (size_t i = 0; i < slot_count; i++) h.feed(founded_year[i]);
     for (size_t i = 0; i < slot_count; i++) h.feed(display_color_rgb[i]);
+    for (size_t i = 0; i < slot_count; i++) h.feed(capital[i]);
 
     // Order decides which slot the next country takes
     for (CountryID id : free_list) h.feed(id);

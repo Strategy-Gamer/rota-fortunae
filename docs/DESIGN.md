@@ -310,6 +310,15 @@ The game separates them (per `Planning/Rota Fortunae_ Civilizations.txt`):
   suppression ÷ the country's commoners), and **state positions** (military plus funded patronage)
   are split by each location's share of the country's elites, because they are nationally
   competitive.
+- **Control scales the state's reach** (not in FinalSim). Each location's control is
+  1 at its owner's capital and falls with effective distance: the shortest path over the owner's
+  land and the sea, where sea edges cost more and foreign or impassable land is never crossed
+  ([`control.cpp`](../src/countries/control.cpp)). Collection, the per-capita suppression a location
+  receives, and its elites' weight in the competition for state positions are all multiplied by
+  it, so the frontier pays less, is policed less and is shut out of the court. Control is
+  recomputed each year from ownership, capitals and the map; it is never stored. A capital is
+  always owned by its country: losing it leaves the country without one, and with no control
+  anywhere. Where the capital moves instead is undecided.
 - **Crises are per country.** One set of crises and one war-weariness lull per country; each
   crisis hits every owned location by the same fraction. They are **load-bearing**: with the crisis
   rates at zero, FinalSim never leaves fracture.
@@ -329,8 +338,9 @@ them. The one-year lags are the review-critical part: security, the army bill, c
 legitimacy read *last* year's `U_e`; fracture unrest reads last year's phase.
 
 **Units.** Population is in **whole people** at `LOCATION_CAPACITY` per location (FinalSim's cap of
-1). Absolute parameters (`army_base`, `mil_positions`) scale per unit of capacity, which keeps the
-model scale-invariant: a 100-location country behaves like a 1-location one. Fractional changes in
+1). Absolute parameters (`army_base`, `mil_positions`) scale per unit of capacity, so apart from
+control a 100-location country behaves like a 1-location one; control is the one deliberate
+penalty on size. Fractional changes in
 commoners and elites become whole people by **keyed stochastic rounding**: the fraction is added as
 one person with that probability, drawn from `keyed_hash(seed, year, stream, id)`. So there is no
 stored remainder and no RNG stream whose call order matters. Crisis rolls use the same keyed draws.
@@ -381,10 +391,10 @@ collapse mechanic is core, not stretch**.
 **Next, in order** (the cycle (§10) runs in every country, and the map modes and trajectory panel
 are in). Each step has to show on the map by itself:
 1. **Geography:** adjacency, land, sea and impassable locations, and routes across the sea, on the
-   EU4-based map; a stored capital per country; scenario countries that are contiguous.
-2. **Control:** effective distance from the capital (over land and across the sea) sets each
-   location's control, which weakens collection, suppression and access to state positions toward
-   the frontier. This deliberately ends the scale-invariance in §10.
+   EU4-based map; scenario countries that are contiguous.
+2. **Control:** a stored capital per country, and effective distance from it (over land and across
+   the sea) sets each location's control, which weakens collection, suppression and access to
+   state positions toward the frontier (§10).
 3. **Civil war on the map:** rebels hold the frontier and high-unrest locations, and elite deaths
    come from devastation where the two sides meet, replacing the cycle's uniform civil-war cull.
 4. **Breakaways:** a rebel side that wins with low control secedes as a new country (§9). This is
