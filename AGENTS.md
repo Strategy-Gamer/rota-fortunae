@@ -86,6 +86,11 @@ The tools work but aren't on PATH. Run these from the repo root:
 - **Run headless:**
   `"C:/Users/white/Documents/Godot/Godot_v4.5.1-stable_win64_console.exe" --headless --path project --quit-after <frames>`.
   Use the `_console` build so output reaches stdout.
+- **Playtest runner:** run the headless command above with `-s res://Tools/playtest.gd -- seed=0
+  countries=8 years=300 runs=2 out=<scratchpad>/run.csv` in place of `--quit-after`. It generates
+  a seeded scenario and writes each country's yearly trajectory and the state hash to CSV. It
+  prints the final year, and with `runs` above 1 it checks determinism (exit code 1 if runs
+  diverge). A few hundred years takes milliseconds.
 - **Standalone C++ tests:** each file in `tests/` has its compile line in its header (g++ from
   `C:/msys64/mingw64/bin`). Put binaries in the scratchpad, not the repo. g++ and the MSVC game
   build take different `Fixed64` code paths (`docs/DESIGN.md` §6), so a passing g++ test doesn't
@@ -95,9 +100,10 @@ The tools work but aren't on PATH. Run these from the repo root:
 
 Prefer the checks that resemble play, in this order:
 
-1. **Run the real game** headless over simulated years and read what it outputs: trajectories,
-   events, and the state hash.
-2. **Determinism:** the same scenario and seed, run twice, give the same hash at the same tick.
+1. **Run the playtest runner** over simulated years and read the trajectories. Try several
+   seeds, because behavior that only works on one seed isn't working.
+2. **Determinism:** run the runner with `runs=2` or more. For anything that touches commands or
+   the tick loop, also boot the game headless.
 3. **Unit tests,** only for self-contained code with independently known answers. For example,
    `FixedMath` is checked against `<cmath>`.
 

@@ -149,6 +149,14 @@ by the `Game` autoload: `execute_command`, `step_tick`, `get_state_hash`, `take_
 read-only queries. `GameSession` drives *when*; `SimWorld` owns *what happens*. This is note 01's
 "SimulationBackend" and note 02's "bridge". They are **the same seam**, so don't build two.
 
+**The playtest runner shares the game's sim path.** `project/Tools/playtest.gd` builds a
+`SimWorld` from the same map image and the same seeded scenario generator. It then skips the clock
+with `advance_years`, which keeps the day loop in C++. The game ticks through `on_tick`. Both
+step through `TimeProgression::advance_day`, so **all per-day sim logic belongs in
+`advance_day`**. Anything placed in `on_tick` around it would run in the game but not in the
+runner. The game and the runner can't be compared by hash, because the runner never advances the
+sync clock; they agree on the sim's outcome by date.
+
 ---
 
 ## 6. Determinism & the fixed-point line
@@ -246,8 +254,9 @@ Choose the lightest storage that fits each store's churn (design-notes/05):
   authority. Sibling per-country stores keep no free list of their own; the create and destroy
   systems reset them in lockstep.
   - **Destruction is deferred:** systems *mark* a country, and the tick driver sweeps marked
-    countries at the very end of the tick. No system ever sees a slot freed mid-loop. Destroying a
-    country unowns its land and archives it in an append-only, unhashed `DeadCountryRecord` list.
+    countries after each day's systems have run. No system ever sees a slot freed mid-loop.
+    Destroying a country unowns its land and archives it in an append-only, unhashed
+    `DeadCountryRecord` list.
   - **Reviving** allocates a *fresh* slot from an archived record, since the old ID may already be
     reused. The old record stays in the archive as history.
 - **The first high-churn store** (pops, units, transient orders) is where the full kit earns its
@@ -319,16 +328,15 @@ collapse mechanic is core, not stretch**.
 5. The player can issue **2–3 real commands** that visibly nudge the cycle.
 
 **Next, in order:**
-1. **Headless playtest runner:** a scenario and seed in; per-country trajectories plus the state
-   hash per year out. It's what makes tuning and verification fast for everything below.
-2. **Port the cycle:** economy primitives, the per-location stores, per-country state, aggregation,
-   then the cycle system, following §10. Start with one location per country.
-3. **Collapse made visible:** crossing an unrest/cohesion threshold triggers a collapse event on the
+1. **Port the cycle:** economy primitives, the per-location stores, per-country state, aggregation,
+   then the cycle system, following §10. Start with one location per country, and extend the
+   runner's CSV with the cycle's gauges as they appear.
+2. **Collapse made visible:** crossing an unrest/cohesion threshold triggers a collapse event on the
    map (fragmentation, anarchy or elite purge), built on the lifecycle systems in §9. Then crises
    (famine, revolt, civil war, coup) with seeded RNG.
-4. **Many countries at once**, plus shallow AI (let the model drive, with a few automated reactions
+3. **Many countries at once**, plus shallow AI (let the model drive, with a few automated reactions
    such as raising taxes under fiscal stress) and 2–3 player commands.
-5. **Watchable:** sim-driven map modes, a trajectory panel, pacing tuned so a cycle reads in
+4. **Watchable:** sim-driven map modes, a trajectory panel, pacing tuned so a cycle reads in
    minutes.
 
 **If ahead, pull in first:** (1) **terrain** (terrain, rivers, elevation), because the map is the
@@ -350,8 +358,11 @@ migration) · partial-map re-evaluation on territory change.
 - **MSVC fixed-point fallback** (§6).
 - **Sim systems include the Godot bridge header** (`sim_world.h`) only for render-dirty bits. This
   pulls godot-cpp into code that should be pure C++, and blocks compiling the sim without Godot.
-- **`SimWorld::create_country` mutates state directly from GDScript** (test-country setup). This
-  violates §1. Scenario loading should replace it.
+  The runner doesn't need that fixed (it runs inside Godot); a native C++ runner or C++ tests would.
+- **No land/sea distinction.** Sea zones are ordinary locations, so the random scenario hands them
+  to countries and the economy grows population on them. This needs terrain data.
+- **Scenarios are random only.** Authored scenarios (a fixed start date, chosen countries and
+  borders) don't exist yet.
 
 ## 13. Explicitly NOT now (guard against scope creep)
 
