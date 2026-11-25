@@ -116,7 +116,7 @@ void SimWorld::_bind_methods() {
     static_assert(rc::CRISIS_COUNT == 3, "bind every crisis type");
 
     // Method Binds
-    ClassDB::bind_method( D_METHOD("build_from_image", "image"), &SimWorld::build_from_image);
+    ClassDB::bind_method( D_METHOD("build_from_image", "image", "location_data", "strait_data"), &SimWorld::build_from_image);
 
     ClassDB::bind_method(D_METHOD("clear"), &SimWorld::clear);
 
@@ -233,8 +233,9 @@ bool SimWorld::is_paused(){
 }
 
 bool SimWorld::generate_random_scenario(int seed, int country_count) {
-    const int location_count = static_cast<int>(world.geography.location_count());
-    if (world.countries.count() != 0 || country_count < 1 || country_count > location_count) {
+    const auto& kinds = world.geography.kind;
+    const auto land_count = std::count(kinds.begin(), kinds.end(), rota::map::LocationKind::Land);
+    if (world.countries.count() != 0 || country_count < 1 || country_count > land_count) {
         return false;
     }
 
@@ -336,7 +337,7 @@ bool SimWorld::validate_country_id(
     );
 }
 
-void SimWorld::build_from_image(const Ref<Image>& image) {
+void SimWorld::build_from_image(const Ref<Image>& image, const String& location_data, const String& strait_data) {
     if (image.is_null() || image->is_empty()) {
         UtilityFunctions::push_error(
             "SimWorld received an empty image."
@@ -359,13 +360,18 @@ void SimWorld::build_from_image(const Ref<Image>& image) {
             static_cast<std::uint32_t>(image->get_width()),
             static_cast<std::uint32_t>(image->get_height()),
             godot_bytes.ptr(),
-            static_cast<std::size_t>(godot_bytes.size())
+            static_cast<std::size_t>(godot_bytes.size()),
+            rota::map::MapBuilder::parse_location_data(
+                location_data.utf8().get_data(),
+                strait_data.utf8().get_data()
+            )
         );
         uint32_t location_count = world.geography.location_count();
         world.location_politics.initialize(location_count);
         world.location_economy.initialize(location_count);
         world.location_secular_cycle.initialize(location_count);
     } catch (const std::exception& exception) {
+        world.geography.clear(); // so is_loaded() doesn't report a half-built map
         UtilityFunctions::push_error(exception.what());
     }
 }

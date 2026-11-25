@@ -4,7 +4,7 @@ class_name GameMap
 # Node that holds all logic pertaining to the map, including rendering, data management, etc.
 # This class functions as a controller for map-related functionality.
 
-const DEFAULT_MAP_PATH := "res://MapData/uk_eu5.png"
+const DEFAULT_MAP_PATH := "res://MapData/provinces.png"
 
 @export var sim_world: SimWorld
 @onready var map_renderer: MapRenderer = $MapRenderer
@@ -88,7 +88,7 @@ func load_map(hex_map_path) -> void:
 
 	# Process hex_image
 	t0 = Time.get_ticks_usec()
-	sim_world.build_from_image(hex_image)
+	sim_world.build_from_image(hex_image, read_sidecar(hex_map_path, "_locations.txt"), read_sidecar(hex_map_path, "_straits.txt"))
 	
 	t1 = Time.get_ticks_usec()
 	print(
@@ -116,6 +116,10 @@ static func load_map_image(path: String) -> Image:
 	if image.get_format() != Image.FORMAT_RGB8:
 		image.convert(Image.FORMAT_RGB8)
 	return image
+
+# Text of the data file beside a map image (provinces.png -> provinces_locations.txt). Empty if there is none.
+static func read_sidecar(map_path: String, suffix: String) -> String:
+	return FileAccess.get_file_as_string(map_path.get_basename() + suffix)
 
 func on_render_dirty(mask: int):
 	if mask != 0:

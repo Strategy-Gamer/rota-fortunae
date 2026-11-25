@@ -15,6 +15,8 @@ constexpr std::uint32_t rgb(std::uint32_t r, std::uint32_t g, std::uint32_t b) {
 }
 
 constexpr std::uint32_t UNOWNED_COLOR = rgb(0x50, 0x50, 0x50);
+constexpr std::uint32_t SEA_COLOR = rgb(0x2E, 0x4A, 0x6E);
+constexpr std::uint32_t IMPASSABLE_COLOR = rgb(0x2A, 0x26, 0x22);
 
 // Phase colors follow the Planning plots: prosperity green, strain yellow, fracture red
 constexpr std::uint32_t PHASE_COLORS[] = { rgb(0x3C, 0xA0, 0x46), rgb(0xE6, 0xC8, 0x32), rgb(0xC8, 0x32, 0x28) };
@@ -37,7 +39,7 @@ std::uint32_t ramp(Fixed64 value, std::uint32_t low, std::uint32_t high) {
     return out;
 }
 
-// Calls color(location, owner) for owned land and paints unowned land gray
+// Calls color(location, owner) for owned land; paints unowned land, sea and impassable land flat
 template <typename F>
 RGBImageData paint(const rota::core::World& world, F color) {
     RGBImageData result;
@@ -47,7 +49,12 @@ RGBImageData paint(const rota::core::World& world, F color) {
 
     for (LocationID loc = 0; loc < result.width; loc++) {
         const rota::countries::CountryID owner = world.location_politics.get_owner(loc);
-        const std::uint32_t packed = world.countries.is_valid(owner) ? color(loc, owner) : UNOWNED_COLOR;
+        std::uint32_t packed;
+        switch (world.geography.kind[loc]) {
+            case LocationKind::Sea: packed = SEA_COLOR; break;
+            case LocationKind::Impassable: packed = IMPASSABLE_COLOR; break;
+            default: packed = world.countries.is_valid(owner) ? color(loc, owner) : UNOWNED_COLOR;
+        }
         write_rgb24(result.bytes, static_cast<std::size_t>(loc) * 3, packed);
     }
     return result;

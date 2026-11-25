@@ -23,7 +23,7 @@ void generate_random_scenario(
     std::vector<rota::map::LocationID> capitals;
     while (capitals.size() < country_count) {
         const rota::map::LocationID loc = rng.below(location_count);
-        if (std::find(capitals.begin(), capitals.end(), loc) == capitals.end()) {
+        if (w.geography.is_land(loc) && std::find(capitals.begin(), capitals.end(), loc) == capitals.end()) {
             capitals.push_back(loc);
         }
     }
@@ -41,6 +41,8 @@ void generate_random_scenario(
     }
 
     for (rota::map::LocationID loc = 0; loc < location_count; loc++) {
+        if (!w.geography.is_land(loc)) continue;
+
         std::uint32_t nearest = 0;
         std::int64_t nearest_dist = std::numeric_limits<std::int64_t>::max();
 

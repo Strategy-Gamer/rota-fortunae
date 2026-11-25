@@ -16,7 +16,8 @@ func _init() -> void:
 	var runs: int = args.get("runs", "1").to_int()
 	var out_path: String = args.get("out", "")
 
-	var image := GameMap.load_map_image(args.get("map", GameMap.DEFAULT_MAP_PATH))
+	var map_path: String = args.get("map", GameMap.DEFAULT_MAP_PATH)
+	var image := GameMap.load_map_image(map_path)
 	if image.is_empty():
 		quit(1)
 		return
@@ -27,7 +28,7 @@ func _init() -> void:
 	var exit_code := 0
 	for run in runs:
 		var t0 := Time.get_ticks_usec()
-		var hashes := _run(image, seed, countries, years, out_path if run == 0 else "", run == 0)
+		var hashes := _run(image, map_path, seed, countries, years, out_path if run == 0 else "", run == 0)
 		print("run %d: %d ms, final hash %d" % [run, (Time.get_ticks_usec() - t0) / 1000, hashes.back() if not hashes.is_empty() else 0])
 
 		if hashes.is_empty():
@@ -47,9 +48,9 @@ func _init() -> void:
 	quit(exit_code)
 
 # Returns the state hash for the start and after every year; empty if the scenario couldn't be built.
-func _run(image: Image, seed: int, countries: int, years: int, out_path: String, report: bool) -> Array:
+func _run(image: Image, map_path: String, seed: int, countries: int, years: int, out_path: String, report: bool) -> Array:
 	var world := SimWorld.new()
-	world.build_from_image(image)
+	world.build_from_image(image, GameMap.read_sidecar(map_path, "_locations.txt"), GameMap.read_sidecar(map_path, "_straits.txt"))
 	if not world.generate_random_scenario(seed, countries):
 		push_error("Could not generate a scenario with %d countries" % countries)
 		world.free()

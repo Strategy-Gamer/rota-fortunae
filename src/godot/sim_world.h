@@ -20,7 +20,8 @@ public:
     SimWorld() = default;
     ~SimWorld() override = default;
 
-    void build_from_image(const Ref<Image>& image);
+    // The data texts are the map's sidecar files (see MapBuilder::parse_location_data); empty means all land
+    void build_from_image(const Ref<Image>& image, const String& location_data, const String& strait_data);
     void clear();
 
     // False if a payload field isn't an int or bool, or the command is illegal

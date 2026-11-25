@@ -102,6 +102,7 @@ bool cmd_set_location_owner(rota::core::World& world, int actor_civ, const Paylo
     }
 
     if(!world.countries.is_valid(static_cast<rota::countries::CountryID>(*country_id))) return false;
+    if(!world.geography.is_land(static_cast<rota::map::LocationID>(*location_id))) return false;
 
     rota::countries::set_location_owner(
         world,

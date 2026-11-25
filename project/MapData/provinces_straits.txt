@@ -1,0 +1,108 @@
+from;to;name
+#af3ac0;#003f8c;Majorca-Minorca
+#76f14e;#af3ac0;Ibiza-Majorca
+#347c40;#e3107c;Canaries
+#002c40;#013880;Skåne-Sjaelland
+#013880;#023cff;Sjaelland-Fyn
+#023cff;#c6db39;Fyn-Aarhus
+#023cff;#2cb82c;Fyn-Kolding
+#023cff;#6400e8;Fyn-Lolland
+#013880;#6400e8;Sjaelland-Lolland
+#9196c0;#1198ff;Calabria-Messina
+#954e40;#2d9840;Thrace-Bithynia
+#8b3a4f;#8f7ead;Menominee-Michigan
+#802240;#ed9a4f;Stockholm-Åland
+#ed9a4f;#835680;Åland-Finland
+#143c80;#1440ff;Janina-Corfu
+#a4302f;#c7824f;Janina-Achaea
+#144440;#1768ff;Athens-Naxos
+#7c0aa2;#d14499;Gallipoli-Biga
+#e77f2b;#a49ac0;Sutherland-Western Isles
+#eccb16;#a49ac0;Inner Hebrides-Outer Hebrides
+#eccb16;#e77f2b;Inner Hebrides-Sutherland
+#eccb16;#d47638;Inner Hebrides-Argyll
+#e77f2b;#b482ff;Sutherland-Orkney
+#8d6280;#0e6800;Holland-Friesland
+#0d6040;#543c7e;Zeeland-Gent
+#9a8ead;#cd5ead;Suo-Chikuzen
+#198820;#a4d39c;Bungo-Iyo
+#a4d39c;#4e6c7e;Aki-Iyo
+#402ca0;#5f5440;Jiangmen-Hainan
+#056840;#856600;Estland-Ösel
+#856600;#856eff;Ösel-Kurland
+#d54a80;#587800;Johor-Siak
+#de46ff;#30377f;Riau-Palembang
+#13347e;#057020;Nootka-Salish
+#13347e;#9336ad;Nootka-Squamish
+#13347e;#143820;Nootka-Kwakiutl
+#aa1fc4;#154820;Acadia-Unamakik
+#205ae1;#954a4f;Piktuk-Epagoitgnag
+#9766ad;#9546ad;Chisedek-Taqamkuk
+#1e5020;#f57806;Deren-Nanghaer
+#b69a4f;#b72680;Tajura-Mocha
+#108080;#47847e;Venice-Treviso
+#078cff;#cf2a13;Stade-Dithmarschen
+#cd624f;#9a96ad;Awa-Settsu
+#e33636;#66b391;Oshima-Mutsu
+#1c2c7e;#d2224f;Kurils-Tokachi
+#b47a4f;#b47ead;Bagamoyo-Zanzibar
+#bb5a4f;#929e80;Corsica-Sardinia
+#3834ff;#383840;Al Hasa-Bahrain
+#b83600;#383840;Qatar-Bahrain
+#874d7d;#68c498;Zamboanga-Buglas
+#5d3cff;#ff4b42;Samar-Bikol
+#5c30c0;#dc32ff;Halmahera-Ternate
+#5c30c0;#5c3400;Halmahera-Tidore
+#a7424f;#ba8b00;Taranaki-Waitaha
+#6c9d40;#2d9cc0;Chios-Sugla
+#89160c;#d14499;Lesbos-Biga
+#a85a00;#e42b2b;Kaffa-Mapa
+#9b0578;#143c7e;Haida-Tlingit
+#c5c52e;#b2035f;Odawa-Okouara
+#c5c52e;#976ead;Odawa-Soto
+#1a035f;#5979f6;Mingan-Anticosti
+#a392ff;#b9f1ca;Ayrshire-Ulster
+#4c5040;#c37b79;Madurai-Vanni
+#c2eb00;#478c80;Orinoco Delta-Trinidad
+#478800;#c786ff;St Vincent-St Lucia
+#c786ff;#4784c0;St Lucia-Martinique
+#4784c0;#c78280;Martinique-Dominica
+#468040;#c67e00;Guadalupe-Antigua
+#c67e00;#467cff;Antigua-St Kits
+#5988c0;#d843c9;Surabaya-Madura
+#da8e40;#68105b;Bali-Lombok
+#68105b;#5a9080;Lombok-Sumbawa
+#5a9080;#da92c0;Sumbawa-Flores
+#da92c0;#6b4264;Flores-East Timor
+#89ff7c;#ed6351;Buton-Kendari
+#c5ff35;#68c498;Cebu-Panay
+#592391;#f8f5ac;Leyte-Caraga
+#c5ff35;#9a56d4;Panay-Mindoro
+#c9a71d;#9a56d4;Taytay-Mindoro
+#5c2c40;#dc2e80;Ambom-Ceram
+#d67183;#587c80;Banka-Palembang
+#2cd638;#96288e;Bintan-Johor
+#a6133c;#b82cdb;Para-Marajo
+#6a78c0;#b82cdb;Belem-Marajo
+#8b3a4f;#c5c52e;Belem-Marajo
+#1d3b9f;#b262c0;Djerba-Tataouine
+#bd7e40;#ff5acb;Mogostan-Hormuz
+#383cc0;#ff5acb;Qawasim-Hormuz
+#144440;#bc6edc;Athens - Euboea
+#bc6edc;#1768ff;Euboea - Cyclades
+#845e40;#719900;Savolax - Kuusamo
+#c356ad;#206440;Ceuta-Gibraltar
+#592391;#dba858;Leyte-Cebu
+#68c498;#dba858;Buglas-Cebu
+#a4302f;#df0099;Arta-Cephalonia
+#56c261;#867e80;Rügen-Stralsund
+#f8f59d;#0680c0;Wolgast-Kolberg
+#5d6b25;#e58b61;Tiwi-Woolna
+#3a4c7e;#d20a01;Hawaii-Maui
+#d20a01;#d22829;Maui-Oahu
+#d22829;#d24651;Oahu-Kauai
+#d232a1;#d21479;Vanua Levu-Lau
+#d21479;#3ab420;Lau-Viti Levu
+#3ab420;#d232a1;Vitu Levu-Vanua Levu
+#a49a4f;#381453;Wurundjeri-Peerapper
+#da8e40;#d98680;Bali-Blambangan

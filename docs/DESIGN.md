@@ -254,7 +254,12 @@ command contract (§4.2) well-defined.
 
 Choose the lightest storage that fits each store's churn (design-notes/05):
 
-- **Locations: stable, never deleted.** A plain SoA vector indexed by `LocationID`.
+- **Locations: stable, never deleted.** A plain SoA vector indexed by `LocationID`. They come
+  from the map image, and two files beside it (`<map>_locations.txt`, `<map>_straits.txt`) give
+  each one's kind and the strait crossings. **Only land is ever owned.** Sea is crossed, never
+  held, and it stays in the adjacency graph so routes and fronts can cross water (Ireland, Corsica);
+  impassable land is neither owned nor crossed. The world wraps east-west. Adjacency and kinds are
+  map input like geometry (§6): not hashed, built in a fixed order.
 - **Countries: low churn, stable IDs.** Countries rise, fall and fragment, but they are few, their
   rows are wide, and they are referenced **by ID-as-index** (`owner_country[loc]` indexes the
   country arrays). So:
@@ -401,8 +406,6 @@ migration) · partial-map re-evaluation on territory change.
 
 - **Border shader never wired to `id_tex`.** Borders are unrendered. Bundle this with the map-mode
   cleanup.
-- **No land/sea distinction.** Sea zones are ordinary locations, so the random scenario hands them
-  to countries and the economy grows population on them. This needs terrain data.
 - **Scenarios are random only.** Authored scenarios (a fixed start date, chosen countries and
   borders) don't exist yet.
 

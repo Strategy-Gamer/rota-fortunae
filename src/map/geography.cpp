@@ -12,6 +12,9 @@ void Geography::clear() {
     area.clear();
     centroid_x.clear();
     centroid_y.clear();
+    kind.clear();
+    neighbor_offset.clear();
+    neighbors.clear();
 }
 
 }

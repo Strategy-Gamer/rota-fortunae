@@ -1,0 +1,3926 @@
+color;name;kind
+#802240;Stockholm;land
+#002480;Östergötland;land
+#8026c0;Småland;land
+#0028ff;Bergslagen;land
+#802a00;Värmland;land
+#002c40;Skåne;land
+#812e80;Västergötland;land
+#0130c0;Dalaskogen;land
+#8132ff;Hälsingland;land
+#013400;Jämtland;land
+#813640;Västerbotten;land
+#013880;Sjælland;land
+#813ac0;Slesvig;land
+#023cff;Fyn;land
+#823e00;Midtjylland;land
+#024040;Bohuslän;land
+#824280;Akershus;land
+#0244c0;Umeå;land
+#8246ff;Österbotten;land
+#024800;Trøndelag;land
+#834a40;Hålogaland;land
+#034c80;Oplandene;land
+#834ec0;Bergenshus;land
+#0350ff;Stavanger;land
+#835200;Gotland;land
+#035440;Halland;land
+#835680;Finland;land
+#0458c0;Nyland;land
+#845aff;Tavastland;land
+#045c00;Viborg;land
+#845e40;Savolax;land
+#046080;Kexholm;land
+#8462c0;Neva;land
+#0464ff;Ingermanland;land
+#856600;Ösel;land
+#056840;Estland;land
+#856a80;Livland;land
+#056cc0;Riga;land
+#856eff;Kurland;land
+#057000;Memel;land
+#857240;Ostpreussen;land
+#067480;Warmia;land
+#8676c0;Danzig;land
+#0678ff;Hamburg;land
+#867a00;Lübeck;land
+#067c40;Mecklenburg;land
+#867e80;Stralsund;land
+#0680c0;Kolberg;land
+#8782ff;Neumark;land
+#078400;Berlin;land
+#878640;Ruppin;land
+#078880;Magdeburg;land
+#878ac0;Lüneburg;land
+#078cff;Bremen;land
+#878e00;Oldenburg;land
+#089040;Osnabrück;land
+#889280;Hannover;land
+#0894c0;Anhalt;land
+#8896ff;Meissen;land
+#089800;Lausitz;land
+#889a40;Dresden;land
+#089c80;Leipzig;land
+#899ec0;Erfurt;land
+#0920ff;Niederbayern;land
+#892200;München;land
+#092440;Bamberg;land
+#892680;Franken;land
+#0928c0;Memmingen;land
+#892aff;Konstanz;land
+#0a2c00;Württemberg;land
+#8a2e40;Leiningen;land
+#0a3080;Breisgau;land
+#8a32c0;Tirol;land
+#0a34ff;Baden;land
+#8a3600;Elsass;land
+#0a3840;Salzburg;land
+#8b3a80;Worms;land
+#0b3cc0;Pfalz;land
+#8b3eff;Würzburg;land
+#0b4000;Trier;land
+#8b4240;Hessen;land
+#0b4480;Lippe;land
+#8b46c0;Nassau;land
+#0c48ff;Berg;land
+#8c4a00;Köln;land
+#0c4c40;Münster;land
+#8c4e80;Calais;land
+#0c50c0;Artois;land
+#8c52ff;Picardie;land
+#0c5400;Vlaanderen;land
+#8d5640;Hainault;land
+#0d5880;Brabant;land
+#8d5ac0;Liège;land
+#0d5cff;Luxemburg;land
+#8d5e00;Noord;land
+#0d6040;Zeeland;land
+#8d6280;Holland;land
+#0e64c0;Utrecht;land
+#8e66ff;Gelre;land
+#0e6800;Friesland;land
+#8e6a40;Liguria;land
+#0e6c80;Nice;land
+#555020;Niklas;land
+#0e70ff;Lombardia;land
+#8f7200;Parma;land
+#0f7440;Modena;land
+#8f7680;Brescia;land
+#0f78c0;Verona;land
+#8f7aff;Mantua;land
+#0f7c00;Trent;land
+#8f7e40;Friuli;land
+#108080;Venezia;land
+#9082c0;Ferrara;land
+#1084ff;Romagna;land
+#908600;Pisa;land
+#108840;Firenze;land
+#908a80;Siena;land
+#108cc0;Roma;land
+#918eff;Ancona;land
+#119000;Abbruzzi;land
+#919240;Napoli;land
+#119480;Apulia;land
+#9196c0;Calabria;land
+#1198ff;Messina;land
+#919a00;Palermo;land
+#129c40;Malta;land
+#929e80;Sardinia;land
+#1220c0;Kärnten;land
+#9222ff;Krain;land
+#122400;Istria;land
+#922640;Croatia;land
+#122880;Steiermark;land
+#932ac0;Linz;land
+#132cff;Wien;land
+#932e00;Sopron;land
+#133040;Dalmatia;land
+#933280;Ragusa;land
+#1334c0;Zeta;land
+#9336ff;Hum;land
+#143800;Bosnia;land
+#943a40;Serbia;land
+#143c80;Corfu;land
+#943ec0;Albania;land
+#1440ff;Janina;land
+#944200;Morea;land
+#144440;Athens;land
+#954680;Salonica;land
+#1548c0;Macedonia;land
+#954aff;Edirne;land
+#154c00;Bulgaria;land
+#954e40;Thrace;land
+#155080;Slavonia;land
+#9552c0;Pecs;land
+#1654ff;Ersekujvar;land
+#965600;Szolnok;land
+#165840;Banat;land
+#965a80;Partium;land
+#165cc0;Transylvania;land
+#965eff;Silistria;land
+#166000;Oltenia;land
+#976240;Wallachia;land
+#176480;Carpathia;land
+#9766c0;Crete;land
+#1768ff;Naxos;land
+#976a00;Bern;land
+#176c40;Schwyz;land
+#976e80;Caux;land
+#1870c0;Normandie;land
+#9872ff;Armor;land
+#187400;Finistère;land
+#987640;Morbihan;land
+#187880;Vendée;land
+#987ac0;Labourd;land
+#187cff;Gascogne;land
+#997e00;Armagnac;land
+#198040;Béarn;land
+#998280;Maine;land
+#1984c0;Anjou;land
+#9986ff;Berry;land
+#198800;Poitou;land
+#998a40;Valenciennes;land
+#1a8c80;Vermandois;land
+#9a8ec0;Île-de-France;land
+#1a90ff;Orléannais;land
+#93deda;Nemours;land
+#1a9440;Champagne;land
+#9a9680;Barrois;land
+#1a98c0;Metz;land
+#9b9aff;Lothringen;land
+#1b9c00;Bourbon;land
+#9b9e40;Nevers;land
+#1b2080;Bourgogne;land
+#9b22c0;Franche-Comté;land
+#1b24ff;Périgord;land
+#9b2600;Limousin;land
+#1c2840;Toulouse;land
+#9c2a80;Roussillon;land
+#1c2cc0;Rouergue;land
+#9c2eff;Auvergne;land
+#1cf800;Languedoc;land
+#9c3240;Toulon;land
+#1c3480;Avignon;land
+#9d36c0;Lyonnais;land
+#1d38ff;Dauphiné;land
+#9d3a00;Savoie;land
+#1d3c40;Galicia;land
+#9d3e80;Asturias;land
+#1d40c0;León;land
+#9d42ff;Vizcaya;land
+#1e4400;Navarra;land
+#9e4640;Pirineo;land
+#1e4880;Girona;land
+#9e4ac0;Barcelona;land
+#1e4cff;Zaragoza;land
+#9e4e00;Castilla La Vieja;land
+#1e5040;Salamanca;land
+#9f5280;Madrid;land
+#1f54c0;Badajoz;land
+#9f56ff;Toledo;land
+#1f5800;València;land
+#9f5a40;Murcia;land
+#1f5c80;Almería;land
+#9f5ec0;Granada;land
+#2060ff;Andalucía;land
+#a06200;Córdoba;land
+#206440;Gibraltar;land
+#a06680;Lisboa;land
+#2068c0;Beira;land
+#a06aff;Beja;land
+#206c00;Algarve;land
+#a16e40;Porto;land
+#217080;Bragança;land
+#a6cb5d;Cornwall;land
+#2174ff;Wessex;land
+#a17600;Kent;land
+#217840;London;land
+#a17a80;Oxfordshire;land
+#227cc0;Essex;land
+#a27eff;Gloucestershire;land
+#228000;Shrewsbury;land
+#a28240;Glamorgan;land
+#228480;Gwynedd;land
+#a286c0;Lincoln;land
+#2288ff;Lancashire;land
+#a38a00;Yorkshire;land
+#238c40;Northumberland;land
+#a38e80;Cumbria;land
+#2390c0;Lothian;land
+#a392ff;Ayrshire;land
+#239400;Perth;land
+#a39640;Aberdeen;land
+#249880;Inverness;land
+#a49ac0;Outer Hebrides;land
+#249cff;Poznan;land
+#a49e00;Kalisz;land
+#242040;Plock;land
+#a42280;Mazovia;land
+#2424c0;Lodz;land
+#a526ff;Sandomir;land
+#252800;Galicien;land
+#a52a40;Halicz;land
+#252c80;Krakow;land
+#a52ec0;Ratibor;land
+#2530ff;Breslau;land
+#a53200;Moravia;land
+#263440;Bohemia;land
+#a63680;Plsen;land
+#2638c0;Bessarabia;land
+#a63aff;Podlasia;land
+#263c00;Troki;land
+#a63e40;Samogitia;land
+#264080;Lithuania;land
+#a742c0;Letgallen;land
+#2744ff;Pskov;land
+#a74600;Polotsk;land
+#274840;Minsk;land
+#a74a80;Grodno;land
+#274cc0;Polesia;land
+#a74eff;Volhynia;land
+#285000;Kiev;land
+#a85240;Podolia;land
+#285480;Yedisan;land
+#a856c0;Zaporozhia;land
+#2858ff;Crimea;land
+#a85a00;Kaffa;land
+#285c40;Azow;land
+#a95e80;Kouban;land
+#2960c0;Cherkassk;land
+#a962ff;Chernigov;land
+#296400;Poltava;land
+#a96640;Kharkov;land
+#296880;Mogilyov;land
+#a96ac0;Smolensk;land
+#2a6cff;Tver;land
+#aa6e00;Moskva;land
+#2a7040;Kaluga;land
+#4ae34d;Bryansk;land
+#2a74c0;Kursk;land
+#aa76ff;Voronezh;land
+#2a7800;Tula;land
+#ab7a40;Ryazan;land
+#2b7c80;Tambow;land
+#ab7ec0;Saratow;land
+#2b80ff;Pensa;land
+#ab8200;Perm;land
+#2b8440;Nijni-Novgorod;land
+#ab8680;Vladimir;land
+#2c88c0;Yaroslavl;land
+#ac8aff;Olonets;land
+#2c8c00;Novgorod;land
+#ac8e40;Kholm;land
+#2c9080;Vologda;land
+#4800f0;Archangelsk;land
+#2c94ff;Ustyug;land
+#ad9600;Finnmark;land
+#2d9840;Kocaeli;land
+#ad9a80;Hüdavendigar;land
+#2d9cc0;Sugla;land
+#ad9eff;Mentese;land
+#2d2000;Rhodes;land
+#ad2240;Cyprus;land
+#2e2480;Kütahya;land
+#ae26c0;Konya;land
+#2e28ff;Karaman;land
+#ae2a00;Kastamonu;land
+#2e2c40;Ankara;land
+#ae2e80;Adana;land
+#2e30c0;Sinop;land
+#af32ff;Sivas;land
+#2f3400;Trebizond;land
+#af3640;Erzurum;land
+#2f3880;Marash;land
+#af3ac0;The Baleares;land
+#2f3cff;Tangiers;land
+#af3e00;Mellila;land
+#30f440;Tlemcen;land
+#b04280;Oran;land
+#3044c0;Al-Djazair;land
+#b046ff;Kabylia;land
+#304800;Constantine;land
+#b04a40;Tunis;land
+#304c80;Toubkhal;land
+#b14ec0;Fez;land
+#3150ff;Marrakech;land
+#b15200;Safi;land
+#315440;Figuig;land
+#b15680;Ifni;land
+#3158c0;Sus;land
+#b15aff;Atlas;land
+#325c00;Aures;land
+#b25e40;Biskra;land
+#326080;Gafsa;land
+#b262c0;Tataouine;land
+#3264ff;Tripolitania;land
+#b26600;Sirt;land
+#326840;Cyrenaica;land
+#b36a80;Darnah;land
+#336cc0;Alexandria;land
+#b36eff;Fayyum;land
+#337000;Qus;land
+#b37240;Cairo;land
+#337480;Rosetta;land
+#b376c0;Damietta;land
+#3478ff;Gaza;land
+#b47a00;Sinai;land
+#347c40;The Canarias;land
+#b47e80;The Azores;land
+#3480c0;Madeira;land
+#b482ff;Orkney;land
+#348400;Reykjavik;land
+#b58640;Akureyri;land
+#358880;Tyrone;land
+#b58ac0;Meath;land
+#358cff;Leinster;land
+#b58e00;Munster;land
+#359040;Connaught;land
+#b59280;Aleppo;land
+#3694c0;Tripoli;land
+#b696ff;Jerusalem;land
+#369800;Al Karak;land
+#b69a40;Ajlun;land
+#369c80;Damascus;land
+#b69ec0;Tabuk;land
+#3620ff;Medina;land
+#b72200;Mecca;land
+#372440;Bishah;land
+#b72680;Mokha;land
+#3728c0;Aden;land
+#b72aff;Mukalla;land
+#372c00;Sana'a;land
+#b72e40;Najran;land
+#383080;Al-Arid;land
+#b832c0;Jabal Shammar;land
+#3834ff;El Catif;land
+#b83600;Qatar;land
+#383840;Bahrain;land
+#b83a80;Bani Yas;land
+#383cc0;Qawasim;land
+#b93eff;Suhar;land
+#394000;Muscat;land
+#b94240;Dhofar;land
+#394480;Mahra;land
+#b946c0;Nizwa;land
+#3948ff;Liwa;land
+#b94a00;Tadmor;land
+#3a4c40;Haditha;land
+#ba4e80;Ar Raqqa;land
+#3a50c0;Basra;land
+#ba52ff;Karballa;land
+#3a5400;Baghdad;land
+#ba5640;Mosul;land
+#3a5880;Ahvaz;land
+#bb5ac0;Lorestan;land
+#3b5cff;Hamadan;land
+#bb5e00;Kirkuk;land
+#3b6040;Azerbaijan;land
+#bb6280;Gilan;land
+#3b64c0;Diyarbakir;land
+#bb66ff;Yerevan;land
+#3c8c00;Ganja;land
+#bc6a40;Shirvan;land
+#3c6c80;Imereti;land
+#bc6ec0;Kartli;land
+#3c70ff;Ardabil;land
+#bc7200;Dagestan;land
+#3c7440;Amol;land
+#bd7680;Shahrud;land
+#3d78c0;Rey;land
+#bd7aff;Isfahan;land
+#3d7c00;Bushehr;land
+#bd7e40;Hormuz;land
+#3d8080;Kerman;land
+#bd82c0;Dash-i-Lut;land
+#3e84ff;Quhistan;land
+#be8600;Sistan;land
+#3e8840;Birjand;land
+#be8a80;Atak;land
+#3e8cc0;Kara Kum;land
+#be8eff;Mangyshlak;land
+#3e9000;Qaraqalpak;land
+#bf9240;Khiva;land
+#3f9480;Bukhara;land
+#bf96c0;Ust Yurt;land
+#3f98ff;Charjuy;land
+#bf9a00;Marv;land
+#3f9c40;Herat;land
+#bf9e80;Kandahar;land
+#4020c0;Gazni;land
+#c022ff;Ghor;land
+#402400;Balkh;land
+#c02640;Kabul;land
+#402880;Badakhshan;land
+#c02ac0;Qarshi;land
+#402cff;Samarkand;land
+#c12e00;Kyrzyl-Kum;land
+#413040;Turkestan;land
+#c13280;Tashkent;land
+#4134c0;Kokand;land
+#c136ff;Taraz;land
+#413800;Uzkend;land
+#c13a40;Zhetysu;land
+#423c80;Mingrelia;land
+#c23ec0;Circassia;land
+#4240ff;Astrakhan;land
+#c24200;Nogay;land
+#424440;Sarai;land
+#c24680;Borisoglebsk;land
+#4248c0;Khazaria;land
+#c34aff;Ryn;land
+#434c00;Bayuly;land
+#c34e40;Alimuly;land
+#435080;Zhetyru;land
+#c352c0;Samara;land
+#4354ff;Yaik;land
+#c35600;Bashkortostan;land
+#445840;Kypshak;land
+#c45a80;Nadym;land
+#445cc0;Argyn;land
+#c45eff;Kerey;land
+#446000;Kulunda;land
+#c46240;Bermuda;land
+#446480;Bahamas;land
+#c566c0;Turks Islands;land
+#4568ff;Havana;land
+#c56a00;Moron;land
+#456c40;Guantamano;land
+#c56e80;Jamaica;land
+#4570c0;Les Cayes;land
+#c572ff;Tortuga;land
+#467400;Barahonas;land
+#c67640;Curacao;land
+#467880;Puerto Rico;land
+#c67ac0;St. Thomas;land
+#467cff;St. Martin;land
+#c67e00;St. Kitts;land
+#468040;Antigua;land
+#c78280;Guadelopue;land
+#4784c0;Dominica;land
+#c786ff;Martinique;land
+#478800;St. Lucia;land
+#c78a40;Barbados;land
+#478c80;Trinidad;land
+#c78ec0;Kutch;land
+#4890ff;Thatta;land
+#c89200;Sehwan;land
+#489440;Multan;land
+#c89680;Lahore;land
+#4898c0;Kashmir;land
+#c89aff;Kangra;land
+#489c00;Sirhind;land
+#c99e40;Garhwal;land
+#492080;Jangladesh;land
+#c922c0;Jaisalmer;land
+#4924ff;Marwar;land
+#c92600;Girnar;land
+#492840;Baroda;land
+#c92a80;Surat;land
+#4a2cc0;Chittorgarh;land
+#ca2eff;Dundhar;land
+#4a3000;Mewat;land
+#ca3240;Rajkot;land
+#4a3480;Delhi;land
+#ca36c0;Oudh;land
+#4a38ff;Central Doab;land
+#cb3a00;Gird;land
+#4b3c40;Mandu;land
+#cb3e80;Khandesh;land
+#4b40c0;Hadoti;land
+#cb42ff;North Konkan;land
+#4b4400;South Konkan;land
+#cb4640;North Kanara;land
+#4c4880;Raichur Doab;land
+#cc4ac0;Mysore;land
+#4c4cff;Malabar;land
+#cc4e00;Kochin;land
+#4c5040;Madurai;land
+#cc5280;Venad;land
+#4c54c0;Kongu;land
+#cd56ff;Tondainadu;land
+#4d5800;Coromandel;land
+#cd5a40;Vijayanagar;land
+#4d5c80;Golconda;land
+#cd5ec0;Velanadu;land
+#4d60ff;Ahmadnagar;land
+#cd6200;Marathwada;land
+#4e6440;East Berar;land
+#ce6680;Bastar;land
+#4e68c0;West Berar;land
+#ce6aff;Kalingandhra;land
+#4e6c00;Mahakoshal;land
+#ce6e40;Mandla;land
+#4e7080;Cuttack;land
+#cf72c0;Sambalpur;land
+#4f74ff;Baisi Rayja;land
+#cf7600;Jaunpur;land
+#4f7840;Lower Doab;land
+#cf7a80;Katmandu;land
+#4f7cc0;Patna;land
+#cf7eff;Bundelkhand;land
+#508000;Jharkand;land
+#d08240;Bengal Delta;land
+#508480;Koch;land
+#d086c0;Gauda;land
+#5088ff;Dacca;land
+#d08a00;Bhutan;land
+#508c40;Assam;land
+#d18e80;Sylhet;land
+#5190c0;Chittagong;land
+#d192ff;Bijapur;land
+#519400;Naga;land
+#d19640;Darrang;land
+#519880;Kotte;land
+#d19ac0;Kachar;land
+#529cff;The Andamans;land
+#d29e00;Eastern Makran;land
+#522040;Indus;land
+#d22280;Quetta;land
+#5224c0;Khyber;land
+#d226ff;Arakan;land
+#522800;Chin;land
+#d32a40;Sagaing;land
+#532c80;Kachin;land
+#d32ec0;Hsenwi;land
+#5330ff;Kyuakse;land
+#d33200;Toungoo;land
+#533440;Pegu;land
+#d33680;Keng Tung;land
+#5438c0;Mongnai;land
+#d43aff;Chiang Mai;land
+#543c00;Moulmein;land
+#d43e40;Tenasserim;land
+#544080;Ratchaburi;land
+#d442c0;Ligore;land
+#5444ff;Pattani;land
+#d54600;Perak;land
+#554840;Malacca;land
+#d54a80;Johor;land
+#554cc0;Pahang;land
+#d54eff;Kelantan;land
+#555000;Ayutthaya;land
+#d55240;Sukthothai;land
+#565480;Chian Rai;land
+#d656c0;Rayong;land
+#5658ff;Udong;land
+#d65a00;Prei Nokoi;land
+#565c40;Panduranga;land
+#d65e80;Vijaya;land
+#5660c0;Champassak;land
+#d762ff;Siem Reap;land
+#576400;Binh Tri Thien;land
+#d76640;Thakhek;land
+#576880;Khorat;land
+#d76ac0;Thang Long;land
+#576cff;Vientiane;land
+#d76e00;Luang Prabang;land
+#587040;Viet Bac;land
+#d87280;Aceh;land
+#5874c0;Aru;land
+#d876ff;Minangkabau;land
+#587800;Siak;land
+#d87a40;Benkulen;land
+#587c80;Palembang;land
+#d97ec0;Lampung;land
+#5980ff;Banten;land
+#d98200;Priangan;land
+#598440;Mataram;land
+#d98680;Blambangan;land
+#5988c0;Surabaya;land
+#d98aff;Demak;land
+#5a8c00;Sunda;land
+#da8e40;Bali-Lombok;land
+#5a9080;Sumbawa;land
+#da92c0;Flores;land
+#5a94ff;Sumba;land
+#da9600;Timor;land
+#5a9840;Brunei;land
+#db9a80;Sabah;land
+#5b9cc0;Kutei;land
+#db9eff;Banjarmasin;land
+#5b2000;Sukadane;land
+#db2240;Makassar;land
+#5b2480;Bone;land
+#db26c0;Pose;land
+#5c28ff;Menade;land
+#dc2a00;Buru;land
+#5c2c40;Ambom;land
+#dc2e80;Ceram;land
+#5c30c0;Halmahera;land
+#dc32ff;Ternate;land
+#5c3400;Tidore;land
+#dd3640;Sulu;land
+#5d3880;Maguindanae;land
+#dd3ac0;Tagoloan;land
+#5d3cff;Samar;land
+#dd3e00;Palawan;land
+#5d4040;Manila;land
+#dd4280;Samtoy;land
+#5e44c0;Cagayan;land
+#de46ff;Riau;land
+#5e4800;Xishuan Banna;land
+#de4a40;Dali;land
+#5e4c80;Yunnan;land
+#de4ec0;Wenshan;land
+#5e50ff;Guangxi;land
+#df5200;XXX;land
+#5f5440;Hainan;land
+#df5680;Guangzhou;land
+#5f58c0;Macau;land
+#df5aff;Fuzhou;land
+#5f5c00;Ganzhou;land
+#df5e40;Changsha;land
+#606080;Chenzhou;land
+#e062c0;Bozhou;land
+#6064ff;Guiyang;land
+#e06600;Liangshan;land
+#606840;U-Tsang;land
+#e06a80;Qamdo;land
+#606cc0;Kham;land
+#e16eff;Sichuan Pendi;land
+#617000;Shenquing;land
+#e17240;Yichuan;land
+#617480;Hanyang;land
+#e176c0;Nanchang;land
+#6178ff;Hangzhou;land
+#e17a00;Huai'an;land
+#627c40;Anqing;land
+#e27e80;Running;land
+#6280c0;Kaifeng;land
+#e282ff;Fengyuan;land
+#628400;Shandong Bandao;land
+#e28640;Jinan;land
+#628880;Handan;land
+#e38ac0;Sanguan;land
+#638cff;Changzhi;land
+#e38e00;Beijing;land
+#639040;Xuan Fu;land
+#e39280;Datong;land
+#6394c0;Guyuan;land
+#e396ff;Lanzhou;land
+#649800;Shaanxi;land
+#e49a40;Ordos;land
+#649c80;Ulaanchab;land
+#e49ec0;Chengde;land
+#6420ff;Liaoxi;land
+#e42200;Dangla;land
+#642440;Amdo;land
+#e52680;Yumen;land
+#6528c0;Gansu;land
+#e52aff;Ningxia;land
+#652c00;Hotan;land
+#e52e40;Qarqan;land
+#653080;Uighuristan;land
+#e532c0;Kuruk Tag;land
+#6634ff;Dzungaria;land
+#e63600;Urumqi;land
+#663840;Tannu Tuva;land
+#e63a80;Selenge;land
+#663cc0;Govi Altay;land
+#e63eff;Khangai;land
+#664000;Dorno Govi;land
+#e74240;Dornod;land
+#674480;Chahar;land
+#e746c0;Xilin Gol;land
+#6748ff;Yakesa;land
+#e74a00;Hinggan;land
+#674c40;Liaodong;land
+#e74e80;Heilongjiang;land
+#6850c0;Sanxing;land
+#e852ff;Wusuli;land
+#685400;Haixi;land
+#e85640;Ninguta;land
+#685880;Hamheung;land
+#e85ac0;Hwangju;land
+#685cff;Gangwon;land
+#9986ad;Hanseong;land
+#d9a4a4;Sangju;land
+#e96280;Jeonju;land
+#6964c0;Taiwan;land
+#e966ff;Kashgar;land
+#696800;Chanderi;land
+#e96a40;Cumana;land
+#6a6c80;Guayana;land
+#ea6ec0;Essequibo;land
+#6a70ff;Demerara;land
+#ea7200;Paramaribo;land
+#6a7440;Cayenne;land
+#ea7680;Tucujulandia;land
+#6a78c0;Grao Para;land
+#eb7aff;Maranhao;land
+#6b7c00;Crato;land
+#eb7e40;Ceara;land
+#6b8080;Oeiras;land
+#eb82c0;Rio Grande;land
+#6b84ff;Itamaraca;land
+#eb8600;Pernambuco;land
+#6c8840;Bahia;land
+#ec8a80;Ilheus;land
+#6c8cc0;Goias;land
+#ec8eff;Diamantina;land
+#6c9000;Porto Seguro;land
+#ec9240;Espirito Santo;land
+#6c9480;Sao Tome;land
+#ed96c0;Rio de Janeiro;land
+#6d98ff;Santo Amaro;land
+#ed9a00;Santa Luzia;land
+#6d9c40;Sao Vicente;land
+#ed9e80;Wystruc;land
+#6d20c0;Guayra;land
+#ed22ff;Curitiba;land
+#6e2400;Braslaw;land
+#ee2640;Vitebsk;land
+#6e2880;Uruguay;land
+#ee2ac0;Banda Oriente;land
+#6e2cff;Al Junaynah;land
+#ee2e00;Asuncion;land
+#6e3040;Itenines;land
+#ef3280;Parana;land
+#6f34c0;Rio de la Plata;land
+#ef36ff;Tandil;land
+#6f3800;Candelaria Patagones;land
+#ef3a40;Puerto Desaedo;land
+#6f3c80;Tierra del Fuego;land
+#ef3ec0;Alacaluf;land
+#7040ff;Huillimapu;land
+#f04200;Pehuenmapu;land
+#704440;Carmen Patagones;land
+#f04680;Pincunmapu;land
+#7048c0;Angoche;land
+#f04aff;Mtetwa;land
+#704c00;Chaco Austral;land
+#f14e40;Catamarca;land
+#715080;Copiapo;land
+#f152c0;Atacama;land
+#7154ff;Jujuy;land
+#f15600;Potosi;land
+#715840;Arica;land
+#f15a80;Oruro;land
+#d7bfd4;Mbwila;land
+#f25eff;Chaco Boreal;land
+#726000;Chiquitos;land
+#f26240;Caranga;land
+#726480;Chuquiabo;land
+#f266c0;Moxos;land
+#7268ff;Puno;land
+#f36a00;Arequipa;land
+#736c40;Nazca;land
+#f36e80;Huamanga;land
+#7370c0;Cuzco;land
+#f372ff;Lima;land
+#737400;Huancavelica;land
+#f37640;Tarma;land
+#747880;Chanchan;land
+#f47ac0;Cajamarca;land
+#747cff;Huanuco;land
+#f47e00;Maynas;land
+#748040;Tumbes;land
+#f48280;Cuenca;land
+#7484c0;Canelos;land
+#f586ff;Guayaquil;land
+#758800;Quito;land
+#f58a40;Quijos;land
+#758c80;Caqueta;land
+#f58ec0;Cauca;land
+#7590ff;Mariquita;land
+#f59200;Bogota;land
+#769440;Choco;land
+#f69680;Antioquía;land
+#7698c0;Cartagena;land
+#f69aff;Magdalena;land
+#769c00;Maracaibo;land
+#f69e40;Caracas;land
+#762080;Chiancon;land
+#f722c0;Graaff-Reinet;land
+#7724ff;Barinas;land
+#80224f;Panama;land
+#00247e;Chorotega;land
+#8026ad;Nicaragua;land
+#002820;Mosquito;land
+#802a4f;Pipil;land
+#002c7e;Honduras;land
+#812ead;Guatemala;land
+#013020;Petén;land
+#81324f;Belize;land
+#01347e;Zapotec;land
+#8136ad;Campeche;land
+#013820;Yucatan;land
+#813a4f;Mixtec;land
+#023c7e;Tohancapan;land
+#823ead;Tlapanec;land
+#024020;Tlaxcala;land
+#82424f;Tarasco;land
+#02447e;Mexico;land
+#8246ad;Huastec;land
+#024820;Sayultecas;land
+#834a4f;Huichol;land
+#034c7e;Zacatecas;land
+#834ead;Guachichil;land
+#035020;Tamaulipas;land
+#83524f;Sinaloa;land
+#03547e;Tepehuan;land
+#8356ad;Coahuila;land
+#045820;Yaqui;land
+#845a4f;Suma;land
+#045c7e;Concho;land
+#845ead;Cochimi;land
+#046020;Guaycura;land
+#84624f;Mojave;land
+#04647e;Chumash;land
+#8566ad;Salinan;land
+#056820;Yorkuts;land
+#856a4f;Pomo;land
+#056c7e;Kalapuya;land
+#856ead;Chinook;land
+#057020;Salish;land
+#85724f;Canyon;land
+#06747e;Yavapai;land
+#8676ad;Pima;land
+#067820;Navajo;land
+#867a4f;Apache;land
+#067c7e;Pueblo;land
+#867ead;Piro;land
+#068020;Mescalero;land
+#87824f;Lipan;land
+#07847e;Karankawa;land
+#8786ad;Comanche;land
+#078820;Waco;land
+#878a4f;Tonkawa;land
+#078c7e;Atakapa;land
+#878ead;Arapaho;land
+#089020;Kiowa;land
+#88924f;Jicarilla;land
+#08947e;Wichita;land
+#8896ad;Chitimacha;land
+#089820;Caddo;land
+#889a4f;Arkansas;land
+#089c7e;Ozark;land
+#899ead;Quapaw;land
+#092020;Kansas;land
+#89224f;Osage;land
+#09247e;Tamaroa;land
+#8926ad;Pawnee;land
+#092820;Missouri;land
+#892a4f;Omaha;land
+#0a2c7e;Nakota;land
+#8a2ead;Iowa;land
+#0a3020;Lakota;land
+#8a324f;Dakota;land
+#0a347e;Minnesota;land
+#8a36ad;Mandan;land
+#0a3820;Chippewa;land
+#8b3a4f;Menominee;land
+#0b3c7e;Sauk;land
+#8b3ead;Fox;land
+#0b4020;Winnebago;land
+#8b424f;Illinois;land
+#0b447e;Kaskaskia;land
+#8b46ad;Cahokia;land
+#0c4820;Tennessee;land
+#8c4a4f;Chickasaw;land
+#0c4c7e;Choctaw;land
+#8c4ead;Bayougoula;land
+#0c5020;Mobile;land
+#8c524f;Pensacola;land
+#0c547e;Alabama;land
+#8d56ad;Tuskegee;land
+#0d5820;Seminole;land
+#8d5a4f;Timucua;land
+#0d5c7e;Apalachee;land
+#8d5ead;Muskogee;land
+#0d6020;Yamasee;land
+#8d624f;Chiaha;land
+#0e647e;Santee;land
+#8e66ad;Catawba;land
+#0e6820;Shawnee;land
+#8e6a4f;Cherokee;land
+#0e6c7e;Cheraw;land
+#8e6ead;Tuscarora;land
+#0e7020;Pamlico;land
+#8f724f;Pennyrile;land
+#0f747e;Kentucky;land
+#8f76ad;Cumberland;land
+#0f7820;Wea;land
+#8f7a4f;Miami;land
+#0f7c7e;Potawatomi;land
+#8f7ead;Michigan;land
+#108020;Wyandot;land
+#90824f;Erie;land
+#10847e;Ohio;land
+#9086ad;Monacan;land
+#108820;Powhatan;land
+#908a4f;Kanawha;land
+#108c7e;Manahoac;land
+#918ead;Conoy;land
+#119020;Allegheny;land
+#91924f;Susquehanna;land
+#11947e;Lenape;land
+#9196ad;Delaware;land
+#119820;Seneca;land
+#919a4f;Cayuga;land
+#129c7e;Onondaga;land
+#929ead;Oneida;land
+#122020;Unami;land
+#92224f;Mahican;land
+#12247e;Mohawk;land
+#9226ad;Manhattan;land
+#122820;Connecticut;land
+#932a4f;Narraganset;land
+#132c7e;Massachusetts;land
+#932ead;Pocumtuk;land
+#133020;Pennacook;land
+#93324f;Abnaki;land
+#13347e;Nootka;land
+#9336ad;Squamish;land
+#143820;Kwakiutl;land
+#943a4f;Tsimshian;land
+#143c7e;Tlingit;land
+#943ead;Yakutat;land
+#144020;Kenai;land
+#94424f;Aleut;land
+#14447e;Beothuk;land
+#9546ad;Taqamkuk;land
+#154820;Unamakik;land
+#954a4f;Epekwitk;land
+#154c7e;Acadia;land
+#954ead;Micmac;land
+#155020;Kespek;land
+#95524f;Niagara;land
+#16547e;Huron;land
+#9656ad;Ontario;land
+#165820;Kwedech;land
+#965a4f;Ottawa;land
+#165c7e;Algonquin;land
+#965ead;Hochelega;land
+#166020;Stadacona;land
+#97624f;Atiamekw;land
+#17647e;Innu;land
+#9766ad;Labrador;land
+#176820;Ungava;land
+#976a4f;Nunavik;land
+#176c7e;Cree;land
+#976ead;Sault;land
+#187020;Abitbi;land
+#98724f;Moose Cree;land
+#18747e;Attawapiskat;land
+#9876ad;Swampy Cree;land
+#187820;Chipewyan;land
+#987a4f;Ojibwa;land
+#187c7e;Winnipeg;land
+#997ead;Atikaki;land
+#198020;Manitoba;land
+#99824f;Woods Cree;land
+#19847e;Satsuma;land
+#e95e00;Cheongju;land
+#198820;Bungo;land
+#998a4f;Okinawa;land
+#1a8c7e;Nghe An;land
+#9a8ead;Suo;land
+#1a9020;Izumo;land
+#9a924f;Harima;land
+#1a947e;Kyoto;land
+#9a96ad;Settsu;land
+#1a9820;Amaravati;land
+#9b9a4f;Echizen;land
+#1b9c7e;Echigo;land
+#9b9ead;Dewa;land
+#1b2020;Mutsu;land
+#9b224f;Hitachi;land
+#1b247e;Musashi;land
+#9b26ad;Kai;land
+#1c2820;Owari;land
+#9c2a4f;Kamikawa;land
+#1c2c7e;Kurils;land
+#9c2ead;Sakhalin;land
+#1c3020;Kamchatka;land
+#9c324f;Penchisky;land
+#1c347e;Podzhiversk;land
+#9d36ad;Nizhe-Kolymsk;land
+#1d3820;Anadyrsk;land
+#9d3a4f;Verkhoyansk;land
+#1dfe7e;Suntar Khayat;land
+#9d3ead;Gizhiga;land
+#1d4020;Kamnuskoye;land
+#9d424f;Okhotsk;land
+#1e447e;Tauisk;land
+#9e46ad;Yakutsk;land
+#1ef320;Butalsk;land
+#9eae4f;Jugjur;land
+#1e4c7e;Udskoye;land
+#9e4ead;Saghalian Oula;land
+#1e5020;Deren;land
+#9f524f;Uchurskoye;land
+#1f547e;Verkohzehkoye;land
+#9f56ad;Albazinsky;land
+#1f5820;Ilimsk;land
+#9f5a4f;Verkne-Angarsky;land
+#1f5c7e;Barguzinsky;land
+#9f5ead;Udinsky;land
+#206020;Nerchinsky;land
+#a0624f;Bratsk;land
+#20647e;Irkutsk;land
+#a066ad;Yeniseysk;land
+#206820;Kachinsk;land
+#a06a4f;Sayan;land
+#206c7e;Tomsk;land
+#a16ead;Kuznetsk;land
+#217020;Altai;land
+#a1724f;Narym;land
+#21747e;Pegaya Orda;land
+#a176ad;Surgut;land
+#217820;Koda;land
+#a17a4f;Tara;land
+#227c7e;Obdorsk;land
+#a2e2ad;Berezov;land
+#22e420;Sibir;land
+#a2824f;Tyumen;land
+#22847e;Kurgan;land
+#a286ad;Solikamsk;land
+#228820;Middle Urals;land
+#a38a4f;Viatka;land
+#238c7e;North Urals;land
+#a38ead;Simbirsk;land
+#239020;Kazan;land
+#a3924f;Zavolochye;land
+#23947e;Wadjuk;land
+#a396ad;Paredarerme;land
+#249820;Kaurna;land
+#a49a4f;Woiworung;land
+#249c7e;Wergaia;land
+#a49ead;Wiradjuri;land
+#24e820;Eora;land
+#a4224f;Kamilaroi;land
+#24247e;Bundjalung;land
+#a526ad;Barunggam;land
+#25f020;Gubbi Gubbi;land
+#a52a4f;Falklands;land
+#252c7e;Cape Verde;land
+#a52ead;Fernando Po;land
+#25f820;St. Helena;land
+#a5324f;Socotra;land
+#26347e;Mahe;land
+#a636ad;Diego Garcia;land
+#26f720;Mauritius;land
+#a63a4f;Bourbon;land
+#263c7e;Eiriksfjord;land
+#a63ead;Vestbygden;land
+#26a420;Whangarei;land
+#a7424f;Taranaki;land
+#27447e;Wairoa;land
+#a746ad;Timaru;land
+#274820;Rio de Oro;land
+#a74a4f;Arguin;land
+#274c7e;Trarza;land
+#a74ead;Cayor;land
+#285020;Gabu;land
+#a8524f;Brakna;land
+#28547e;Wolof;land
+#a856ad;Futa Jallon;land
+#285820;Sierra Leone;land
+#a85a4f;Grain Coast;land
+#285c7e;Bambuk;land
+#a95ead;Bure;land
+#296020;Konian;land
+#a9624f;Segu;land
+#29647e;Wasuju;land
+#a966ad;Worodugu;land
+#296820;Ivory Coast;land
+#a96a4f;Tuat;land
+#2a6c7e;Taodeni;land
+#aa6ead;Azawadd;land
+#2a7020;Tadimekket;land
+#aa724f;Massina;land
+#2a747e;Timbuktu;land
+#aa76ad;Gao;land
+#2a7820;Jenne;land
+#ab7a4f;Yatenga;land
+#2b7c7e;Gurma;land
+#ab7ead;Wagadugi;land
+#2b8020;Kumasi;land
+#ab824f;Gold Coast;land
+#2b847e;Abomey;land
+#ab86ad;Whydah;land
+#2c8820;Dendi;land
+#ac8a4f;Borgu;land
+#2c8c7e;Oyo;land
+#ac8ead;Nupe;land
+#2c9020;Ife;land
+#ac924f;Benin;land
+#2c947e;Gobir;land
+#ad96ad;Katsina;land
+#2d9820;Zamfara;land
+#ad9a4f;Bonny;land
+#2d9c7e;Idah;land
+#ad9ead;Pindinga;land
+#2d2020;Zazzau;land
+#ad224f;Kano;land
+#2e247e;Damagaram;land
+#ae26ad;Damasak;land
+#2e2820;Kanem;land
+#ae2a4f;Bagirmi;land
+#2e2c7e;Bornu;land
+#aef6ad;Bauchi;land
+#2e3020;Wukari;land
+#af324f;Calabar;land
+#2f347e;Cameroon;land
+#af36ad;Gabon;land
+#2fec20;Loango;land
+#af3a4f;Luanda;land
+#ced94d;Nsoyo;land
+#af3ead;Mayombe;land
+#304020;Kongo;land
+#b0424f;Ndongo;land
+#30447e;Benguela;land
+#b046ad;Namibia;impassable
+#30ac20;Angra Pequena;land
+#b04a4f;Lesser Namaqualand;land
+#304c7e;Roggeveld;land
+#b14ead;Cape;land
+#315020;Great Karoo;land
+#b1524f;Swellendam;land
+#31547e;Transkei;land
+#b156ad;Natal;land
+#315820;Delagoa Bay;land
+#b15a4f;Inhambane;land
+#325c7e;Zimbabwe;land
+#b25ead;Uteve;land
+#326020;Sofala;land
+#b2624f;Urungwe;land
+#32647e;Tete;land
+#b2caad;Barwe;land
+#326820;Zumbo;land
+#b36a4f;Sena;land
+#336c7e;Quelimane;land
+#b36ead;Menabe;land
+#33d420;Besalampy;land
+#b3724f;Mozambique;land
+#33747e;Kilwa;land
+#b376ad;Ujiji;land
+#347820;Tabora;land
+#b47a4f;Bagamoyo;land
+#347c7e;Tanga;land
+#b47ead;Zanzibar;land
+#348020;Mombasa;land
+#b4824f;Malindi;land
+#34847e;Chisimayo;land
+#b586ad;Mogadishu;land
+#358820;Mayertern;land
+#b58a4f;Ogaden;land
+#358c7e;Haud;land
+#b58ead;Berbera;land
+#359020;Ifat;land
+#b5924f;Harer;land
+#36947e;Zeila;land
+#b696ad;Shoa;land
+#369820;Awsa;land
+#b69a4f;Tajura;land
+#369c7e;Dar Nuba;land
+#b69ead;Fazughli;land
+#362020;Kefa;land
+#b7224f;Kordofan;land
+#37247e;Dar Ja'al;land
+#b726ad;Taqali;land
+#372820;Gezira;land
+#b72a4f;Gojjam;land
+#372c7e;Gonder;land
+#b7f6ad;Butana;land
+#383020;Taka;land
+#b8324f;Tigre;land
+#38fc7e;Dongola;land
+#b836ad;Berber;land
+#383820;Massawa;land
+#b83a4f;Aswan;land
+#383c7e;Suakin;land
+#b93ead;Kharga;land
+#39a420;Qasr Ibrim;land
+#b9424f;Guam;land
+#39447e;Rabaul;land
+#b946ad;Papua;land
+#39ac20;Solomon Islands;land
+#b94a4f;Vanuatu;land
+#3a4c7e;Hawaii;land
+#ba4ead;Kiribati;land
+#3ab420;Fiji;land
+#ba524f;Samoa;land
+#3a547e;Tahiti;land
+#ba56ad;Irian;land
+#3abc20;Aorangi;land
+#bb5a4f;Corsica;land
+#3b5c7e;Maldives;land
+#bb5ead;Yola;land
+#01c8c8;Vänern;sea
+#02c8fa;Vättern;sea
+#03dcfa;Gulf of Bothnia;sea
+#04fafa;Ålands Hav;sea
+#05c8c8;Gulf of Finland;sea
+#06c8fa;Western Baltic Sea;sea
+#07dcfa;Gulf of Riga;sea
+#08fafa;Southern Baltic Sea;sea
+#09c8c8;Öresund;sea
+#0ac8fa;Kattegat;sea
+#0bdcfa;Peipsi Järv;sea
+#0cfafa;Ladoga;sea
+#0dc8c8;Onega;sea
+#0ec8fa;Barents Sea;sea
+#0fdcfa;Lofoten Sea;sea
+#10fafa;Northern Norwegian Sea;sea
+#11c8c8;Southern Norwegian Sea;sea
+#12c8fa;Skagerrack;sea
+#13dcfa;Helgoland Bight;sea
+#14fafa;Coast of Holland;sea
+#15c8c8;Dogger Bank;sea
+#16c8fa;Straits of Dover;sea
+#17dcfa;The Channel;sea
+#e07b7b;Taveta;land
+#19c8c8;Coast of Britanny;sea
+#1ac8fa;Quiberon Bay;sea
+#1bdcfa;Cote D'Argent;sea
+#1cfafa;Bay of Biscay;sea
+#1dc8c8;Cantabrian Sea;sea
+#1ec8fa;Tyne;sea
+#1fdcfa;Firth of Forth;sea
+#20fafa;The North Sea;sea
+#21c8c8;Moray Firth;sea
+#22c8fa;North Channel;sea
+#23dcfa;Irish Sea;sea
+#24fafa;St. George's Channel;sea
+#25c8c8;Donegal Bay;sea
+#26c8fa;Dingle Bay;sea
+#27dcfa;Celtic Sea;sea
+#28fafa;Western Approaches;sea
+#29c8c8;Finisterre Bay;sea
+#2ac8fa;Lusitanian Sea;sea
+#2bdcfa;Gulf of Cadiz;sea
+#2cfafa;Straits of Gibraltar;sea
+#2dc8c8;Gulf of Almeira;sea
+#2ec8fa;Gulf of Valencia;sea
+#2fdcfa;Gulf of Lion;sea
+#30fafa;Cote D'Azur;sea
+#31c8c8;Ligurian Sea;sea
+#32c8fa;Shetland Straits;sea
+#33dcfa;Western Mediterranean;sea
+#34fafa;Barbary Coast;sea
+#35c8c8;Cape Bon;sea
+#36c8fa;Tyrrenean Sea;sea
+#37dcfa;Bay of Naples;sea
+#38fafa;Gulf of Gabes;sea
+#b53084;Sao Tome;land
+#3ac8fa;Straits of Messina;sea
+#3bdcfa;Gulf of Venice;sea
+#3cfafa;Adriatic Sea;sea
+#3dc8c8;Straits of Otranto;sea
+#3ec8fa;Gulf of Taranto;sea
+#3fdcfa;Ionian Sea;sea
+#40fafa;Gulf of Sirte;sea
+#41c8c8;Gulf of Tobruk;sea
+#42c8fa;Bay of Alexandrian;sea
+#43dcfa;Palestinian Coast;sea
+#44fafa;Gulf of Cyprus;sea
+#d1f604;Spis;land
+#46c8fa;Aegean Sea;sea
+#47dcfa;Sea of Marmara;sea
+#48fafa;Gulf of Varna;sea
+#49c8c8;Gulf of Odessa;sea
+#4ac8fa;Sea of Azov;sea
+#4bdcfa;Eastern Black Sea;sea
+#4cfafa;Lake Balaton;sea
+#4dc8c8;Caspian Sea;sea
+#4ec8fa;Aral Sea;sea
+#4fdcfa;Gulf of Suez;sea
+#50fafa;Red Sea;sea
+#51c8c8;Straits of Obokk;sea
+#52c8fa;Bal el Mandeb;sea
+#53dcfa;Coast of Mascate;sea
+#54fafa;Gulf of Masirah;sea
+#55c8c8;Straits of Hormuz;sea
+#56c8fa;Persian Gulf;sea
+#57dcfa;Gulf of Indus;sea
+#58fafa;Gulf of Gujarat;sea
+#59c8c8;Laquedive Islands;sea
+#5ac8fa;Coast of Malabar;sea
+#5bdcfa;Comorin Cape;sea
+#5cfafa;Coast of Caramandel;sea
+#5dc8c8;Coast of Orissa;sea
+#5ec8fa;Ganges Delta;sea
+#5fdcfa;Akyab Bay;sea
+#60fafa;Irrawady Delta;sea
+#61c8c8;Andaman Sea;sea
+#62c8fa;Mergui Archipelago;sea
+#63dcfa;Straits of Malacca;sea
+#64fafa;Nicobar Isles;sea
+#65c8c8;Coast of Atjeh;sea
+#66c8fa;Coast of Sumatra;sea
+#67dcfa;Christmas Island;sea
+#68fafa;Coast of Java;sea
+#69c8c8;Coast of Surabaya;sea
+#6ac8fa;Straits of Lombok;sea
+#6bdcfa;Timor Sea;sea
+#6cfafa;The Moluccas;sea
+#6dc8c8;Java Sea;sea
+#6ec8fa;Straits of Makassar;sea
+#6fdcfa;Karimata Strait;sea
+#70fafa;Straits of Johore;sea
+#71c8c8;Malayan Sea;sea
+#72c8fa;Coast of Sarawk;sea
+#73dcfa;Mekong Delta;sea
+#74fafa;Gulf of Siam;sea
+#75c8c8;Cam Rah Bay;sea
+#76c8fa;South China Sea;sea
+#77dcfa;Coast of Brunei;sea
+#78fafa;Coast of Annam;sea
+#79c8c8;Gulf of Tonkin;sea
+#7ac8fa;Guanghou Bay;sea
+#7bdcfa;Taiwan Strait;sea
+#7cfafa;Yang Tse Delta;sea
+#7dc8c8;Western Yellow Sea;sea
+#7ec8fa;Korea Bay;sea
+#7fdcfa;South Korean Sea;sea
+#00fbfb;North Korean Sea;sea
+#01c9c9;Coast of Olga;sea
+#02c9fb;Tatar Straits;sea
+#03ddfb;Amur Delta;sea
+#04fbfb;Baj of Ayan;sea
+#05c9c9;Bay of Komenskoie;sea
+#06c9fb;Coast of Kamchatska;sea
+#07ddfb;Oktothsk Sea;sea
+#08fbfb;Coast Sahkalin;sea
+#09c9c9;Soya Strait;sea
+#0ac9fb;Tsugaru Strait;sea
+#0bddfb;Yamato Basin;sea
+#0cfbfb;Amakusa Sea;sea
+#0dc9c9;Setto Inland Sea;sea
+#0ec9fb;Kii Channel;sea
+#0fddfb;Ryukyu Islands;sea
+#10fbfb;Luzon Strait;sea
+#11c9c9;Paracel Islands;sea
+#12c9fb;Manila Bay;sea
+#13ddfb;Coast of Luzon;sea
+#14fbfb;Gulf of Leyte;sea
+#15c9c9;Sulu Sea;sea
+#16c9fb;Sea of Celebes;sea
+#17ddfb;Sea of Ternete;sea
+#18fbfb;Sea of Banda;sea
+#19c9c9;Philipine Sea;sea
+#1ac9fb;Palau Islands;sea
+#1bddfb;Biak Bay;sea
+#1cfbfb;Vilian Strait;sea
+#1dc9c9;Trobrian Islands;sea
+#1ec9fb;Torres Strait;sea
+#1fddfb;Arafuam Sea;sea
+#20fbfb;Kolepom Bay;sea
+#21c9c9;Gulf of Carpentaria;sea
+#22c9fb;Great Barrier Reef;sea
+#23ddfb;Capricorn Bay;sea
+#24fbfb;Cape Howe;sea
+#25c9c9;Bass Strait;sea
+#26c9fb;Kangaroo Island;sea
+#27ddfb;Great Australian Bight;sea
+#28fbfb;Cape Leuwiin;sea
+#29c9c9;Shark Bay;sea
+#2ac9fb;Northwest Cape;sea
+#2bddfb;King Sound;sea
+#2cfbfb;Tasman Sea;sea
+#2dc9c9;Southern Tasman Sea;sea
+#2ec9fb;Cook Strait;sea
+#2fddfb;Northern Tasman Sea;sea
+#30fbfb;Cape Farwell;sea
+#31c9c9;Coast of New Zealand;sea
+#32c9fb;Cantebury Bight;sea
+#33ddfb;Sea of Antarctica;sea
+#34fbfb;New Caledonian Sea;sea
+#35c9c9;Coral Sea;sea
+#36c9fb;Gilbert Sea;sea
+#37ddfb;Solomon Sea;sea
+#38fbfb;Nauru Island;sea
+#39c9c9;Melanesia Sea;sea
+#3ac9fb;Micronesia Sea;sea
+#3bddfb;Yap Islands;sea
+#3cfbfb;Mariana Islands;sea
+#3dc9c9;Tinian Sea;sea
+#3ec9fb;Iwo Jima Sea;sea
+#3fddfb;Sanriku Coast;sea
+#40fbfb;The Kuriles;sea
+#41c9c9;Bay of Uka;sea
+#42c9fb;Bay of Oljut;sea
+#43ddfb;Bay of Anadyr;sea
+#44fbfb;Bering Sea;sea
+#45c9c9;Horn of Africa;sea
+#46c9fb;Coast of Pepper;sea
+#47ddfb;Zanzibar Strait;sea
+#48fbfb;Mozambique Channel;sea
+#49c9c9;Diego Suarez Bay;sea
+#4ac9fb;Western Arabian Sea;sea
+#4bddfb;Eastern Arabian Sea;sea
+#4cfbfb;The Seychelles;sea
+#4dc9c9;Coast of Tamatave;sea
+#4ec9fb;The Mascareignes;sea
+#4fddfb;Gulf of Zambeze;sea
+#50fbfb;Coast of Natal;sea
+#51c9c9;Coast of Transkei;sea
+#52c9fb;Coast of Ciskei;sea
+#53ddfb;Cape of Good Hope;sea
+#54fbfb;Coast of Namibia;sea
+#55c9c9;Coast of Angola;sea
+#56c9fb;Gulf of Kongo;sea
+#57ddfb;Coast of Cameroon;sea
+#58fbfb;Gulf of Nigeria;sea
+#59c9c9;Ivory Coast;sea
+#5ac9fb;Gold Coast;sea
+#5bddfb;Coast of Gamvia;sea
+#5cfbfb;Coast of Guinea;sea
+#5dc9c9;Maueretanian Coast;sea
+#5ec9fb;Canarian Sea;sea
+#5fddfb;Coast of Morocco;sea
+#60fbfb;Jan Mayen Sea;sea
+#61c9c9;Spitzberg Sea;sea
+#62c9fb;Icelandic Sea;sea
+#63ddfb;Eastern Coast of Iceland;sea
+#64fbfb;Western Coast of Iceland;sea
+#65c9c9;Northeastern Atlantic;sea
+#66c9fb;Rockall;sea
+#67ddfb;Denmark Strait;sea
+#68fbfb;Eastern Coast of Greenland;sea
+#69c9c9;Western Coast of Greenland;sea
+#6ac9fb;Labrador Strait;sea
+#6bddfb;Baffin Bay;sea
+#6cfbfb;Hudson Straits;sea
+#6dc9c9;James Bay;sea
+#6ec9fb;Western Hudson Bay;sea
+#6fddfb;Eastern Hudson Bay;sea
+#70fbfb;Foxe Bassin;sea
+#71c9c9;Gulf of St. Lawrence;sea
+#72c9fb;Cabot Strait;sea
+#73ddfb;Bay of Fundy;sea
+#74fbfb;Strait of Belle Isle;sea
+#75c9c9;Fortune Bay;sea
+#76c9fb;Notre Dame Bay;sea
+#77ddfb;Labrador Sea;sea
+#78fbfb;Greenland Sea;sea
+#79c9c9;Northern Atlantic;sea
+#7ac9fb;Masschusetts Bay;sea
+#7bddfb;Chesapaeake Bay;sea
+#7cfbfb;Cape Hatteras;sea
+#7dc9c9;Coast of Carolina;sea
+#7ec9fb;Coast of Florida;sea
+#7fddfb;Sea of Sargassos;sea
+#00fcfc;Florida Straits;sea
+#01caca;Apalachee Bay;sea
+#02cafc;Mobile Bay;sea
+#03defc;Galveston Bay;sea
+#04fcfc;Tampico Bay;sea
+#05caca;Yucatan Sea;sea
+#06cafc;Gulf of Mexico;sea
+#07defc;Yucatan Channel;sea
+#08fcfc;Belize Bay;sea
+#09caca;Moscitos Coast;sea
+#0acafc;Gulf of Darien;sea
+#0bdefc;Jamica Channel;sea
+#0cfcfc;Central Carribean;sea
+#0dcaca;Northwestern Carribean;sea
+#0ecafc;Venezualan Gulf;sea
+#0fdefc;Venezuelan Sea;sea
+#10fcfc;Eastern Carribean;sea
+#11caca;Windward Islands;sea
+#12cafc;Lesser Antilles;sea
+#13defc;Turks & Caicos Sea;sea
+#14fcfc;Coast of Cuba;sea
+#15caca;Coast of Hispaniola;sea
+#16cafc;Guyana Coast;sea
+#17defc;Bay of Belem;sea
+#18fcfc;Amazonas Gulf;sea
+#19caca;Coast of Brazil;sea
+#1acafc;Coast of Recife;sea
+#1bdefc;Coast of Pernambuc;sea
+#1cfcfc;Todos Santos Bay;sea
+#1dcaca;Rio De Janeiro;sea
+#1ecafc;Baia Parangua;sea
+#1fdefc;Rio De La Plata;sea
+#20fcfc;Bahia Blanca;sea
+#21caca;Coast of Patagonia;sea
+#22cafc;Magellan Strait;sea
+#23defc;South Chilean Coast;sea
+#24fcfc;Coast of Chile;sea
+#25caca;Atacama Coast;sea
+#26cafc;Arica Gulf;sea
+#27defc;Arequipa Bay;sea
+#28fcfc;Coast of Peru;sea
+#29caca;Guayaguil Bay;sea
+#2acafc;Coast of Ecuador;sea
+#2bdefc;Gulf of Panama;sea
+#2cfcfc;Bay of Costa Rica;sea
+#2dcaca;Acapulco Bay;sea
+#2ecafc;Manzazilla Bay;sea
+#2fdefc;Mazatlan Bay;sea
+#30fcfc;Gulf of California;sea
+#31caca;Coast of Baja;sea
+#32cafc;Coast of California;sea
+#33defc;Santa Catalina Islands;sea
+#34fcfc;Coast of Oregon;sea
+#35caca;Coast of Columbia;sea
+#36cafc;Hecate Strait;sea
+#37defc;Gulf of Alaska;sea
+#38fcfc;Coast of Alaska;sea
+#39caca;Kuskowim Bay;sea
+#3acafc;Hatton Bank;sea
+#3bdefc;Eastern Gibbs Fracture;sea
+#3cfcfc;Western Gibbs Fracture;sea
+#3dcaca;Iberian Shelf;sea
+#3ecafc;Sea of Azores;sea
+#3fdefc;Corner Seamounts;sea
+#40fcfc;New England Seamounts;sea
+#41caca;Sable Island Bank;sea
+#42cafc;Blake Plataeu;sea
+#43defc;West Bermuda Sea;sea
+#44fcfc;East Bermuda Sea;sea
+#45caca;Some Funny Seaname;sea
+#46cafc;Northern Guiana Basin;sea
+#47defc;Guiana Basin;sea
+#48fcfc;Southern Guiana Basin;sea
+#49caca;Canary Approach;sea
+#4acafc;Cap Verde Approach;sea
+#4bdefc;Central Atlantic #1;sea
+#4cfcfc;Central Atlantic #2;sea
+#4dcaca;Central Atlantic #3;sea
+#4ecafc;Central Atlantic #4;sea
+#4fdefc;Romanche Gap;sea
+#50fcfc;East Guinea Basin;sea
+#51caca;West Guinea Basin;sea
+#52cafc;Coast of Falklands;sea
+#53defc;New Georgia Islands;sea
+#54fcfc;Western Atlantic #1;sea
+#55caca;Western Atlantic #2;sea
+#56cafc;Western Atlantic #3;sea
+#57defc;Western Atlantic #4;sea
+#58fcfc;Western Atlantic #5;sea
+#59caca;Western Atlantic #6;sea
+#5acafc;East of Magellans;sea
+#5bdefc;Central Atlantic #5;sea
+#5cfcfc;Central Atlantic #6;sea
+#5dcaca;Central Atlantic #7;sea
+#5ecafc;Central Atlantic #8;sea
+#5fdefc;Eastern Atlantic #1;sea
+#60fcfc;Eastern Atlantic #2;sea
+#61caca;Eastern Atlantic #3;sea
+#62cafc;Eastern Atlantic #4;sea
+#63defc;Eastern Atlantic #5;sea
+#64fcfc;Eastern Atlantic #6;sea
+#65caca;Southern Atlantic #1;sea
+#66cafc;Southern Atlantic #2;sea
+#67defc;Southern Atlantic #3;sea
+#68fcfc;Southern Atlantic #4;sea
+#69caca;Cape of Storms;sea
+#6acafc;Gulf of Bengal;sea
+#6bdefc;Northen Bay of Bengal;sea
+#6cfcfc;Southern Bay of Bengal;sea
+#6dcaca;Ceylon Sea;sea
+#6ecafc;Coast of Maldives;sea
+#6fdefc;Indian Ocean #1;sea
+#70fcfc;Indian Ocean #2;sea
+#71caca;Indian Ocean #3;sea
+#72cafc;Indian Ocean #4;sea
+#73defc;Indian Ocean #5;sea
+#74fcfc;Indian Ocean #6;sea
+#75caca;Indian Ocean #7;sea
+#76cafc;Indian Ocean #8;sea
+#77defc;Indian Ocean #9;sea
+#78fcfc;Indian Ocean #10;sea
+#79caca;Indian Ocean #11;sea
+#7acafc;Indian Ocean #12;sea
+#7bdefc;Indian Ocean #13;sea
+#7cfcfc;Indian Ocean #14;sea
+#7dcaca;Indian Ocean #15;sea
+#7ecafc;Indian Ocean #16;sea
+#7fdefc;Indian Ocean #17;sea
+#00fdfd;Indian Ocean #18;sea
+#01cbcb;Indian Ocean #19;sea
+#02cbfd;Indian Ocean #20;sea
+#03dffd;Indian Ocean #21;sea
+#04fdfd;Indian Ocean #22;sea
+#05cbcb;Indian Ocean #23;sea
+#06cbfd;Indian Ocean #24;sea
+#07dffd;Indian Ocean #25;sea
+#08fdfd;Indian Ocean #26;sea
+#09cbcb;Indian Ocean #27;sea
+#0acbfd;Indian Ocean #28;sea
+#0bdffd;Indian Ocean #29;sea
+#0cfdfd;Indian Ocean #30;sea
+#0dcbcb;Indian Ocean #31;sea
+#0ecbfd;Indian Ocean #32;sea
+#0fdffd;Lake Chad;sea
+#10fdfd;Lake Victoria;sea
+#11cbcb;Lake Tangayika;sea
+#12cbfd;Lake Malawi;sea
+#13dffd;White Sea;sea
+#14fdfd;Lake Balchasj;sea
+#15cbcb;Lake Bajkal;sea
+#16cbfd;Poyang Lake;sea
+#17dffd;Lake Titicaca;sea
+#18fdfd;Lake Nicaragua;sea
+#19cbcb;Everglades;sea
+#1acbfd;Lake Ontario;sea
+#1bdffd;Lake Erie;sea
+#1cfdfd;Lake Huron;sea
+#1dcbcb;Lake Michigan;sea
+#1ecbfd;Lake Superior;sea
+#1fdffd;Lake Nipigon;sea
+#20fdfd;Lake Winnipeg;sea
+#21cbcb;Western Pacific #1;sea
+#22cbfd;Western Pacific #2;sea
+#23dffd;Western Pacific #3;sea
+#24fdfd;Western Pacific #4;sea
+#25cbcb;Western Pacific #5;sea
+#26cbfd;Western Pacific #6;sea
+#27dffd;Western Pacific #7;sea
+#28fdfd;Western Pacific #8;sea
+#29cbcb;Western Pacific #9;sea
+#2acbfd;Western Pacific #10;sea
+#2bdffd;Western Pacific #11;sea
+#2cfdfd;Northern Pacific #1;sea
+#2dcbcb;Northern Pacific #2;sea
+#2ecbfd;Northern Pacific #3;sea
+#2fdffd;Northern Pacific #4;sea
+#30fdfd;Northern Pacific #5;sea
+#31cbcb;Northern Pacific #6;sea
+#32cbfd;Northern Pacific #7;sea
+#33dffd;Northern Pacific #8;sea
+#34fdfd;Northern Pacific #9;sea
+#35cbcb;Northern Pacific #10;sea
+#36cbfd;Central Pacific #1;sea
+#37dffd;Central Pacific #2;sea
+#38fdfd;Central Pacific #3;sea
+#39cbcb;Central Pacific #4;sea
+#3acbfd;Central Pacific #5;sea
+#3bdffd;Central Pacific #6;sea
+#3cfdfd;Central Pacific #7;sea
+#3dcbcb;Central Pacific #8;sea
+#3ecbfd;Central Pacific #9;sea
+#3fdffd;Central Pacific #10;sea
+#40fdfd;Coast of Hawaii;sea
+#41cbcb;Central Pacific #11;sea
+#42cbfd;Central Pacific #12;sea
+#43dffd;Eastern Pacific #1;sea
+#44fdfd;Eastern Pacific #2;sea
+#45cbcb;Eastern Pacific #3;sea
+#46cbfd;Eastern Pacific #4;sea
+#47dffd;Eastern Pacific #5;sea
+#48fdfd;Eastern Pacific #6;sea
+#49cbcb;Eastern Pacific #7;sea
+#4acbfd;Eastern Pacific #8;sea
+#4bdffd;Eastern Pacific #9;sea
+#4cfdfd;Eastern Pacific #10;sea
+#4dcbcb;Eastern Pacific #11;sea
+#4ecbfd;Eastern Pacific #12;sea
+#4fdffd;Eastern Pacific #13;sea
+#50fdfd;Eastern Pacific #14;sea
+#51cbcb;Eastern Pacific #15;sea
+#52cbfd;Eastern Pacific #16;sea
+#53dffd;Eastern Pacific #17;sea
+#55cbcb;Southern Pacifc #1;sea
+#56cbfd;Southern Pacifc #2;sea
+#57dffd;Southern Pacifc #3;sea
+#58fdfd;Southern Pacifc #4;sea
+#59cbcb;Southern Pacifc #5;sea
+#5acbfd;Southern Pacifc #6;sea
+#5bdffd;Southern Pacifc #7;sea
+#5cfdfd;Southern Pacifc #8;sea
+#5dcbcb;Southern Pacifc #9;sea
+#5ecbfd;Southern Pacifc #10;sea
+#5fdffd;Southern Pacifc #11;sea
+#60fdfd;Southern Pacifc #12;sea
+#61cbcb;Southern Pacifc #13;sea
+#62cbfd;Southern Pacifc #14;sea
+#63dffd;Southern Pacifc #15;sea
+#64fdfd;Southern Pacifc #16;sea
+#65cbcb;Southern Pacifc #17;sea
+#66cbfd;Southern Pacifc #18;sea
+#67dffd;Southern Pacifc #19;sea
+#68cbcb;Southern Pacifc #20;sea
+#6acbfd;Southern Pacifc #22;sea
+#6bdffd;Southern Pacifc #23;sea
+#6cfdfd;Southern Pacifc #24;sea
+#6dcbcb;Southern Pacifc #25;sea
+#6ecbfd;Southern Pacifc #26;sea
+#42447e;Limburg;land
+#c246ad;Cambray;land
+#424820;Antwerpen;land
+#c34a4f;Cantabria;land
+#434c7e;Burgos;land
+#c34ead;Caceres;land
+#435020;La Mancha;land
+#c3524f;Cadiz;land
+#43547e;Alicante;land
+#c356ad;Ceuta;land
+#445820;Rzhev;land
+#c45a4f;Kostroma;land
+#445c7e;Orel;land
+#c45ead;Ustyug;land
+#446020;Budjak;land
+#c4624f;Oberpfalz;land
+#44647e;Hannover;land
+#c566ad;Potsdam;land
+#456820;Koblenz;land
+#c56a4f;Alzey;land
+#456c7e;Kassel;land
+#c56ead;Niederlausitz;land
+#457020;Burgas;land
+#c5724f;Nis;land
+#46747e;Kosovo;land
+#c676ad;Osijek;land
+#467820;Lienz;land
+#c67a4f;Görz;land
+#467c7e;Ostmarch;land
+#c67ead;Erz;land
+#468020;Presburg;land
+#c7824f;Achaea;land
+#47847e;Treviso;land
+#c786ad;Holstein;land
+#478820;Karelia;land
+#c78a4f;Kola;land
+#478c7e;Kasimov;land
+#c78ead;Rub' al Khali;impassable
+#489020;Komi;land
+#c8924f;Western Siberia;impassable
+#48947e;Eastern Siberia;impassable
+#c896ad;Koryak;impassable
+#489820;Tiam Shan;impassable
+#c89a4f;Karakoram;impassable
+#489c7e;Takla Makan;impassable
+#c99ead;Himalaya;impassable
+#492020;Arunachal;impassable
+#c9224f;Maoke;impassable
+#49247e;Western Australia;impassable
+#c926ad;Central Australia;impassable
+#c92a4f;Merina;land
+#4a2c7e;El Djouf;impassable
+#ca2ead;Central Sahara;impassable
+#4a3020;East Sahara;impassable
+#ca324f;Central Africa;impassable
+#4a347e;Inner Kongo;impassable
+#ca36ad;Imatong;impassable
+#4a3820;Urgoma;impassable
+#cb3a4f;Limpopo;land
+#4b3c7e;Kalahari;impassable
+#cb3ead;Northern Amazonas;impassable
+#4b4020;Southern Amazonas;impassable
+#cb424f;Greenland;impassable
+#4b447e;Québec;impassable
+#cb46ad;Weagamow;impassable
+#4c4820;Baffin Island;impassable
+#cc4a4f;Great Basin;impassable
+#4c4c7e;Great Plains;land
+#cc4ead;Alaska;impassable
+#4c5020;Nunavut;impassable
+#cc524f;Northwest Territories;impassable
+#4c547e;Saskatchewan;land
+#cd56ad;Columbia;impassable
+#4d5820;Ayeyarwady;land
+#cd5a4f;Hejian;land
+#4d5c7e;Nan;land
+#cd5ead;Chikuzen;land
+#4d6020;Tosa;land
+#cd624f;Awa;land
+#4e647e;Nanjing;land
+#ce66ad;Shangai;land
+#4e6820;Stung Treng;land
+#ce6a4f;Wenzhou;land
+#4e6c7e;Aki;land
+#ce6ead;Lika;land
+#4e7020;Raska;land
+#cf724f;Soli;land
+#4f747e;Xiamen;land
+#cf76ad;Tajima;land
+#4f7820;Travunia;land
+#cf7a4f;Yamato;land
+#4f7c7e;Ji'an;land
+#cf7ead;Dorpat;land
+#508020;Mino;land
+#d0824f;Nanyang;land
+#50847e;Etchu;land
+#d086ad;Hefei;land
+#508820;Totomi;land
+#d08a4f;Guilin;land
+#508c7e;Marienburg;land
+#d18ead;Narva;land
+#519020;Kozuke;land
+#d1924f;Xiankhouang;land
+#51947e;Pyeongyang;land
+#d196ad;Amasya;land
+#519820;Shiribeshi;land
+#d19a4f;Hamid;land
+#529c7e;Hama;land
+#d29ead;Mudanjiang;land
+#522020;Ribatejo;land
+#d2224f;Tokachi;land
+#52247e;Kozani;land
+#d226ad;Jaffa;land
+#522820;Sidon;land
+#d32a4f;Abkhazia;land
+#532c7e;Lauenburg;land
+#d32ead;Stettin;land
+#533020;Torun;land
+#d3324f;Norfolk;land
+#53347e;Derby;land
+#d336ad;Cremona;land
+#543820;Graz;land
+#d43a4f;Somogy;land
+#543c7e;Ghent;land
+#d43ead;Namur ;land
+#544020;Freiburg;land
+#d4424f;Augsburg;land
+#54447e;Zürich;land
+#d546ad;S:t Gallen;land
+#554820;Wallis;land
+#56547e;Ulm;land
+#554c7e;Chur;land
+#d54ead;Bremen;land
+#8e6ec0;Turin;land
+#d5524f;Frankfurt;land
+#565c7e;Charolais;land
+#d656ad;Aachen;land
+#565820;Alencon;land
+#d65a4f;Sundgau;land
+#d54a4f;St. Barthélemy;land
+#d65ead;Bône;land
+#0000e8;Western Finish lakes;sea
+#0100ec;East Finish lakes;sea
+#0200f0;Central finish lakes;sea
+#0300f4;Storavan;sea
+#0400f8;Storsjon;sea
+#0500e8;Kara Sea;sea
+#0600ec;Lake geneva;sea
+#0700f0;Bodensee;sea
+#0800f4;Tuz Gola;sea
+#0900f8;Lake Van;sea
+#0a00e8;Lake Daryacheh;sea
+#0b00ec;Sevan Lake;sea
+#0c00f0;Lake Taihu;sea
+#0d00f4;Lake Hongze;sea
+#0e00f8;Dongting;sea
+#0f00e8;Tonie Sap Lake;sea
+#1000ec;Tana lake;sea
+#1100f0;Lake Turkana;sea
+#5168bf;Mpangu;land
+#1300f8;Lake Poopo;sea
+#1400e8;Lake Champlain;sea
+#1500ec;Lac Saint Jean;sea
+#1600f0;Lac Manicouagan;sea
+#1700f4;Lac Michikamau;sea
+#1800f8;Lac Bienville;sea
+#1900e8;Lac Al Eau Claire;sea
+#1a00ec;Lac Minto;sea
+#1b00f0;La Grande Riviere;sea
+#1c00f4;Lake Island;sea
+#1d00f8;Lake Reindeer;sea
+#1e00e8;Wollaston Lake;sea
+#1f00ec;Great Slave Lake;sea
+#2000f0;Lake Athabasca;sea
+#2100f4;Dubawni Lake;sea
+#2200f8;Yathkyed Lake;sea
+#2300e8;Kasba Lake;sea
+#2400ec;Nueltin Lake;sea
+#2500f0;Wholdaia Lake;sea
+#2600f4;Peter Pond Lake;sea
+#2700f8;Great salt lake;sea
+#2800e8;Williston Lake;sea
+#3ecefc;Greenland tip;sea
+#e1bfc8;Tana;land
+#3ee6fc;Northern baltic sea;sea
+#3edafc;Eastern baltic sea;sea
+#3eeafc;Western Alands sea;sea
+#3ed2fc;Western Norwegian Sea;sea
+#ed9a4f;Åland;land
+#823c32;East Frisia;land
+#3196f8;Gulf of Satalia;sea
+#3200e8;Bari;land
+#fb0024;Lucania;land
+#3400f0;Semigallia;land
+#370000;Kovno;land
+#4100fa;Grodno;land
+#4b0019;Wizna;land
+#5500e1;Leczyca;land
+#5f0032;Belz;land
+#6900c8;Turov;land
+#6e004b;Zhytomyr;land
+#7300af;Bratslav;land
+#780064;Cherkasy;land
+#7d0096;Novgorod-Seversky;land
+#3f00f4;Desh;land
+#4000f8;Gingee;land
+#4100e8;Bidar;land
+#4200ec;Tirupati;land
+#4300f0;Meghalaya;impassable
+#4400f4;Hunyad;land
+#4500f8;Maramaros;land
+#4600e8;Szabolcs;land
+#4700ec;Torontal;land
+#ac92c0;Kholmogory;land
+#4900f4;Suzdal;land
+#4a00f8;Galich;land
+#4b00e8;Kargopol;land
+#4c00ec;Torzhok;land
+#4d00f0;Ostrov;land
+#4e00f4;Ladoga;land
+#4f00f8;Kudymkar;land
+#5000e8;Cherdyn;land
+#5100ec;Ust-Sysolsk;land
+#58747e;Buzuluk;land
+#d876ad;Chelyaba;land
+#d97ead;Khujand;land
+#598020;Kulob;land
+#d87a4f;Sozak;land
+#587820;Syghnak;land
+#587020;Tsaritsyn;land
+#d8724f;Udmurtia;land
+#587c7e;Urgench;land
+#d76ead;Yedishkul;land
+#69e1ff;Sea of Jutland;sea
+#5d00f4;Dead Sea;sea
+#5e00f8;Mälaren;sea
+#5f00e8;Shetlands;land
+#6000ec;Färöarnax;land
+#88fdfd;Sea of Japan;sea
+#6200f4;Bornholm;land
+#6300f8;Blekinge;land
+#6400e8;Lolland;land
+#6500ec;Nordjylland;land
+#66f000;Närke;land
+#6700f4;New Caledonia;land
+#6800f8;Society Islands;land
+#6900e8;Rapa Nui;land
+#6a00ec;Tonga;land
+#6b00f0;Tuvalu;land
+#6c00f4;Gilbert Islands;land
+#6d00f8;Nauru;land
+#6e00e8;Marshall Islands;land
+#6f00ec;Wake;land
+#7000f0;Micronesia;land
+#7100f4;Palau;land
+#7200f8;Midway;land
+#7300e8;Christmas Island;land
+#7400ec;Cocos Island;land
+#3cdddd;Qinghai Lake;sea
+#5fc8c8;Siling Lake;sea
+#c887ff;Galápagos Islands;land
+#7802e8;Ktunaxa;land
+#7d04ec;Niitsitapi;land
+#8208f0;Asinaan;land
+#8710f4;Apsáalooke;land
+#8c20f8;Arikara;land
+#9140e8;Yankton;land
+#9680ec;Teton;land
+#370150;Connecticut;land
+#9b0278;Shenandoah;land
+#6903a0;Arsigantegok;land
+#4b0428;Kennebec;land
+#6906a0;Natchitoches;land
+#410728;Nipigon;land
+#9b0878;Bungi;land
+#6909a0;Nehiyawewin;land
+#370a28;Tsuutina;land
+#690b78;Nimiipu;land
+#9b0ca0;Bannock;land
+#190d46;Miwok;land
+#9b0578;Haida;land
+#370e78;Munsee;land
+#ff0fa0;Ajiraan;land
+#ff1028;South Georgia;land
+#ff1178;Tanjore;land
+#e612a0;Arcot;land
+#ff135a;Mahur;land
+#ff1478;South Kanara;land
+#ff15a0;Goa;land
+#10869b;Morasanadu;land
+#10f59b;Malenadu;land
+#bca445;Savanaur;land
+#ff7800;Pune;land
+#519467;Gulbarga;land
+#9cac2d;Baglana;land
+#cd7775;Warangal;land
+#d59da5;Midnapore;land
+#d5f2a5;Sunderbans;land
+#54ed57;Sadiya;land
+#40bd03;Manipur;land
+#f65c3e;Koch Hajo;land
+#00e145;Balasore;land
+#b510a0;Bhagalpur;land
+#357c56;Rangpur;land
+#c18317;Nasirabad;land
+#55a085;Tirhut;land
+#c6cbaa;Garjat;land
+#4912a9;Khurda;land
+#b84608;Chanda;land
+#d7f1a0;Bhavnagar;land
+#7aea20;Navanagar;land
+#e18e42;Patan;land
+#9cc997;Ahmadabad;land
+#9cc9dd;Gorakhpur;land
+#9c3ddd;Rewakantha;land
+#4bbe40;Bhelsa;land
+#e762b6;Mewar;land
+#ed600a;Kalpi;land
+#ffc0e3;Upper Doab;land
+#ffc000;Katehar;land
+#c14cb2;Panipat;land
+#98a0f3;Etawah;land
+#cadaff;Shekhawati;land
+#35d7d9;Batthiana;land
+#749177;Nagaur;land
+#d43535;Gorwar;land
+#48e1c0;Siwistan;land
+#bb9ad4;Kumaon;land
+#7bb548;Chaubisi Rajas;land
+#eabd5d;Limbuwan;land
+#60e5ed;Bhakkar;land
+#9ac02c;Baltistan;land
+#97afcd;Ladakh;land
+#0012ff;Doaba;land
+#00c2ff;Sialkot;land
+#e08cdd;Margalla;land
+#208cdd;Bannu;land
+#848cdd;Dera Ghazi Khan;land
+#db6c09;Srikakulam;land
+#8e5086;Lakhnor;land
+#118a5e;Raipur;land
+#cd5652;Kosta;land
+#c100f1;Konaseema;land
+#a1a5e1;Tiruchirapalli;land
+#c5e1bf;Cholistan;land
+#e0d5b2;Ajmer;land
+#429cba;Umarkot;land
+#518e42;Chaul;land
+#9a34b3;Rayalaseema;land
+#91210b;Tripura;land
+#aab9d4;Mahadeo;land
+#e6be40;Mandsaur;land
+#4e9bbf;Bahreich;land
+#de5e5e;Varanasi;land
+#d2f3c2;Damin;land
+#5f65de;Baghelkhand;land
+#94888a;Surguja;land
+#c1cf2c;Kandy;land
+#c37b79;Vanni;land
+#baef16;Tirunelveli;land
+#d7bf1a;Urkan;land
+#6784e0;Udi;land
+#688840;Birija;land
+#6994a0;Kuru;land
+#69a250;Furdan;land
+#689ef0;Ningguta;land
+#646290;Huncun;land
+#645a50;Boduna;land
+#6356f0;Yehe;land
+#c7df66;Hetu Ala;land
+#73d28f;Andong;land
+#c18584;Gaizhou;land
+#6aaca0;Ereen;land
+#6bb4e0;Chahar;land
+#6ccef0;Ih Huree;land
+#dbe07c;Zasagt;land
+#7466f0;Urzhar;land
+#723840;Chuguchak;land
+#727337;Ili;land
+#702040;Kuqa;land
+#6ff4a0;Hami;land
+#6ffef0;Qakilik;land
+#734ef0;Yarkand;land
+#735670;Kochkor;land
+#9b8b2f;Chuy;land
+#735250;Yashilkul;land
+#7bb880;Ngari;land
+#7aaef0;Changtang;impassable
+#799840;Nyingchi;land
+#c4bb15;Qamdo;land
+#778a90;Markam;land
+#767ef0;Dege;land
+#7778c0;Rebgong;land
+#768250;Garze;land
+#7cd290;Xuanhua;land
+#8f4b4b;Daming;land
+#5676f0;Wuding;land
+#911818;Laizhou;land
+#eefe94;Yanzhou;land
+#6bda6f;Xuzhou;land
+#545080;Huai'an;land
+#be3535;Fengyang;land
+#523eb0;Fuyang;land
+#b93333;Zhenjiang;land
+#b9c527;Ningguo;land
+#962a2a;Huizhou;land
+#29963d;Shaoxin;land
+#793636;Ningbo;land
+#456640;Jinhua;land
+#836423;Poyang;land
+#902525;Jianning;land
+#435470;Tingzhou;land
+#e9d85c;Kelang;land
+#612c60;Middag;land
+#925151;Chaochow;land
+#4134e0;Waichow;land
+#412eb0;Shiukwan;land
+#402ca0;Leichow;land
+#412250;Ngaichow;land
+#402040;Limchow;land
+#444e40;Ngchow;land
+#433e80;Liuzhou;land
+#4346c0;Namning;land
+#ffd800;Pu'er;land
+#45cd32;Dehong;land
+#4bf04a;Lijiang;land
+#4ffe70;Bozhou;land
+#952121;Langzhong;land
+#5ab6b0;Songqu;land
+#993939;Xiangyang;land
+#513040;Jingzhou;land
+#0024ff;Yuanling;land
+#9e3e3e;Hengyang;land
+#abc617;Runing;land
+#589040;Shangqiu;land
+#59a2d0;Ningwu;land
+#5aac60;Lu'an;land
+#5bbce0;Yan'an;land
+#4ff6f0;Tianshui;land
+#5dd840;Pingliang;land
+#5fece0;Liangzhou;land
+#5dde70;Taozhou;land
+#d7d22b;Xining;land
+#677880;Mergen;land
+#699ce0;Iman;land
+#6aa460;Sartu;land
+#6466b0;Alchuka;land
+#6edca0;Tsetserleg;land
+#cd9e7c;Qaraqorum;land
+#6cc4a0;Ejin;land
+#d9dc54;Korla;land
+#602a50;Govi;land
+#716a1a;Kunlun;impassable
+#ff12a0;Adyghe;land
+#ff1328;Guria;land
+#ff1900;Cabardia;land
+#ff7e28;Khundzia;land
+#ffc896;Tarki;land
+#f3ca0c;Suleiman Range;impassable
+#ff16c8;Alania;land
+#ffdf00;Melikates;land
+#ff1717;Kakheti;land
+#ffe0c8;Samtskhe;land
+#ff1828;Nakhchivan;land
+#ffe178;Urmia;land
+#ff7dc8;Maragheh;land
+#ff7dd7;Terek;land
+#ff185a;Ilam;land
+#bba516;Kirmanshah;land
+#bbd780;Ardalan;land
+#3c8f22;Zanjan;land
+#bbcd16;Qom;land
+#5151c0;Golestan;land
+#bb185a;Qazvin;land
+#bb189b;Semnan;land
+#ff705a;Yasuj;land
+#a54854;Sarvestan;land
+#3a58b4;Bandar Langeh;land
+#5151ff;Bam;land
+#a54889;Mashhad;land
+#5151dd;Ardakan;land
+#d7329b;Larestan;land
+#be2c00;Ferah;land
+#d2e300;Bamyan;land
+#5abb22;Jalalabad;land
+#d09a0c;Kunduz;land
+#283bd3;Maymana;land
+#5a9c22;Bust;land
+#81ab81;Chakhansur;land
+#79d229;Bela;land
+#be483b;Kharan;land
+#98893b;Western Makran;land
+#c1d73e;Rafsanjan;land
+#be4860;Sabzevar;land
+#83d386;Bojnord;land
+#a06d9d;Tekrur;land
+#5049a0;Kantor;land
+#784bb9;Siine;land
+#788984;Galam;land
+#c86fb6;Beafada;land
+#f0456e;Karou;land
+#50876b;Termes;land
+#a08b9d;Tagant;land
+#f071cf;Wagadu;land
+#2873e8;Baghena;land
+#507553;Walata;land
+#78776c;Do;land
+#a09785;Sibiridugu;land
+#a04dd2;Bendugu;land
+#503db8;Bagoe;impassable
+#c875eb;Lobi;land
+#a07985;Gwiriko;land
+#f07de8;Bonoman;land
+#287fb7;Gyaaman;land
+#288b9f;Dagbon;land
+#5081d0;Denkyira;land
+#7883e9;Cape Coast;land
+#a08554;Bara;land
+#c84feb;Mema;land
+#a073d2;Kala;land
+#7462a8;Karabara;land
+#c85bd3;Haayre;land
+#c8876d;Hombori;land
+#f07756;Liptako;land
+#8cc7b7;Bilanga;land
+#f08986;Tenkodogo;land
+#28530b;Aribanda;land
+#c89355;Zarmaganda;land
+#28790b;Dallol;land
+#508db8;Azawagh;land
+#a07fba;Azbin;land
+#788fd1;Ader;land
+#a091ea;Agades;land
+#787da1;Tenere;land
+#507b88;Itesan;land
+#f0a156;Kawar;land
+#f0956e;Kebbi;land
+#789bb9;Daura;land
+#a09dd2;Biram;land
+#c89feb;Rano;land
+#289787;Muniyo;land
+#f08fcf;Bedde;land
+#a059ba;Manga;land
+#c881d3;Marghi;land
+#f083ec;Logone;land
+#28a30b;Kotoko;land
+#288552;Yao;land
+#284787;Ondo;land
+#f05156;Ijebu;land
+#7857a1;Ketu;land
+#8c91e8;Moshi;land
+#c88db6;Yawuri;land
+#c8999e;Warri;land
+#509353;Atakora;land
+#d14499;Biga;land
+#f598a9;Saruhan;land
+#ffe693;Tekke;land
+#e2e766;Bolu;land
+#c64499;Bozok;land
+#009baf;Kayseri;land
+#bbbade;Icel;land
+#a7a336;Malatya;land
+#9d2480;Canik;land
+#599942;Erzincan;land
+#b8b733;Mush;land
+#cfe184;Van;land
+#00994b;Urfa;land
+#842990;Sinjar;land
+#fa1329;Tikrit;land
+#33823f;Samawat;land
+#f26660;Wasit;land
+#b5b534;Antioch;land
+#310b47;Rahba;land
+#8b163b;Suez;land
+#04183d;Al Gharbia;land
+#95c93d;Minya;land
+#9dd7d1;Bahariya;land
+#cee7ca;Manfalut;land
+#3e3092;Ras Gharib;land
+#cbb92d;Queseer;land
+#d4e383;Wadi Halfa;land
+#9ea8d5;Sahra an Nubyah;land
+#ef458b;Halaib;land
+#f5f4b3;Tarrana;land
+#b21f72;Bardiyah;land
+#9ad8de;Maan;land
+#00785b;Tayma;land
+#657d36;Yanbu;land
+#3b5225;Ma'din Sulaym;land
+#facbe0;Jeddah;land
+#bce4e9;Truba;land
+#007cc2;Abd al-Qays;land
+#e1e0ae;Badiyat ash Sham;impassable
+#0973bb;Dawasir;land
+#ee1066;Aflaj;land
+#ff15f5;Buraydah;land
+#c9187e;Hafar;land
+#9d2272;Yabrin;land
+#5b0430;Grane;land
+#d5e7b2;Sharqiyah;land
+#38101f;Wusta;land
+#751243;Hadramawt;land
+#d2196f;Marib;land
+#f0ee81;Beihan;land
+#fcb770;Jazan;land
+#00785e;Hofuf;land
+#6c9d40;Chios;land
+#47d02f;Kizil-Su;land
+#9732cd;Konjikala;land
+#a99e56;Shekty;land
+#676898;Alty-Kuduk;land
+#39ca35;Tortkara;land
+#9ba758;Shegendyk;land
+#bdae42;Narym;land
+#27d884;Shymkent;land
+#d36a2c;Aksary;land
+#b3b54a;Altyn;land
+#45ba7a;Baganaly;land
+#442871;Tobykty;land
+#17823d;Dzhaman-Kuduk;land
+#a8af12;Gurganj;land
+#913131;Atakent;land
+#c1ff80;Talas;land
+#b7bf48;Orda;land
+#b3a555;Utva;land
+#58afab;Lower Yik;land
+#8764a4;Karamegdan;land
+#af5877;Lower Ishim;land
+#6c829b;Kungirot;land
+#7f0000;Song La;land
+#0026ff;Hai Phong;land
+#894c48;Hue;land
+#35cc69;Kauthara;land
+#f47f19;Rhade;land
+#e1bf00;Prek Russey;land
+#52c73d;Teuk Khmao;land
+#ff006e;Kratie;land
+#0094ff;Battambang;land
+#be23c3;Phnom Penh;land
+#22410b;Luang Namtha;land
+#9a0c1a;Savanh Nakhone;land
+#7f1f0c;Khukhanor Surin;land
+#114faa;Nong Khai;land
+#2a7f7f;Nongbua Lamphu;land
+#5b7000;Chaiyaphum;land
+#474080;Phetchaburi;land
+#2026ff;Phitsanulok;land
+#d582e1;Phra Bang;land
+#ca4298;Chaiya;land
+#d32c3f;Thalang;land
+#876272;Selangor;land
+#2c8e55;Terengganu;land
+#5caf24;Kedah;land
+#207c20;Hkamti Long;land
+#ff759a;Mong Kawng;land
+#8dff6b;Tamanthi;land
+#35a88d;Thaungdut;land
+#fff26d;Pagan;land
+#ffa03a;Hsipaw;land
+#ffa389;Yawnghwe;land
+#89ff68;Sandoway;land
+#ff5c47;Martaban;land
+#61c647;Mergui;land
+#365b48;Bendery;land
+#974e8e;Ingil;land
+#594678;Pereyaslav;land
+#d3df45;Lipetsk;land
+#ca2b8b;Bahmut;land
+#99e6cc;Theodoro;land
+#b3cc99;Mansur;land
+#7a8faa;Kyzyl-Yar;land
+#46467a;Tyn;land
+#744a7a;Azaraba;land
+#3c2c72;Etkara;land
+#424b78;Majar;land
+#b61928;Kuma;land
+#553ad7;Ukek;land
+#abd0c0;Kanadey;land
+#f7160c;Agyidel;land
+#2d1f12;Juketau;land
+#a34812;Veda-Suvar;land
+#a3bd12;Alatyr;land
+#97ba6e;Peremyshl;land
+#593d4e;Naryan-Mar;impassable
+#224a7e;Yamal;impassable
+#a65320;Ostyaki;land
+#99665d;Yugan;land
+#3f665d;Agan;land
+#58c64f;Baykha;land
+#acc987;Uchamin;land
+#a2b74f;Chulym;land
+#aaca7e;Vah;land
+#3f86ad;Barnaul;land
+#225059;Nukhtui;land
+#222b3a;Chuna;land
+#9aaf3a;Seganka;land
+#224a3a;Kharya;land
+#ad6820;Yarmanka;land
+#ad4220;Kagyrgyn;land
+#48824f;Iglino;land
+#481c4f;Ust-Kut;land
+#2f7aa7;Kan;land
+#a43046;Bashgird;land
+#a69020;Mangazea;land
+#942f20;Chara;land
+#e42b2b;Mantrega;land
+#901f91;Fezzan;land
+#51905f;Jufra;land
+#cf832e;Ghadames;land
+#271ff6;Thubaqt;land
+#a51fc4;Zuwarah;land
+#660c91;Sfax;land
+#e4e75f;Kairouan;land
+#3ca12e;Bizerte;land
+#ba83f6;Touggourt;land
+#7b33c4;Mzab;land
+#f9f991;Hodna;land
+#15015f;Titteri;land
+#93972e;Saoura;land
+#5483f6;Dahra;land
+#d20bc4;Ouarsenis;land
+#2a0c91;Kasdir;land
+#a8975f;Ouarzazate;land
+#696d2e;Oujda;land
+#e70ff6;Draa;land
+#3f77c4;Meknes;land
+#bddd91;Tadla;land
+#7e015f;Dukkala;land
+#fc1f2e;Haha;land
+#01f6f6;Chott el-Jerid;sea
+#fc832e;Ouargla;land
+#bd7991;Souss;land
+#94853c;Tajarhi;land
+#2585b4;Djado;land
+#010091;Kumeyaay;land
+#7f1491;Yuki;land
+#4077f6;Tachi;land
+#be64c4;Maidu;land
+#162091;Shasta;land
+#94a15f;Klamath;land
+#555b2e;Kalapuya;land
+#d31ff6;Umatilla;land
+#2b33c4;Quileute;land
+#a90291;Chehalis;land
+#6a0c5f;Yakima;land
+#e8c92e;Spokane;land
+#0433f6;Palus;land
+#8282c4;Bohogue;land
+#43c991;Goshute;land
+#c18b5f;Hualapai;land
+#19bf2e;Chiricahua;land
+#97a1f6;Hopi;land
+#5826c4;Zuni;land
+#d6e791;Acoma;land
+#2ee75f;Jicarilla;land
+#acbf2e;Lipiyanes;land
+#6d29f6;Jumao;land
+#eb98c4;Coahuilteco;land
+#078391;Querecho;land
+#85e75f;Piegan;land
+#46a12e;Haaninin;land
+#c41ff6;Ashshipite;land
+#1cabc4;Eelalapito;land
+#9af391;Tsitsistas;land
+#5b025f;Kuccuntikka;land
+#d9832e;Baachinena;land
+#318df6;Skiri;land
+#af2bc4;Utsehta;land
+#70a491;Mandan;land
+#eef45f;Itscheabine;land
+#0a792e;Wahpekute;land
+#889ef6;Moingwena;land
+#4970c4;Michigamea;land
+#c7e891;Satuskhdin;land
+#1f405f;Adai;land
+#9da42e;Mdewakanton;land
+#5e30f6;Noquet;land
+#dc2cc4;Kilatika;land
+#34b791;Mengkonkia;land
+#b2035f;Okouara;land
+#738d2e;Mascouten;land
+#f165f6;Piankeshaw;land
+#0d1fc4;Wabash;land
+#8b0b91;Chillicothe;land
+#4c015f;Shatteras;land
+#caca2e;Chickamauga;land
+#227af6;Yazoo;land
+#a0ddc4;Natchez;land
+#610c91;Biloxi;land
+#df845f;Napochi;land
+#37832e;Tohome;land
+#b5c9f6;Chatot;land
+#7683c4;Yustaga;land
+#f4e791;Calusa;land
+#10135f;Mayaimi;land
+#8e1f2e;Hitchiti;land
+#4f83f6;Yamasee;land
+#cd01c4;Mocama;land
+#250691;Coweta;land
+#a3bf5f;Saluda;land
+#64032e;Cusabo;land
+#e229f6;Waccamaw;land
+#3a01c4;Yadkin;land
+#b81f91;Waxhaw;land
+#79a15f;Chicora;land
+#f7832e;Roanoke;land
+#1383f6;Tutelo;land
+#91ffc4;Moratok;land
+#521f91;Doeg;land
+#d0c75f;Monongahela;land
+#283d2e;Manahoac;land
+#a61ff6;Potomac;land
+#6715c4;Nanticoke;land
+#e51f91;Honniasont;land
+#3d1f5f;Juniata;land
+#bbde2e;Atrakwaye;land
+#7c83f6;Espachomy;land
+#fa8dc4;Adirondack;land
+#028391;Quinnipiac;land
+#80b55f;Wampanoag;land
+#41852e;Pennacook;land
+#bf7bf6;Missiquoi;land
+#171fc4;Sokoki;land
+#957a91;Kennebec;land
+#568d5f;Passamaquoddy;land
+#d4d72e;Aroostook;land
+#2c83f6;Kespukwitk;land
+#aa1fc4;Eskikewakik;land
+#6b1f91;Wolystoq;land
+#e96f5f;Madawaska;land
+#05ca2e;Siknikt;land
+#8365f6;Placentia;land
+#4401c4;Sikumiut;land
+#c2d691;Naskapi;land
+#1a035f;Mingan;land
+#98012e;Manicouagan;land
+#5979f6;Anticosti;land
+#d702c4;Piekougami;land
+#2f0191;Atikamekw;land
+#adc75f;Timiskaming;land
+#6e012e;Maliseet;land
+#ec33f6;Etchemins;land
+#0879c4;Loup;land
+#861f91;Kichesipi;land
+#47c25f;Tionontate;land
+#c5c52e;Odawa;land
+#1d29f6;Piscatang;land
+#9b1fc4;Kesagami;land
+#5c2d91;Shaggami;land
+#da1a5f;Outoulibi;land
+#32832e;Omushkego;land
+#dd90f6;Wappus;land
+#b0b5f6;Quenebigon;land
+#7183c4;Kesyehotinne;land
+#ef1291;Mahmikiwiniyak;land
+#0b335f;Sipiwininiwak;land
+#891c2e;Hebina;land
+#4a0ff6;Athabasca;land
+#c81fc4;Nihithawak;land
+#204091;Danezaa;land
+#9e725f;Siksikawa;land
+#5f7a2e;Sekani;land
+#3583c4;Dakelh;land
+#b3db91;Secwepemc;land
+#74035f;Tsilhoqotin;land
+#f2ff2e;Okanagan;land
+#0e82f6;Rocky Mountains;impassable
+#8c83c4;Nisga'a;land
+#4d8491;Heiltsuk;land
+#cb295f;Kodiak;land
+#23dd2e;Eyak;land
+#a183f6;Sitka;land
+#621fc4;Cotoname;land
+#e02c91;Guamares;land
+#381f5f;Seri;land
+#b6c92e;Huichol;land
+#779af6;Toboso;land
+#f51fc4;Laguneros;land
+#118391;Nakipa;land
+#8f135f;Tizapan;land
+#501f2e;Cuitzeo;land
+#ce9af6;Cutzamala;land
+#262cc4;Patzcuaro;land
+#a40c91;Hinonoeino;land
+#651f5f;Tulucan;land
+#e3c92e;Cihuatlan;land
+#3b84f6;Tepeacac;land
+#b9e3c4;Coyolapan;land
+#7ae891;Tochtepec;land
+#f8f85f;Zaachila;land
+#14832e;Xicallanco;land
+#9292f6;Mani;land
+#5377c4;Uaymil;land
+#d1db91;Chiapas;land
+#290f5f;Chacujal;land
+#a7252e;Chortli;land
+#687cf6;Xoconochco;land
+#e61fc4;Raritan;land
+#6836f6;Lenca;land
+#f01fc4;Tziccoac;land
+#3e2d91;Metztitlan;land
+#bcbf5f;Apatzingan;land
+#7d1f2e;Cholula;land
+#fbbcf6;Teloloapan;land
+#031fc4;Coixtlahuacan;land
+#811f91;Cuetlaxtlan;land
+#420d5f;Yopitzinco;land
+#c0c92e;Tehuantepec;land
+#191ff6;Champutun;land
+#96e7c4;Ah Canul;land
+#571f91;Ecab;land
+#d5d55f;Iximché;land
+#2d832e;Baracoa;land
+#ab1ff6;Bayamo;land
+#6c1fc4;Camaguey;land
+#ea1f91;Colima;land
+#060f5f;Maguana;land
+#84102e;Magua;land
+#451ff6;Managua;land
+#c31fc4;Uluas;land
+#1b8d91;Olancho;land
+#991f5f;Nicoya;land
+#5a1f2e;Veraguas;land
+#d81ff6;Ais;land
+#301fc4;Tuintsundé;land
+#aee791;Cacaxtes;land
+#6f1f5f;Borrado;land
+#ed1f2e;Hasinai;land
+#6f3d5f;Tkaronto;land
+#ede72e;Missisage;land
+#c0652e;Kitkehaki;land
+#33ff28;Pasai;land
+#3cd639;Peureulak;land
+#1d2677;Rokan;land
+#9692b8;Indragiri;land
+#30377f;Jambi;land
+#d67183;Bangka;land
+#157568;Belitung;land
+#378247;Muko-Muko;land
+#4c769b;Pagarruyung;land
+#5c3bef;Pariaman;land
+#82401d;Mentawai;land
+#4f827d;Nias;land
+#ed2e28;Gayo;land
+#2cd638;Bintan;land
+#d8319e;Pakuan;land
+#825582;Cirebon;land
+#c66253;Kendal;land
+#a57475;Pajang;land
+#d83a22;Kediri;land
+#d843c9;Madura;land
+#68105b;Lombok;land
+#88d294;East Gangwon;land
+#6b4264;East Timor;land
+#b52d51;Yamdena;land
+#a3463a;Tondo;land
+#a3cf3a;Pangasinan;land
+#ff4b42;Bikol;land
+#c5ff35;Panay;land
+#dbd3a4;Tagloc;land
+#41db58;Butuan;land
+#689e52;Lehad Datu;land
+#844c6c;Sibu;land
+#83b76f;Kuching;land
+#ff3d8a;Katapang;land
+#ea5656;Barito;land
+#ff6b1c;Sampit;land
+#c466c4;Tarakan;land
+#57cc59;Berau;land
+#698777;Bulungan;land
+#af4190;Samarinda;land
+#ffe45e;Gorontalo;land
+#ff59b9;Palu;land
+#7f96ff;Palopo;land
+#89ff7c;Buton;land
+#c9db2b;Sula;land
+#f1cf81;Fak-Fak;land
+#778011;Madang;land
+#52ceab;Lae;land
+#83c677;Kerema;land
+#b2c649;Daru;land
+#21c698;Yos Sudarso;land
+#ddd468;Asmat;land
+#7c3f3e;Aru;land
+#93781f;Malgana;land
+#ff8d47;Minang;land
+#5d6b25;Tiwi;land
+#ff664f;Yolngu;land
+#26686d;Awngthim;land
+#35ff4d;Guugu Yimithirr;land
+#2d6b28;Wulgurukaba;land
+#ff653f;Baiali;land
+#aa537c;Yuin;land
+#2052a3;Gunditjmara;land
+#fdff9e;Nukunu;land
+#7c3800;Ahuriri;land
+#ba8b00;Waitaha;land
+#9853ba;Kirikiriroa;land
+#f9b1b3;Borneo;impassable
+#8a3a2d;Jeju;land
+#a24080;Yukjin;land
+#d18bb9;Gyeongseong;land
+#7a3061;Nyeongbyeon;land
+#863569;West Gyeongsang;land
+#d52654;Vidin;land
+#6aba50;Khara Narin Ula;land
+#502080;Jianchang;land
+#25d0ea;Tikhvin;land
+#eae36b;Plovdiv;land
+#44e6b3;Cuenca;land
+#03c480;Romsdal;land
+#bc4343;Narbonne;land
+#e723b3;La Mancha;land
+#4408b3;Soria;land
+#a638ce;Welayta;land
+#567442;Kaffa;land
+#2eba92;Illubabor;land
+#74a674;Gambela;land
+#7ed82e;Hadiya;land
+#862c7c;Arsi;land
+#78376f;Damot;land
+#3094da;Asosa;land
+#1ad874;Ausa;land
+#92427e;Assab;land
+#ba2eb0;Mendefera;land
+#528080;Enderta;land
+#c64a69;Angot;land
+#c15b1f;Lasta;land
+#3a937c;Agew;land
+#476491;Semien;land
+#916505;Dembiya;land
+#97bec2;Mora;land
+#5dbc54;Kismayo;land
+#cc4f62;Merca;land
+#599bfe;Afgooye;land
+#597c52;Bardera;land
+#b2428c;Warder;land
+#b7ff8e;Afder;land
+#dbae5c;Beledweyne;land
+#598a2b;Gedo;land
+#ce982d;Warsheikh;land
+#9baa44;Hobyo;land
+#8e97d7;Galkayo;land
+#ff9999;El Buur;land
+#5664ff;Bosaso;land
+#c99759;Hamasien;land
+#c9c959;Hafun;land
+#c2aaa3;Las Khorey;land
+#c25969;Sanaag;land
+#7e6bff;Ankober;land
+#d3a32e;Togdheer;land
+#61d155;Hargeisa;land
+#ce9158;Barawa;land
+#ce6546;Meregh;land
+#b784ff;Pate;land
+#c87a6e;Shendy;land
+#a0a058;Soba;land
+#30613b;Sennar;land
+#a7ae88;Kosti;land
+#2fae4e;Medwa;land
+#894b71;Kobbe;land
+#c2eb00;Delta;land
+#727de5;Guasipati;land
+#1b8f39;Uyapari;land
+#d0e0a1;Riohacha;land
+#1fc47c;Altagracia;land
+#d4cba5;Coro;land
+#c16892;Llanos;land
+#b8e085;Apure;land
+#c47acb;Atabapo;land
+#27bd4b;Pore;land
+#445dae;Merida;land
+#42e16e;Meta;land
+#93c6f9;Puerto Carreno;land
+#e89084;Guavire;land
+#d7e30a;Nieva;land
+#d7220a;Popayan;land
+#cde3a6;Darien;land
+#d23718;Esmeraldas;land
+#cb0db2;Piwra;land
+#cbe6b2;Tucume;land
+#a21d84;Moyomba;land
+#1ae532;Wankapampa;land
+#d0e711;Pisqupampa;land
+#e30a42;Chimbote;land
+#eab6c3;Huaraz;land
+#9b4c0c;Camana;land
+#d4c879;Ayaviri;land
+#d43679;Quero;land
+#81aab0;Tiahuanaco;land
+#35cb07;Exaltacion;land
+#cb1c1c;Madre de Dios;land
+#e5bbdb;Santa Cruz de la Sierra;land
+#e3cda2;Sucre;land
+#79bfe0;Tucuman;land
+#a4c38b;Santa Catalina;land
+#cb314e;Tarija;land
+#dfec70;Puna de Atacama;land
+#c066ea;Calama;land
+#57a6a9;Antofagasta;land
+#4a06b0;Santiago del Estero;land
+#73e3d7;La Rioja;land
+#cf5860;Chepes;land
+#dcda53;San Juan;land
+#c91da7;Quisquisacate;land
+#3de150;San Luis;land
+#70b700;Santa Fe;land
+#c3e78c;Rosario;land
+#ee2a37;Montevideo;land
+#d92880;Colonia;land
+#66409a;Salto;land
+#efc180;Yareyu;land
+#2736ff;Chaco Central;land
+#afd5db;Misiones;land
+#50d3e7;Highveld;land
+#839acc;Rio Grande do Sul;land
+#8aa90d;Santiago (Misiones);land
+#f3ebce;Itapua;land
+#b34059;Querandi;land
+#8268e0;Sauce;land
+#1c4dd9;Coquimbo;land
+#dc8352;Rio Negro;land
+#105b34;Senqu;land
+#c4a55b;Puelches;land
+#ea1b1b;Olavarria;land
+#9a5c19;Chanar;land
+#c94a18;Bahia Blanca;land
+#e1f820;Florida Blanca;land
+#c60c94;Tehuelmapu;land
+#a25b34;Poya;land
+#5e34d5;Chiquiyami;land
+#8de11f;Chiloe;land
+#1b9f81;Aysen;land
+#b365e5;Chubut;land
+#3a75ab;Teush;land
+#6138d0;Mendoza;land
+#bf288f;Matara;land
+#098c9f;Santa Tecla;land
+#a4ea35;Griqualand;land
+#7c1696;Corumba;land
+#8cd717;Fuerte Borbon;land
+#49690c;Melodia;land
+#ef2139;Povos das Missoes;land
+#ed2a0a;Barra;land
+#db1a10;Parnaiba;land
+#0dac2f;Santa Catarina;land
+#3c44db;Cuiaba;land
+#65c823;Rio Branco;land
+#b82cdb;Marajo;land
+#b17331;Santa Ana das Minas;land
+#6c50d5;Araxas;land
+#6c8c17;Ofaie;land
+#3358c4;Sao Joao del Rei;land
+#32bfc8;Castro;land
+#ea3d45;Campinas;land
+#74e09e;Araraquara;land
+#ed2c00;Serro;land
+#e8c522;Vila Rica;land
+#d5543f;Guapore;land
+#dbd26a;Cerejeiras;land
+#1e50de;Vila Bela;land
+#e12f05;Caceres Mato Grosso;land
+#c6a636;Diamantino;land
+#e31f3b;Rio Das Mortes;land
+#db2c61;Ipora;land
+#1fec37;Vila Boa;land
+#e79365;Formosa;land
+#38cb14;Conceicao;land
+#dc8a29;Pontal;land
+#532ec9;Natividad;land
+#e8cdca;Sergipe;land
+#d014af;Jeremoabo;land
+#3e10bf;Inhambupe;land
+#8569d7;Pambu;land
+#c8993f;Rio Contas;land
+#519112;Paratinga;land
+#efdd19;Campo Largo;land
+#80bc16;Luziana;land
+#f1cc6a;Coxim;land
+#d9e872;Alegoas;land
+#1566c9;Borborema;land
+#dae55c;Pastos Bons;land
+#5e91a6;Timon;land
+#31c47b;Parnagua;land
+#347b57;Grajau;land
+#c8a052;Alcantara;land
+#e51650;Tucurui;land
+#a6133c;Para;land
+#efe169;Santarem;land
+#2ce15b;Pirara;land
+#2c48a6;Waddai;land
+#2b8fc9;Faro;land
+#deb023;Manaus;land
+#ef3169;Muturu;land
+#485023;Guyana;impassable
+#e12d2d;Suriname;land
+#ecab0f;Oiapoque;land
+#ec4e00;Zaraza;land
+#a7ba24;Chichas (Tupiza);land
+#0c95bc;Choquechaca (Caracaras);land
+#1f7c1a;Charcas;land
+#2d7439;Chachapoyas;land
+#db543a;Ucayali;land
+#79a2d0;Yurimaguas;land
+#2a48c9;Quillacas;land
+#44e11a;Macaya;land
+#c468bf;Matamba;land
+#48c633;Mbata;land
+#20daad;Buhera;land
+#ec3974;Manikya;land
+#ecdc74;Madanda;land
+#ecde74;Hjälmaren;sea
+#1d3b9f;Djerba;land
+#6b79bf;Ingolstadt;land
+#e08636;Straubing;land
+#46e036;Regensburg;land
+#ef2151;Osterode;land
+#ff853b;Tarnow;land
+#3dc97b;Sadecki;land
+#f1f914;Lwow;land
+#d0d547;Rowne;land
+#55e8a1;Notec/Bydgoszcz;land
+#4ba9d9;Altmark;land
+#34fd25;Vogtland;land
+#f30145;Glogau;land
+#20fbd4;Eger;land
+#58a3d7;Budejovice;land
+#79e165;Sternberg;land
+#ffefa3;Hradekco;land
+#e79a05;Hoya;land
+#f9f001;Paderborn;land
+#ffa235;Meppen;land
+#f81313;Loon;land
+#2ae76c;Kleves;land
+#cd1717;Umbria;land
+#f8e788;Urbino;land
+#63ccea;Arezzo;land
+#c0db0a;Novara;land
+#f10f0f;Lucca;land
+#de6c45;Asti;land
+#e38735;Syracuse;land
+#969f2f;Salerno;land
+#cee3a9;Costenza;land
+#dfec49;Capitanata;land
+#37f617;Cagliari;land
+#dcfb2f;Urgell;land
+#e80b0b;Tarragona;land
+#c83a4e;Rioja;land
+#b59660;Teruel;land
+#f315ac;Draguignan;land
+#5b7dde;Albenga;land
+#88308e;Stargard;land
+#f8f59d;Greifswald;land
+#eae4ae;Stolp;land
+#e5ab21;Wismar;land
+#2219e8;Pomerelia;land
+#30c1bf;Bucaresti;land
+#ff5acb;Hormuz;land
+#e7b046;Nis;land
+#e80505;Skopje;land
+#86c6c0;Sarajevo;land
+#bc6edc;Euboea;land
+#efcc95;Comoros;land
+#f46120;Antankara;land
+#d9a62b;Iboina;land
+#8eb9ba;Tsimihety;land
+#64c93d;Maroantsetra;land
+#265315;Vatomandry;land
+#a94a20;Antemoro;land
+#d75093;Betsileo;land
+#4fa02f;Mahafaly;land
+#8b35cd;Antanosy;land
+#b987e0;Bara;land
+#c93655;Antsalova;land
+#de91a1;Fiherana;land
+#d96c81;Al Qadirif;land
+#9b3d4f;Makua;land
+#e3a437;Ngindo;land
+#eacc96;Wayao;land
+#c81375;Katsekera;land
+#319b63;Lolo;land
+#26ea82;Lundu;land
+#2c34c9;Kalonga;land
+#91a5b1;Kinga;land
+#dc1e6a;Makonde;land
+#ab436d;Phangwa;land
+#db9fb7;Ngonde;land
+#2c7b2a;Tumbuka;land
+#6abd68;Lala;land
+#21dc1c;Nsenga;land
+#e1509f;Lomwe;land
+#7b7fd0;Ibo;land
+#d2a435;Luangwa;land
+#2eaeb0;Ewaso Ngiro;land
+#1c8687;Dawa;land
+#d07189;Turkana;land
+#397023;Kuria;land
+#a97f4d;Shamba;land
+#ea2046;Gogo;land
+#4e7e3c;Nyatura;land
+#1ebc35;Zigua;land
+#d7c484;Shaga;land
+#d71149;Kikuyu;land
+#8dc187;Buzinza;land
+#39d02a;Basoga;land
+#cba05d;Karagwe;land
+#ac7620;Buganda;land
+#dc3400;Bunyoro;land
+#bbcbad;Ndorwe;land
+#85d53e;Nduga;land
+#61b11a;Buzozo;land
+#1cbf46;Bushubi;land
+#db2cc4;Nkoma;land
+#cfcd25;Buyogoma;land
+#b57130;Ruguru;land
+#e37d1a;Hehe;land
+#efc092;Pubungo;land
+#bf752e;Lango;land
+#359824;Muhambwe;land
+#914c88;Rukwa;land
+#db5e28;Mayumba;land
+#dc9ed1;Ngoyo;land
+#7873cf;Soyo;land
+#52e1b0;Tyo;land
+#d95acc;Kasanje;land
+#d9adc7;Shinje;land
+#20726f;Malem;land
+#57dc73;Yaka;land
+#dbd935;Nunu;land
+#347919;Kumbana;land
+#d53c5d;Munene;land
+#60c919;Kuba;land
+#dbd94c;Songye;land
+#65e021;Mpasu;land
+#8c0f96;Rund;land
+#960faf;Lwena;land
+#a00fc8;Chokwe;land
+#aa0f64;Ishindi;land
+#b40f96;Kalundwe;land
+#be0faf;Luba;land
+#c80fc8;Upemba;land
+#d20f64;Hemba;land
+#dc0f96;Luapala;land
+#e60faf;Lualaba;land
+#f00fc8;Bemba;land
+#fa0f64;Tabwa;land
+#cf0f96;Lamba;land
+#cf0faf;Kusu;land
+#cf0fc8;Lenje;land
+#c50f64;Kanongesha;land
+#cf0f64;Kaonde;land
+#c50f96;Lega;land
+#e77f2b;Sutherland;land
+#77d496;Saintonge;land
+#9d7cd5;Aurilac;land
+#67a06c;Uleaborg;land
+#915586;Luleå;land
+#9c27bd;Mazyr;land
+#77a2a6;Belyov;land
+#cda397;Bezhetsk;land
+#b4d4b4;Desmond;land
+#b17035;Sligo;land
+#a05b84;Kildare;land
+#b9f1ca;Ulster;land
+#2b88cf;Shenkursk;land
+#2b6a2b;Birkaland;land
+#6dc36d;Kexholm;land
+#d2cd44;Szolnok;land
+#e54737;Bacs;land
+#92c6d9;Turda;land
+#8ec98e;Kiralyföld;land
+#35a435;Ust-Vym;land
+#de2f60;Somerset;land
+#e33636;Nanbu;land
+#46e5e7;Mweru;sea
+#58eff1;Kivu;sea
+#67d8d9;Rutanzige;sea
+#8be6e7;Lake Albert;sea
+#2de1e3;Zaysan;sea
+#4fdee0;Alakol;sea
+#28c4c6;Issyk-Kul;sea
+#3636ec;Oulujärvi;sea
+#2222d2;Saimaa;sea
+#cf2a13;Ditmarschen;land
+#c6db39;Aarhus;land
+#7fba62;Smålenene;land
+#de452c;Bratsberg;land
+#c9bfa9;Agdesiden;land
+#e1df13;Jotenheimen;impassable
+#4ad94a;Rostov;land
+#de97c8;Luki;land
+#2cb82c;Kolding;land
+#9197d4;Évora;land
+#d00aa8;Kuusamo;land
+#719900;Enare;land
+#e1df15;Scandes;impassable
+#e1df17;Pyrenees;impassable
+#e1df19;Carpathians;impassable
+#e1df1b;Caucasus;impassable
+#e1df1d;The Alps;impassable
+#75961a;Janjero;land
+#ede626;Alps2;impassable
+#e0dc75;Alps3;impassable
+#d0ca27;Alps4;impassable
+#e7e016;Alps5;impassable
+#dc9017;Elfsborg;land
+#96d54c;Dalsland;land
+#dc4eca;Göinge;land
+#369d4c;Tiohärad/Värend;land
+#c3cf61;High Atlas;impassable
+#878e4f;High Atlas2;impassable
+#decbef;Aures;impassable
+#6f21b8;Zagros;impassable
+#b07a95;Abarquh;land
+#16ecef;Zagros2;impassable
+#6a22ac;Syrmia;land
+#c89393;Durres;land
+#0fa1c6;Lezhe;land
+#513fd9;Branicevo;land
+#de4fef;Elburz;impassable
+#107718;Pontic Mountains;impassable
+#18d425;Armenian Highlands;impassable
+#e06947;Hyuga;land
+#ab403a;Higo;land
+#dea29e;Hizen;land
+#94f3b6;Iwami;land
+#1da765;Bizen;land
+#882871;Tango;land
+#a4d39c;Iyo;land
+#89aa24;Kii;land
+#dbbf53;Shinano;land
+#b780d5;Sagami;land
+#4a35c6;Shimousa;land
+#9668e1;Shimotsuke;land
+#cf96d6;Ugo;land
+#66b391;Oshima;land
+#5e3430;Yongping;land
+#97b97d;Zhending;land
+#688f6a;Haizhou;land
+#94c5e3;Huangzhou;land
+#38908d;Fengxiang;land
+#2d753b;Tongren;land
+#1da1d8;Hulan;land
+#2c6123;Jianzhou;land
+#ba8f3a;Taining;land
+#59426b;Ju Ud;land
+#2c2d80;Anding;land
+#234470;Nagchu;land
+#268148;Balikul;land
+#813354;Turpan;land
+#c4c635;Qurqara-usu;land
+#8170ac;Maralbexi;land
+#65456b;Yangi Hissar;land
+#482010;Dazhou;land
+#7a3d69;Jiazhou;land
+#282e0a;Luzhou;land
+#1a3553;Kalar;land
+#16647b;Fudali;land
+#4a8f4d;Ulch;land
+#345077;Pijin;land
+#4569ab;Buteha;land
+#752a29;Bayan Tumen;land
+#2c7189;Khiagt;land
+#94902e;Dundgovi;land
+#325190;Ulaangom;land
+#d17302;Hetao;land
+#2496b3;Tokai Sea;sea
+#40adc8;Coast of Hokkaido;sea
+#1d7c94;North Japan Basin;sea
+#696040;Daegu;land
+#c32c8c;Naju;land
+#bcc838;Chungju;land
+#9eba2c;Suwon;land
+#e7b814;Haeju;land
+#915123;Ganggye;land
+#1fb6b8;Bahai Sea;sea
+#2d75a7;Eastern Yellow Sea;sea
+#90e1e8;Vistula Lagoon;sea
+#ff0000;Trencin;land
+#30edf4;Olomouc;land
+#25d05d;Liegnitz;land
+#ef0a0a;Belgrade;land
+#59e124;Fejer;land
+#cb7f35;Wenden;land
+#23e030;Ula;land
+#efe145;Toropets;land
+#aa7280;Starodub;land
+#4585ef;Vyazma;land
+#98b6c9;Mstislav;land
+#22d9db;Owrucz;land
+#d71e70;Kashin;land
+#8ddcac;Zubtsov;land
+#991ed2;Mologa;land
+#2e27c3;Mozhaisk;land
+#53a7bc;Kolomna;land
+#0ff1f4;Yuriev;land
+#de1111;Starodub;land
+#d76767;Pronsk;land
+#2c8e2e;Solvychegodsk;land
+#2c985f;Mezen;land
+#09a985;Onega;land
+#c9923a;Velsk;land
+#4fb551;Vyshny Volochyok;land
+#a6325e;Ustyuzhna;land
+#1fe324;Totma;land
+#ab0d36;Sol Galitskaya;land
+#9fc893;Tetyushi;land
+#27d0b2;Ar-Chally;land
+#bf6bc6;Izhkar;land
+#c6c55f;Bolgar;land
+#d53838;Aqabah;land
+#d6e718;Al Wajh;land
+#d1e33b;Azraq;land
+#5bc421;Suwayda;land
+#ff0e3b;Al Jawf;land
+#7f54a4;Al-Kariatan;land
+#1fd25a;Sudayr;land
+#35c8c3;Al-Yamamah;land
+#bc6612;Jabal Tubaiq;impassable
+#db1758;Taifa;land
+#453bc8;Qunfudhah;land
+#436bb3;Zabid;land
+#d78018;Taiz;land
+#43bf18;Dhamar;land
+#d2b336;Sahda;land
+#e01826;Shihr;land
+#639647;Al Ghayda;land
+#b57c7c;Baraimi Oasis;land
+#bbd00a;Sur;land
+#c85c14;Ibra;land
+#53cb56;Shatt;land
+#11c38a;Shushtar;land
+#4fb81b;Hoveyzeh;land
+#a8db20;Qazaniya;land
+#354cb0;Mardin;land
+#d44f9a;Arbil;land
+#969229;Sulimaniyeh;land
+#30a733;Hisn Kayfa;land
+#743eb7;Bitlis;land
+#6320c8;Homs;land
+#e74e0a;Ayntab;land
+#46c646;Shamakhi;land
+#e1cd24;Mianeh;land
+#e8b837;Gori;land
+#0d5e6d;Bayazid;land
+#d5c510;Oltu;land
+#b86f6f;Khoy;land
+#d22a2a;Shaki;land
+#756dc9;Khumuk;land
+#86b18d;Aksaray;land
+#45194b;Denizli;land
+#76b07b;Aydin;land
+#879b69;Divrigi;land
+#43796c;Karahisar;land
+#69c339;Sultanönü;land
+#5ebd6c;Kangiri;land
+#9f4949;Kirshehir;land
+#7c3c56;Tokat;land
+#33ac6c;Mansura;land
+#634dc3;Buhaira;land
+#3f801b;Atfih;land
+#a3b752;Isna;land
+#c353bf;Girga;land
+#79159a;Eastern Desert;impassable
+#b8411d;Eastern Desert;impassable
+#e0280f;Farafreh;land
+#95ba95;Ghuriyan;land
+#de2f1d;Sarakhs;land
+#86c483;Nishapur;land
+#f4dd83;Jask;land
+#8f22ff;Chagai;impassable
+#608088;Fasa;land
+#36c16a;Darab;land
+#d40e59;Kazarun;land
+#707894;Siraf;land
+#68b4b5;Dahlak Archipelago;sea
+#e00c48;Tabas;land
+#ec7014;Kashan;land
+#d79b55;Tus;land
+#499ea6;Savah;land
+#c9461e;Soltanieh;land
+#d047c8;Rasht;land
+#58e08e;Astara;land
+#bfdc21;Sari;land
+#d0c675;Malamir;land
+#d01a49;Termez;land
+#b2e75e;Kish;land
+#9b9bc6;Saidabad;land
+#95e2e3;Qamr Bay;sea
+#90cecf;Pirate Coast;sea
+#c62f65;Ifuago;land
+#69db8e;Laguna;land
+#9a56d4;Mindoro;land
+#68c498;Buglas;land
+#dba858;Cebu;land
+#592391;Leyte;land
+#874d7d;Zamboanga;land
+#f8f5ac;Caraga;land
+#c9a71d;Taytay;land
+#7de2f1;Visayan Sea;sea
+#70dbdc;Cuyo Archipelago;sea
+#b9e328;Ise;land
+#eb9f21;Mikawa;land
+#cb7c7c;East March;land
+#dc1616;West March;land
+#d47638;Argyll;land
+#eccb16;Inner Hebrides;land
+#b1ab87;Mann;land
+#c48000;Montgomery;land
+#db9693;Hull;land
+#e7332b;Scarborough;land
+#ddf4d4;Carmarthen;land
+#738fb0;Cambridgeshire;land
+#92cf98;Sussex;land
+#cfb674;Coventry;land
+#a172c0;Devon;land
+#9b995a;Dorset;land
+#e58527;Chester;land
+#a0423d;Leicester;land
+#5b84cf;Ormond;land
+#cf9191;Kinsale;land
+#b52626;Middlands;land
+#ba4a34;Donegal;land
+#183977;Oversticht;land
+#d5c226;Ommeland;land
+#dcbd8b;Haag;land
+#ea9c1e;Rennes;land
+#ced26a;Cotentin;land
+#9958cf;Vendee;land
+#e36837;Angouleme;land
+#5a32db;Chartres;land
+#d48334;Touraine;land
+#9a9200;Troyes;land
+#d02575;Vivarais;land
+#e39494;Auxerrois;land
+#b5e359;Tabayin;land
+#df4cf9;Salin;land
+#07b7dd;Yamethin;land
+#26e324;Prome;land
+#578d23;Yawnghwe;land
+#913643;Mawkmai;land
+#d1cee8;Dagon;land
+#048a8b;Naga Hills;impassable
+#6302dc;Arakan Mountains;impassable
+#081346;Gaoligong Mountains;impassable
+#ae854a;Hengduan Mountains;impassable
+#bab34e;Minsin;land
+#8753c6;Katha;land
+#837bf6;Mong Kung;land
+#e73a35;Ruhunu;land
+#e3aaa9;Salavata;land
+#9a991b;Trincomale;land
+#a6ba6a;Kumari;land
+#d4b22a;Samana;land
+#854117;Dindigul;land
+#c65786;Cannanore;land
+#34a092;Salem;land
+#b2bd6b;Negapatam;land
+#9d4888;Tranqebar;land
+#8da76d;Kanchipuram;land
+#75efa6;Nelore;land
+#267b48;Adanki;land
+#ba8887;Chandragiri;land
+#8bd5a7;Seringapatam;land
+#a47b2c;Sira;land
+#a08bd5;Gutti;land
+#c8a1d2;Adavani;land
+#29a44c;Kondavidu;land
+#7dbf42;Chitradurg;land
+#cbad40;Honnavara;land
+#a9d442;Mudgal;land
+#887c4d;Rajapur;land
+#989355;Daman;land
+#b3ba79;Kolhapur;land
+#62a967;Junir;land
+#a3c3a5;Nasik;land
+#ba9a7d;Dharangaon;land
+#58c993;Sholhapur;land
+#88e800;Rachakonda;land
+#3681cd;Paithre;land
+#cd36a8;Nander;land
+#916b9a;Khamammet;land
+#826f33;Narayanpur;land
+#c2d2c7;Ganjam;land
+#55aea9;Washim;land
+#95b7b5;Karanja;land
+#222ad7;Manidurg;land
+#dbcb47;Kanker;land
+#a9ab65;Kalahandi;land
+#479430;Patna-Garjat;land
+#213002;Parlakhimedi;land
+#1a9f3c;Jammu;land
+#b2c192;Mahurbanj;land
+#b1ec34;Sonpur;land
+#c98557;Ratanpur;land
+#db9040;Thalner;land
+#b55685;Porbandar;land
+#b9ba3c;Diu;land
+#9f3c22;Jhalavad;land
+#91783b;Cambay;land
+#5383dc;Narbada;land
+#afd743;Saugor;land
+#b8772a;Handia;land
+#6e9d67;Ujjain;land
+#75d26b;Vagad;land
+#d93a1f;Bhatnair;land
+#4bc4c0;Bundi;land
+#1bd435;Ranthambore;land
+#a92bcd;Mahoba;land
+#7b63d5;Kalinjar;land
+#8bc46f;Bandogarh;land
+#a0d04c;Rohtasgarh;land
+#9a3028;Soumelpur;land
+#a7a32e;Bishnupur;land
+#b33e2b;Monghir;land
+#718520;Chakla;land
+#183a9a;Sonargaon;land
+#8f1ca4;Fathabad;land
+#cb1e8c;Nadia;land
+#803a67;Satgaon;land
+#3d6614;Haibatnagar;land
+#ae1f62;Goraghat;land
+#cd6132;Mahikantha;land
+#88682a;Punakah;land
+#8c2231;Sikkim;land
+#9b405e;Morung;land
+#766e15;Makwanpur;land
+#c13476;Palpa;land
+#abb113;Purnia;land
+#945115;Saran;land
+#7b502a;Champaran;land
+#ab8461;Hajipur;land
+#ae245f;Ghazipur;land
+#9c74dd;Dang;land
+#0d216f;Doti;land
+#e69ad4;Sirmur;land
+#4763c8;Khairabad;land
+#213474;Feyzabad;land
+#1e1158;Kora;land
+#369163;Qannauj;land
+#ff6600;Sambhal;land
+#526600;Bareily;land
+#4aa200;Bharatpur;land
+#39bc98;Bhilwara;land
+#213530;Merta;land
+#1a585c;Mansura;land
+#b1c8c9;Nasirpur;land
+#247d83;Khairpur;land
+#b81b6c;Barmer;land
+#64537b;Churu;land
+#421e74;Bahawalpur;land
+#7c254e;Karor;land
+#c1a245;Shorkot;land
+#664d59;Bhera;land
+#31d0e0;Bharuch;land
+#32479d;Dipalpur;land
+#db9d74;Sakya;land
+#563791;Gyirong;land
+#a74263;Purang;land
+#34a95a;Nedong;land
+#3d917b;Tsurphu;land
+#446c64;Damxung;land
+#767e48;Rutog;land
+#3f5d83;Skardu;land
+#6c3d34;Aqenganggyai;impassable
+#c00645;Inowroclaw;land
+#4dfbe9;Dobrzyn;land
+#985a07;Rawa;land
+#b0b244;Gniezno;land
+#546ef7;Checiny;land
+#71c1cc;Kuyavia;land
+#948af5;Iasi;land
+#876160;Birlad;land
+#38a045;Giurgiu;land
+#c893e7;Severin;land
+#64e255;Wielun;land
+#ab080f;Upita;land
+#b527c7;Wilkimierz;land
+#7daff8;Lida;land
+#029fa4;Nowogrodek;land
+#46ba6b;Chelm;land
+#4ffc84;Kremenets;land
+#aead46;Winnica;land
+#a64837;Drohobycz;land
+#d8b799;Lubnie;land
+#03be78;Rylsk;land
+#eb2ed1;Bobrujsk;land
+#9107a4;Sluck;land
+#79e130;Malaga;land
+#9baac5;Albacete;land
+#f25a26;Huelva;land
+#077301;Xativa;land
+#d9f456;Castellon;land
+#4992e3;Avila;land
+#8255ac;Palencia;land
+#2b2ea7;Zamora;land
+#926f1c;Lugo;land
+#b71a0a;Vigo;land
+#b82a45;Aviero;land
+#f05901;Lleida;land
+#9b3716;Orense;land
+#003f8c;Minorca;land
+#76f14e;Ibiza;land
+#01e61e;Tetouan;land
+#b62185;Mers el Kebir;land
+#077923;Sale;land
+#06867e;Anfa;land
+#e3107c;Tenerife;land
+#6918a5;Kairwan;land
+#516dcb;Sabha;land
+#ad527f;Demnate;land
+#c68785;High Atlas3;impassable
+#000e96;Texcoco;land
+#2845af;Tlacopan;land
+#5089c8;Malinalco;land
+#78b0e1;Acambaro;land
+#a00efa;Ihuatzio;land
+#c84596;Puruaran;land
+#f089af;Amaxocotlan;land
+#ca0eaf;Tohono;land
+#01b0c8;Tzapotzingo;land
+#290ee1;Sayula;land
+#5145fa;Tecoman;land
+#798996;Yohualtepec;land
+#a1b0af;Teotitlan;land
+#c90ec8;Xocotla;land
+#f145e1;Mitla;land
+#0289fa;Tzotzil;land
+#2ab096;Jakaltek;land
+#520eaf;Qumarkaj;land
+#7a45c8;Kobox;land
+#a289e1;Moran;land
+#cab0fa;Xiu;land
+#f20e96;Sotuta;land
+#0345af;Ulva;land
+#2b89c8;Xicaque;land
+#53b0e1;Tzul;land
+#7b0efa;Guaymi;land
+#a34596;Kuna;land
+#cb89af;Talamanca;land
+#f3b0c8;Cuauhtochco;land
+#040ee1;Sinu;land
+#2c45fa;Magangue;land
+#548996;Chimila;land
+#7cb0af;Motilones;land
+#a40ec8;Moniquira;land
+#cc45e1;Pastos;land
+#f489fa;Putumayos;land
+#f245c8;Chichitames;land
+#05b096;Pijaos;land
+#370eaf;Achaguas;land
+#5545c8;Variquicimeto;land
+#7d89e1;Yukpa;land
+#a5b0fa;Wayuu;land
+#cd0e96;Tacarigua;land
+#f545af;Guanaguanare;land
+#0689c8;Tunebo;land
+#42b0e1;Guanipa;land
+#560efa;Anzoategui;land
+#7e4596;Guaju;land
+#a689af;Yaquimo;land
+#ceb0c8;Marien;land
+#f60ee1;Ciguayo;land
+#0745fa;Higuey;land
+#438996;Canimar;land
+#57b0af;Escambrey;land
+#7f0ec8;Guane;land
+#a745e1;Mayaca;land
+#f7b096;Potano;land
+#080eaf;Tanu;land
+#4445c8;Nitahende;land
+#5889e1;Tel Kondaha;land
+#80b0fa;Natahende;land
+#a80e96;Towa;land
+#d045af;Keres;land
+#f889c8;Sobaipuri;land
+#09b0e1;Tsekaadn;land
+#450efa;Taaqtam;land
+#594596;Choinumni;land
+#8189af;Ohlone;land
+#a9b0c8;Wintun;land
+#d10ee1;Paipai;land
+#f945fa;Tecpatitlan;land
+#018996;Xilotepec;land
+#3db0af;Pame;land
+#510ec8;Xiconaque;land
+#7945e1;Jocome;land
+#a189fa;Xochipillan;land
+#c9b096;Tarahumara;land
+#f10eaf;Xecora;land
+#0245c8;Acaxee;land
+#3e89fa;Mayo;land
+#52b096;Opata;land
+#d6869c;Tsushima;land
+#8c45c8;Haicheng;land
+#75c0ab;Maolian;land
+#3cf04c;Fuerhe;land
+#c25d83;Shilimian;land
+#5fe4c9;Wolanhe;land
+#dc20cc;Changbai Mountains;impassable
+#f57806;Nanghaer;land
+#ed86fd;Tulutingshan;land
+#82b02b;Tunhe;land
+#f68e16;Edala;land
+#d5efd4;Halacha;land
+#a3bbc1;Jixi;land
+#4f90dc;North Buteha;land
+#12e111;South Buteha;land
+#939bc0;South Hulunbur;land
+#d1bde8;North Setsen;land
+#ce488b;West Ih Huree;land
+#893ca8;East Dornogovi;land
+#01993f;West Khara Narin Ula;land
+#375e50;East Ereen;land
+#2b8ddb;North Ju Ud;land
+#dd24e1;East Xilin Gol;land
+#4d2360;North Jirem;land
+#7a8c59;Central Jirem;land
+#1ba908;West Alxa;land
+#f86b12;East Govi;land
+#939696;East Qaraqorum;land
+#ec2a95;North Tsetserleg;land
+#03260d;East Zagast;land
+#d78cff;North Kobdo;land
+#6a5a6c;South Kobdo;land
+#ba9053;East Hoboskar;land
+#ffd801;Dzhemenika;land
+#c44500;Karagandy;land
+#ff5a00;Ekibastuz;land
+#ffba00;Imakia;land
+#ffdfac;Baraba;land
+#ff9600;Om;land
+#e73d08;Ishim;land
+#ffe300;As;land
+#ffd500;Turgay;land
+#fe67d9;Keriya;land
+#acc270;Foix;land
+#c3767b;Carcassonne;land
+#f32a07;Toulon;land
+#16784d;La Marche;land
+#df0099;Cephalonia;land
+#a4302f;Arta;land
+#89160c;Lesbos;land
+#878011;Corinth;land
+#44538f;Siroz;land
+#be8f87;Kostendil;land
+#d5e8b7;Tirnovo;land
+#cbf5a4;Gumulcine;land
+#5e20c7;Tolcu;land
+#565c80;Rosenheim;land
+#889480;Freising;land
+#476820;Passau;land
+#30e76c;Bregenz;land
+#e2d26a;Donauwörth;land
+#1b9200;Konstanz;land
+#b96e4f;Urach;land
+#8b9680;Durlach;land
+#8782dd;Rothenburg;land
+#dfe649;Coburg;land
+#b81616;Bayreuth;land
+#08af80;Aschaffenburg;land
+#a1741c;Annecy;land
+#1d7bcc;Geneva;land
+#c062ff;Fribourg;land
+#21b2ac;Illanz;land
+#3f6ad4;Opole;land
+#1c8c75;Pardubice;land
+#b61690;Jindrichuv Hradec;land
+#0e0826;Ostrava;land
+#0b9f4d;Saluzzo;land
+#178046;Pavia;land
+#6ff87c;Padova;land
+#18f87c;Bologna;land
+#32d942;Spoleto;land
+#d8eccb;Terracina;land
+#90de5c;Molise;land
+#ef21f1;Avellino;land
+#4d16ff;Arborea;land
+#ffc1f7;Trapani;land
+#ac449f;Girgenti;land
+#6ef315;Trieste;land
+#ffc11f;Bergamo;land
+#7b6f4f;Como;land
+#ce5259;Halle;land
+#18247e;Nordhausen;land
+#46201a;Weimar;land
+#233fc7;Zwickau;land
+#56c261;Rügen;land
+#d58400;Wolgast;land
+#6f7608;Dramburg;land
+#aa4ff8;Brandenburg;land
+#2778ee;Stargardland;land
+#a7656a;Kruje;land
+#a2ba93;Cilli;land
+#e8bde7;Rijeka;land
+#90db8f;Zadar;land
+#b1e582;Kotor;land
+#e0ca4d;Podrinje;land
+#a3a5b7;Bjelovar;land
+#85e582;Kolubara;land
+#ba5126;Etsch;land
+#dc36a3;Upper Carinthia;land
+#c2c0e7;Innviertel;land
+#9aed93;Traungau;land
+#f38a50;Wienerwald;land
+#eee626;Alps6;impassable
+#b36a6f;Salins;land
+#fffdc4;Mulhouse;land
+#8a885b;Verdun;land
+#fd878f;Zweibrucken;land
+#fdd78f;Julich;land
+#7dd78f;Lille;land
+#b5a04b;s-Hertogenbosch;land
+#342430;Verden;land
+#e4bd73;Celle;land
+#468736;Göttingen;land
+#af8a25;Fulda;land
+#c70e59;Bielefeld;land
+#b1ba14;Blois;land
+#ca7e10;Forez;land
+#201f5e;Görlitz;land
+#7c0aa2;Gallipoli;land
+#19e08a;Ohrid;land
+#c5092d;Transvaal;land
+#2dc509;Tswana;land
+#092dc5;Swazi;land
+#872d09;Upper Limpopo;land
+#62b3d0;Sheffield;land
+#2d1b61;Priegnitz;land
+#5bb21a;Ribatejo;land
+#a8c404;Plasencia;land
+#fe917c;Segovia;land
+#aa6238;West Java;land
+#322b14;East Cirebon;land
+#99a9ad;East Kendal;land
+#ed6c8c;South Demak;land
+#943074;East Kediri;land
+#dd541f;Bone;land
+#ed6351;Kendari;land
+#e4f9fb;Soppeng;land
+#04eb67;Wajo;land
+#0f9a92;Sambaliung;land
+#840bb6;Paser;land
+#b7e454;Batulican;land
+#4ffe65;South Pontiniak;land
+#f82d00;North Katapang;land
+#94290e;West Kuching;land
+#ee8d97;East Sibu;land
+#e40f56;Inland Sarawak;land
+#b945d3;North Borneo;impassable
+#e6d5cd;Sumatra;impassable
+#3a7d3f;South Peureulak;land
+#fbbd50;South Deli;land
+#4e136d;Barus;land
+#7343bc;Gerik;land
+#c17c32;Penang;land
+#cc1d23;Semantan;land
+#96288e;Singapura;land
+#51b013;Rengat;land
+#88200b;Padang;land
+#9e44c1;Indrapura;land
+#ee6f97;Son Nam;land
+#b32752;Minh Quang;land
+#76b286;Nghe An;land
+#f075a3;Amaravati;land
+#4aed7d;Jarai;land
+#b6ff00;Tay Nguyen;land
+#8b7c62;Pursat;land
+#86eb73;Kampot;land
+#3fc2ff;Kampom Pous Thom;land
+#b60104;Preah Vihear;land
+#ebaa84;Raung Dapey;land
+#48d1a0;Rayong;land
+#cf4f80;Bangkok;land
+#f53b6c;Lopburi;land
+#b6f4bb;Phetchabun;land
+#341583;Suphanburi;land
+#494740;Kanchanaburi;land
+#766828;Si Thep;land
+#3d10a0;Muang Ngoi;land
+#ef0dbe;Sip Et;land
+#80be99;Ubon;land
+#ae8cab;Salavan;land
+#ba0f7a;Lamphun;land
+#64ae80;Lakhon;land
+#82e4f1;Annamite Mountains;impassable
+#25a48c;Dawna Hills;impassable
+#5aeb55;Mamuju;land
+#e58b61;Woolna;land
+#a2471d;Yunawa;land
+#1da259;Mingin;land
+#40d985;Kurtjar;land
+#ae8ddd;Biri;land
+#6173e5;Gureng;land
+#37438b;WuliWuli;land
+#585f8c;Bidjara;land
+#495ddd;Badtjala;land
+#3e4a97;Yiman;land
+#4a4ac6;Barunggam;land
+#588c5b;Bundjalung;land
+#89e78e;Tharawal;land
+#2cb333;Gundungurra;land
+#18741d;Dharug;land
+#759e77;Waveroo;land
+#093f0c;Ngadjuri;land
+#b3571f;Nyaki;land
+#dab198;Yuat;land
+#dac47b;Kurrama;land
+#9c9069;Mangala;land
+#e3c45e;Wunambul;land
+#8855ae;Pyemmairrener;land
+#381453;Peerapper;land
+#286477;Austalian Lakes;sea
+#014696;Cowasuk;land
+#0b50af;Wenrohronon;land
+#155ac8;Pegwaki;land
+#1f64e1;Westenhuck;land
+#296e96;Minqua;land
+#3346af;Scahentowanen;land
+#3d50c8;Nottoway;land
+#475ae1;Eno;land
+#516496;Kituwah;land
+#5b6eaf;Combahee;land
+#6546c8;Sawokli;land
+#6f50e1;Etali;land
+#795a96;Napochi;land
+#8d6ec8;Houma;land
+#9746e1;Avoyel;land
+#a15096;Nasoni;land
+#f164e1;Cochati;land
+#026e96;Tatteroa;land
+#0c46af;Mohetan;land
+#1650c8;Kichesipirini;land
+#205ae1;Piktuk;land
+#2a6496;Iroquet;land
+#346eaf;Nebesek;land
+#3e46c8;Ottagotouemin;land
+#4850e1;Batiscan;land
+#525a96;Meductic;land
+#5c64af;Keinouche;land
+#666ec8;Gichigamininiwag;land
+#7046e1;Mamaceqtaw;land
+#7a5096;Otoe;land
+#845aaf;Saone;land
+#8e64c8;Makandwewin;land
+#986ee1;Chinko;land
+#ab5aaf;Espeminkia;land
+#b564c8;Tapouaro;land
+#bf6ee1;Coiracoentanon;land
+#c94696;Mosopelea;land
+#dd50af;Tawehash;land
+#e75ac8;Kitsash;land
+#a24696;Tawakoni;land
+#ac50af;Nabaydacu;land
+#b64696;Ahkwesahsne;land
+#c050af;Aniyutsi;land
+#ca5ac8;Neosho;land
+#d464e1;Pitahawirata;land
+#de6e96;Ponca;land
+#e846af;Selis;land
+#f250c8;Huhkpapha;land
+#035ae1;Sihabi;land
+#0d6496;Wadopabina;land
+#8364af;Kuttawa;land
+#176eaf;Pepikokia;land
+#2d46c8;Pacaha;land
+#c80a01;Laurentian Massif;impassable
+#c82829;White Mountains;impassable
+#c84651;Adirondacks;impassable
+#c86479;Blue Mountains;impassable
+#c814a1;Allegheny Front;impassable
+#c8320b;Appalachian Ridges;impassable
+#c85033;Alleghenies;impassable
+#c81e5b;Cumberland Mountains;impassable
+#c83c83;Smoky Mountains;impassable
+#c85aab;Blue Ridge;impassable
+#d20a01;Maui;land
+#d22829;Oahu;land
+#d24651;Kauai;land
+#d21479;Lau;land
+#d232a1;Vanua Levu;land
+#d2500b;Te Moana-a-Toi;land
+#1dd8c5;Lake Tulare;sea
+#1ed8c9;Lake Cahuilla;sea

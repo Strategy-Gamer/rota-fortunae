@@ -1,5 +1,7 @@
 #include "map_builder.h"
 
+#include <algorithm>
+#include <sstream>
 #include <stdexcept>
 #include <unordered_map>
 
@@ -17,6 +19,68 @@ std::uint32_t pack_rgb(
            (static_cast<std::uint32_t>(b) << 16U);
 }
 
+// "#rrggbb" -> packed like display_color_rgb
+std::uint32_t parse_color(const std::string& text) {
+    if (text.size() != 7 || text[0] != '#') {
+        throw std::invalid_argument("Bad location color: " + text);
+    }
+    const unsigned long hex = std::stoul(text.substr(1), nullptr, 16);
+    return pack_rgb(
+        static_cast<std::uint8_t>(hex >> 16U),
+        static_cast<std::uint8_t>(hex >> 8U),
+        static_cast<std::uint8_t>(hex)
+    );
+}
+
+// Rows after the header, each split on ';'
+std::vector<std::vector<std::string>> parse_rows(const std::string& text) {
+    std::vector<std::vector<std::string>> rows;
+    std::istringstream lines(text);
+    std::string line;
+    bool header = true;
+    while (std::getline(lines, line)) {
+        if (!line.empty() && line.back() == '\r') line.pop_back();
+        if (header || line.empty()) {
+            header = false;
+            continue;
+        }
+        std::vector<std::string> fields;
+        std::istringstream cells(line);
+        std::string field;
+        while (std::getline(cells, field, ';')) fields.push_back(field);
+        rows.push_back(fields);
+    }
+    return rows;
+}
+
+}
+
+LocationData MapBuilder::parse_location_data(
+    const std::string& locations_text,
+    const std::string& straits_text
+) {
+    LocationData data;
+
+    for (const auto& row : parse_rows(locations_text)) {
+        if (row.size() != 3) {
+            throw std::invalid_argument("Location rows need color;name;kind");
+        }
+        LocationKind kind;
+        if (row[2] == "land") kind = LocationKind::Land;
+        else if (row[2] == "sea") kind = LocationKind::Sea;
+        else if (row[2] == "impassable") kind = LocationKind::Impassable;
+        else throw std::invalid_argument("Unknown location kind: " + row[2]);
+        data.kinds.emplace_back(parse_color(row[0]), kind);
+    }
+
+    for (const auto& row : parse_rows(straits_text)) {
+        if (row.size() < 2) {
+            throw std::invalid_argument("Strait rows need from;to");
+        }
+        data.straits.emplace_back(parse_color(row[0]), parse_color(row[1]));
+    }
+
+    return data;
 }
 
 void MapBuilder::build_from_rgb8(
@@ -24,7 +88,8 @@ void MapBuilder::build_from_rgb8(
     std::uint32_t width,
     std::uint32_t height,
     const std::uint8_t* rgb_bytes,
-    std::size_t rgb_byte_count
+    std::size_t rgb_byte_count,
+    const LocationData& data
 ) {
     const std::size_t pixel_count =
         static_cast<std::size_t>(width) * height;
@@ -99,6 +164,25 @@ void MapBuilder::build_from_rgb8(
         centroid_sum_x,
         centroid_sum_y
     );
+
+    const auto location_of = [&](std::uint32_t color) {
+        const auto found = color_to_location.find(color);
+        if (found == color_to_location.end()) {
+            throw std::invalid_argument("Location data names a color that isn't on the map.");
+        }
+        return found->second;
+    };
+
+    geography.kind.assign(geography.location_count(), LocationKind::Land);
+    for (const auto& [color, kind] : data.kinds) {
+        geography.kind[location_of(color)] = kind;
+    }
+
+    std::vector<std::pair<LocationID, LocationID>> straits;
+    for (const auto& [from, to] : data.straits) {
+        straits.emplace_back(location_of(from), location_of(to));
+    }
+    build_adjacency(geography, straits);
 }
 
 void MapBuilder::finalize_centroids(
@@ -124,6 +208,50 @@ void MapBuilder::finalize_centroids(
             static_cast<std::int32_t>(
                 centroid_sum_y[id] / location_area
             );
+    }
+}
+
+void MapBuilder::build_adjacency(
+    Geography& geography,
+    const std::vector<std::pair<LocationID, LocationID>>& straits
+) {
+    // Both directions of every edge, as (from << 32 | to), so sorting gives each row in order
+    std::vector<std::uint64_t> edges;
+    const auto add_edge = [&](LocationID a, LocationID b) {
+        const std::uint64_t forward = (static_cast<std::uint64_t>(a) << 32U) | b;
+        if (a == b || (!edges.empty() && edges[edges.size() - 2] == forward)) return; // runs along one border repeat a pair
+        edges.push_back(forward);
+        edges.push_back((static_cast<std::uint64_t>(b) << 32U) | a);
+    };
+
+    const std::uint32_t width = geography.width;
+    const std::uint32_t height = geography.height;
+    for (std::uint32_t y = 0; y < height; ++y) {
+        const std::size_t row = static_cast<std::size_t>(y) * width;
+        for (std::uint32_t x = 0; x < width; ++x) {
+            const LocationID here = geography.pixel_location[row + x];
+            add_edge(here, geography.pixel_location[row + (x + 1) % width]); // the world wraps east-west
+            if (y + 1 < height) {
+                add_edge(here, geography.pixel_location[row + width + x]);
+            }
+        }
+    }
+    for (const auto& [a, b] : straits) {
+        add_edge(a, b);
+    }
+
+    std::sort(edges.begin(), edges.end());
+    edges.erase(std::unique(edges.begin(), edges.end()), edges.end());
+
+    const std::uint32_t count = geography.location_count();
+    geography.neighbor_offset.assign(count + 1, 0);
+    geography.neighbors.resize(edges.size());
+    for (std::size_t i = 0; i < edges.size(); ++i) {
+        geography.neighbor_offset[(edges[i] >> 32U) + 1] += 1;
+        geography.neighbors[i] = static_cast<LocationID>(edges[i] & 0xFFFFFFFFU);
+    }
+    for (std::uint32_t id = 0; id < count; ++id) {
+        geography.neighbor_offset[id + 1] += geography.neighbor_offset[id];
     }
 }
 

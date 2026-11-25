@@ -11,6 +11,13 @@ using LocationID = std::uint32_t;
 inline constexpr LocationID INVALID_LOCATION_ID =
     std::numeric_limits<LocationID>::max();
 
+// Only land can be owned. Sea is crossed, never held; impassable land is neither.
+enum class LocationKind : std::uint8_t {
+    Land = 0,
+    Sea = 1,
+    Impassable = 2
+};
+
 struct Geography {
     std::uint32_t width = 0;
     std::uint32_t height = 0;
@@ -23,6 +30,12 @@ struct Geography {
     std::vector<std::uint32_t> area;
     std::vector<std::int32_t> centroid_x;
     std::vector<std::int32_t> centroid_y;
+    std::vector<LocationKind> kind;
+
+    // Neighbors of id are neighbors[neighbor_offset[id] .. neighbor_offset[id + 1]), ascending.
+    // Includes sea and impassable locations, and straits between land across the water.
+    std::vector<std::uint32_t> neighbor_offset;
+    std::vector<LocationID> neighbors;
 
     [[nodiscard]]
     std::uint32_t location_count() const noexcept {
@@ -32,6 +45,11 @@ struct Geography {
     [[nodiscard]]
     bool is_valid_location(LocationID id) const noexcept {
         return id < location_count();
+    }
+
+    [[nodiscard]]
+    bool is_land(LocationID id) const noexcept {
+        return kind[id] == LocationKind::Land;
     }
 
     [[nodiscard]]
