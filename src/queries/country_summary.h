@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <vector>
 
 #include "../utility/FixedDecimal.h"
 #include "../countries/countries.h"
@@ -26,5 +27,7 @@ struct CountrySummary {
     Fixed64         war_weariness;
     std::uint32_t   active_crises;      // bit per CrisisType
 };
-CountrySummary build_country_summary(const rota::core::World& world, rota::countries::CountryID country);
+
+// Every country's summary from one pass over the locations, indexed by CountryID (dead slots zeroed)
+std::vector<CountrySummary> build_country_summaries(const rota::core::World& world);
 }

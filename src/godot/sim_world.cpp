@@ -152,6 +152,7 @@ void SimWorld::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("get_location_summary", "location_id"), &SimWorld::get_location_summary);
     ClassDB::bind_method(D_METHOD("get_country_summary", "country_id"), &SimWorld::get_country_summary);
+    ClassDB::bind_method(D_METHOD("get_country_summaries"), &SimWorld::get_country_summaries);
 
     ClassDB::bind_method(D_METHOD("take_render_dirty"), &SimWorld::take_render_dirty);
     ClassDB::bind_method(D_METHOD("get_state_hash"), &SimWorld::get_state_hash);
@@ -470,32 +471,33 @@ bool SimWorld::validate_location_id(
 }
 
 Dictionary SimWorld::get_location_summary(int location_id) const {
-    if (location_id < 0 || location_id >= world.geography.location_count())
+    if (!validate_location_id(location_id))
         return Dictionary();
     auto s = rota::queries::build_location_summary(world, location_id);
     Dictionary d;
-    d["population"]        = (int64_t)s.population;
-    d["elites"]            = (int64_t)s.elites;
-    d["wealth"]            = s.wealth.to_double();
-    d["wealth_per_capita"] = s.wealth_per_capita.to_double();
-    d["unrest"]            = s.unrest.to_double();
-    d["effective_unrest"]  = s.effective_unrest.to_double();
-    d["security"]          = s.security.to_double();
-    d["owner_country"]     = s.owner_country;
+    d["population"]           = (int64_t)s.population;
+    d["commoners"]            = (int64_t)s.commoners;
+    d["elites"]               = (int64_t)s.elites;
+    d["wealth"]               = s.wealth.to_double();
+    d["wealth_per_capita"]    = s.wealth_per_capita.to_double();
+    d["population_density"]   = s.population_density.to_double();
+    d["elite_positions"]      = s.elite_positions.to_double();
+    d["elite_overproduction"] = s.elite_overproduction.to_double();
+    d["unrest"]               = s.unrest.to_double();
+    d["effective_unrest"]     = s.effective_unrest.to_double();
+    d["security"]             = s.security.to_double();
+    d["owner_country"]        = s.owner_country;
     return d;
 }
 
-Dictionary SimWorld::get_country_summary(int country_id) const {
-    if (!validate_country_id(country_id))
-        return Dictionary();
-    auto s = rota::queries::build_country_summary(world, country_id);
+Dictionary SimWorld::country_summary_to_dictionary(int country_id, const rota::queries::CountrySummary& s) const {
     Dictionary d;
-    d["name"]              = String(world.countries.names[country_id].c_str());
-    d["location_count"]    = (int64_t)s.location_count;
-    d["population"]        = (int64_t)s.population;
-    d["elites"]            = (int64_t)s.elites;
-    d["wealth"]            = s.wealth.to_double();
-    d["wealth_per_capita"] = s.wealth_per_capita.to_double();
+    d["name"]                 = String(world.countries.names[country_id].c_str());
+    d["location_count"]       = (int64_t)s.location_count;
+    d["population"]           = (int64_t)s.population;
+    d["elites"]               = (int64_t)s.elites;
+    d["wealth"]               = s.wealth.to_double();
+    d["wealth_per_capita"]    = s.wealth_per_capita.to_double();
     d["phase"]                = (int64_t)s.phase;
     d["population_pressure"]  = s.population_pressure.to_double();
     d["elite_overproduction"] = s.elite_overproduction.to_double();
@@ -506,6 +508,22 @@ Dictionary SimWorld::get_country_summary(int country_id) const {
     d["war_weariness"]        = s.war_weariness.to_double();
     d["active_crises"]        = (int64_t)s.active_crises;
     return d;
+}
+
+Dictionary SimWorld::get_country_summary(int country_id) const {
+    if (!validate_country_id(country_id))
+        return Dictionary();
+    const auto summaries = rota::queries::build_country_summaries(world);
+    return country_summary_to_dictionary(country_id, summaries[country_id]);
+}
+
+Dictionary SimWorld::get_country_summaries() const {
+    const auto summaries = rota::queries::build_country_summaries(world);
+    Dictionary out;
+    for (int id = 0; id < static_cast<int>(summaries.size()); id++) {
+        if (validate_country_id(id)) out[id] = country_summary_to_dictionary(id, summaries[id]);
+    }
+    return out;
 }
 
 int SimWorld::take_render_dirty(){

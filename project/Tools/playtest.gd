@@ -74,8 +74,9 @@ func _run(image: Image, seed: int, countries: int, years: int, out_path: String,
 		var is_last := i == years
 		if file == null and not (report and is_last):
 			continue
+		var summaries: Dictionary = world.get_country_summaries()
 		for id in world.get_country_ids():
-			var s: Dictionary = world.get_country_summary(id)
+			var s: Dictionary = summaries[id]
 			var row := "%d,%d,%d,%s,%d,%d,%.3f,%.6f,%d,%d,%.6f,%.6f,%.6f,%.6f,%.6f,%.3f,%.6f,%d" % [
 					world.get_year(), state_hash, id, s.name, s.location_count, s.population, s.wealth,
 					s.wealth_per_capita, s.elites, s.phase, s.population_pressure, s.elite_overproduction,

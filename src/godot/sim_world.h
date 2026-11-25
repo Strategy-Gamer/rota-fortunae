@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../core/world.h"
+#include "../queries/country_summary.h"
 
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/classes/image.hpp>
@@ -96,6 +97,8 @@ public:
 
     Dictionary get_location_summary(int location_id) const;
     Dictionary get_country_summary(int country_id) const;
+    // Every live country's summary, keyed by ID, from one pass over the locations
+    Dictionary get_country_summaries() const;
 
     int take_render_dirty();
     int64_t get_state_hash();
@@ -110,6 +113,7 @@ private:
 
     bool validate_location_id(int location_id) const;
     bool validate_country_id(int country_id) const;
+    Dictionary country_summary_to_dictionary(int country_id, const rota::queries::CountrySummary& s) const;
 };
 
 }
