@@ -44,3 +44,15 @@ text = "Unrest: ###"
 [node name="Wealth per Capita" type="Label" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
 text = "Wealth per Capita: #####"
+
+[node name="Elites" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Elites: ###"
+
+[node name="Density" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Density: ###"
+
+[node name="Security" type="Label" parent="PanelContainer/VBoxContainer"]
+layout_mode = 2
+text = "Security: ###"

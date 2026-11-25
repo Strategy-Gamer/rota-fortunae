@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://c15twdv8e65uk"]
+[gd_scene load_steps=9 format=3 uid="uid://c15twdv8e65uk"]
 
 [ext_resource type="Script" uid="uid://c1ip8rt4k604e" path="res://Scripts/game_session.gd" id="1_q4g1x"]
 [ext_resource type="PackedScene" uid="uid://dcq7npan0lnsi" path="res://Scenes/map.tscn" id="2_q4g1x"]
@@ -6,6 +6,8 @@
 [ext_resource type="PackedScene" uid="uid://cgc5cjsx4o66v" path="res://Scenes/menu.tscn" id="4_mabpb"]
 [ext_resource type="PackedScene" uid="uid://bk7ptb8ho7rof" path="res://Scenes/topbar.tscn" id="5_0gxyp"]
 [ext_resource type="PackedScene" uid="uid://bl5hyg5yf0kh7" path="res://Scenes/selected_location.tscn" id="6_ke43x"]
+[ext_resource type="Script" path="res://Scripts/cycle_history.gd" id="7_hist"]
+[ext_resource type="PackedScene" path="res://Scenes/country_panel.tscn" id="8_cpanel"]
 
 [node name="GameSession" type="Node2D"]
 script = ExtResource("1_q4g1x")
@@ -14,6 +16,9 @@ script = ExtResource("1_q4g1x")
 
 [node name="Map" parent="." node_paths=PackedStringArray("sim_world") instance=ExtResource("2_q4g1x")]
 sim_world = NodePath("../SimWorld")
+
+[node name="CycleHistory" type="Node" parent="."]
+script = ExtResource("7_hist")
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position = Vector2(155, 211)
@@ -30,5 +35,11 @@ visible = false
 [node name="Selected Province" parent="CanvasLayer" instance=ExtResource("6_ke43x")]
 visible = false
 
+[node name="Country Panel" parent="CanvasLayer" node_paths=PackedStringArray("history") instance=ExtResource("8_cpanel")]
+history = NodePath("../../CycleHistory")
+
+[connection signal="render_dirty" from="." to="CycleHistory" method="_on_game_session_render_dirty"]
 [connection signal="render_dirty" from="." to="CanvasLayer/Selected Province" method="_on_game_session_render_dirty"]
+[connection signal="render_dirty" from="." to="CanvasLayer/Country Panel" method="_on_game_session_render_dirty"]
 [connection signal="selection_changed" from="Map" to="CanvasLayer/Selected Province" method="_on_map_selection_changed"]
+[connection signal="selection_changed" from="Map" to="CanvasLayer/Country Panel" method="_on_map_selection_changed"]

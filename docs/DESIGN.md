@@ -210,6 +210,10 @@ owns *when and how to show it*. Mode IDs are defined once, in `rota::map::MapMod
 them as its `MAP_*` constants, and GDScript never hard-codes the numbers. The renderer rebuilds the
 active mode's palette on any dirty bit, since most cycle modes change every year.
 
+**History for graphs is presentation state.** `CycleHistory` (GDScript) samples every country once
+per new year through the batch `get_country_summaries()` query. The sim doesn't need the past, so
+the history stays out of `World`: it is never hashed, and it starts empty after a load.
+
 ---
 
 ## 7. Stats & modifiers — designed now, built later

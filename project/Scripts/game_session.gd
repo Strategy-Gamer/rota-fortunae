@@ -42,6 +42,7 @@ func _ready() -> void:
 	map.load_map(locationMapPath)
 	if not sim_world.generate_random_scenario(scenario_seed, scenario_countries):
 		push_error("Could not generate a scenario with %d countries" % scenario_countries)
+	$CycleHistory.record_if_new_year(sim_world)
 
 func _physics_process(_delta: float) -> void:
 	"""Drive the synch clock at fixed rate."""

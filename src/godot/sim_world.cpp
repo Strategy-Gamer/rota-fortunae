@@ -99,6 +99,16 @@ void SimWorld::_bind_methods() {
         ClassDB::bind_integer_constant(get_class_static(), "MapMode", name, static_cast<int>(mode));
     }
 
+    // Secular-cycle read-outs: phase values, and active_crises bit positions
+    namespace rc = rota::countries;
+    ClassDB::bind_integer_constant(get_class_static(), "Phase", "PHASE_PROSPERITY", rc::PHASE_PROSPERITY);
+    ClassDB::bind_integer_constant(get_class_static(), "Phase", "PHASE_STRAIN", rc::PHASE_STRAIN);
+    ClassDB::bind_integer_constant(get_class_static(), "Phase", "PHASE_FRACTURE", rc::PHASE_FRACTURE);
+    ClassDB::bind_integer_constant(get_class_static(), "CrisisType", "CRISIS_REVOLT", rc::CRISIS_REVOLT);
+    ClassDB::bind_integer_constant(get_class_static(), "CrisisType", "CRISIS_CIVIL_WAR", rc::CRISIS_CIVIL_WAR);
+    ClassDB::bind_integer_constant(get_class_static(), "CrisisType", "CRISIS_COUP", rc::CRISIS_COUP);
+    static_assert(rc::CRISIS_COUNT == 3, "bind every crisis type");
+
     // Method Binds
     ClassDB::bind_method( D_METHOD("build_from_image", "image"), &SimWorld::build_from_image);
 
