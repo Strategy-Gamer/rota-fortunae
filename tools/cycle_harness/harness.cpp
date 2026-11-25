@@ -94,6 +94,6 @@ int main(int argc, char** argv) {
         }
     }
     std::fclose(out);
-    std::printf("hash %llu year %u\n", static_cast<unsigned long long>(rota::core::state_hash(w)), w.calendar.get_year());
+    std::printf("hash %lld year %u\n", static_cast<long long>(rota::core::state_hash(w)), w.calendar.get_year()); // signed, as the playtest runner prints it
     return 0;
 }

@@ -143,7 +143,8 @@ def compact(lives, name):
             f'  pop swing {median([c["density_swing"] for c in cy])}'
             f'  fracture pop x{median([f["commoners"] for f in fr])} (25y x{median([f["commoners_25"] for f in fr if f["commoners_25"]])})'
             f'  wars/fracture 0:{wars[0]} 1:{wars[1]} 2:{wars[2]} 3+:{wars[3]}'
-            f'  crises/century S {per_century(STRAIN):.1f} F {per_century(FRACTURE):.1f}')
+            f'  crises/century S {per_century(STRAIN):.1f} F {per_century(FRACTURE):.1f}'
+            f'  fractures>=120y {len(stuck(lives, 120))}')
 
 
 def pct(x):
@@ -205,3 +206,21 @@ def trace(lives, seed, country, start, end, every):
                    + ''.join(f'{x:6.2f}' for x in cf) + f'{(row["commoners"] - prev["commoners"]) / c * 100:6.2f} |'
                    + ''.join(f'{x:6.2f}' for x in ef) + f'{(row["elites"] - prev["elites"]) / e * 100:6.2f} | {crises}')
     return '\n'.join(out)
+
+
+def stuck(lives, years):
+    """Fracture spells at least this long, still open or not, as (seed, country, start, length, locations)."""
+    out = []
+    for rows in lives:
+        start = None
+        for r in rows + [None]:
+            if r is not None and r['phase'] == FRACTURE:
+                start = r if start is None else start
+                continue
+            if start is not None:
+                length = (r['year'] if r else rows[-1]['year'] + 1) - start['year']
+                if length >= years:
+                    out.append((start['seed'], start['country'], start['year'], length, start['locations'], r is None))
+            start = None
+    return sorted(out, key=lambda x: -x[3])
+

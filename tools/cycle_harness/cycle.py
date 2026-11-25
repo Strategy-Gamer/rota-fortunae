@@ -4,6 +4,7 @@
   py tools/cycle_harness/cycle.py summary NAME            full report for one run
   py tools/cycle_harness/cycle.py compare NAME [NAME ...] one line per run
   py tools/cycle_harness/cycle.py trace NAME [--seed 0] [--country 0] [--start 1] [--end 9999] [--every 1]
+  py tools/cycle_harness/cycle.py stuck NAME [--years 120] fracture spells at least that long, to trace
   py tools/cycle_harness/cycle.py knobs                    every knob with its value in the source
 
 Every `const Fixed64` in the cycle and civil-war sources is a knob under its own name, and each
@@ -106,14 +107,14 @@ def cmd_run(args):
     known = knob_table()
     env = dict(os.environ)
     overrides = {}
-    if args.no_crises:
-        overrides.update({k: '0' for k in known if k.startswith('CRISIS_') and k.endswith('_BASE')})
     for item in args.knobs:
         name, _, value = item.partition('=')
         if name not in known:
             close = [k for k in known if name.lower() in k.lower()]
             sys.exit(f'unknown knob {name}' + (f' (did you mean {", ".join(close)}?)' if close else ''))
         overrides[name] = value
+    if args.no_crises:  # wins over any crisis knob, so one set of knobs serves both runs
+        overrides.update({k: '0' for k in known if k.startswith('CRISIS_') and k.endswith('_BASE')})
     env.update(overrides)
 
     rgb, (width, height) = map_rgb()
@@ -157,6 +158,9 @@ def main():
     trace.add_argument('--start', type=int, default=1)
     trace.add_argument('--end', type=int, default=10**9)
     trace.add_argument('--every', type=int, default=1)
+    stuck = sub.add_parser('stuck')
+    stuck.add_argument('name')
+    stuck.add_argument('--years', type=int, default=120)
     sub.add_parser('knobs')
     args = parser.parse_args()
 
@@ -169,6 +173,9 @@ def main():
             print(analysis.compact(analysis.load(RUNS / name), name))
     elif args.command == 'trace':
         print(analysis.trace(analysis.load(RUNS / args.name), args.seed, args.country, args.start, args.end, args.every))
+    elif args.command == 'stuck':
+        for seed, country, start, length, locations, still_open in analysis.stuck(analysis.load(RUNS / args.name), args.years):
+            print(f'seed {seed} country {country}: fracture from {start} for {length} years{" (still open)" if still_open else ""}, {locations} locations')
     elif args.command == 'knobs':
         build()
         for name, value in knob_table().items():
