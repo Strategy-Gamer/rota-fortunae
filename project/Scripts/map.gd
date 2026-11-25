@@ -4,7 +4,8 @@ class_name GameMap
 # Node that holds all logic pertaining to the map, including rendering, data management, etc.
 # This class functions as a controller for map-related functionality.
 
-# Path to the location hex map image
+const DEFAULT_MAP_PATH := "res://MapData/uk_eu5.png"
+
 @export var sim_world: SimWorld
 @onready var map_renderer: MapRenderer = $MapRenderer
 @onready var location_map: Sprite2D = $MapRenderer/LocationMap
@@ -37,19 +38,6 @@ func _unhandled_input(event):
 			#if $CanvasLayer/Topbar.remove_ownership_toggle and location_id >= 0:
 				#Game.submit(Command.make_set_location_owner(location_id, 1))
 				#map_renderer.set_map_mode($CanvasLayer/Topbar.mapmode)
-# Scenario initialization functions
-func create_random_scenario(seed: int = 0) -> void:
-	# Creates random scenario on the map
-	# Map must already be loaded
-
-	# Create Countries
-
-	# Assign Capital Locations to Countries
-
-	# Assign Locations to Countries based on proximity to Capitals
-
-	pass
-
 # Location selection functions
 
 func set_hovered_location(location_id: int) -> void:
@@ -84,16 +72,9 @@ func load_map(hex_map_path) -> void:
 
 	var t0 = Time.get_ticks_usec()
 	print("Loading map from: %s" % hex_map_path)
-	var hex_image: Image = _load_image(hex_map_path)
+	var hex_image: Image = load_map_image(hex_map_path)
 	if hex_image.is_empty():
-		push_error("Failed to load location hex map image: %s" % hex_map_path)
 		return
-	print("Loaded hex map image: %s x %s" % [hex_image.get_width(), hex_image.get_height()])
-
-	if hex_image.is_compressed():
-		hex_image.decompress()
-	if hex_image.get_format() != Image.FORMAT_RGB8:
-		hex_image.convert(Image.FORMAT_RGB8)
 
 	var t1 = Time.get_ticks_usec()
 	print(
@@ -120,30 +101,23 @@ func load_map(hex_map_path) -> void:
 	
 	map_renderer.prepare_rendering()
 	print("Map rendering prepared.")
-	create_test_countries()
-	
-func create_test_countries() -> void:
-	var england: int = sim_world.create_country(
-		"England",
-		Color(0.8, 0.15, 0.15)
-	)
-
-	var scotland: int = sim_world.create_country(
-		"Scotland",
-		Color(0.15, 0.3, 0.85)
-	)
-
 	map_renderer.set_map_mode(
 		MapRenderer.MapMode.POLITICAL
 	)
 
-func _load_image(path: String) -> Image:
+# Returns the location image as RGB8, the format SimWorld.build_from_image requires. Empty on failure.
+static func load_map_image(path: String) -> Image:
 	var tex = load(path) as Texture2D
 	if tex == null:
-		push_error("Failed to load texture: %s" % path)
+		push_error("Failed to load location hex map image: %s" % path)
 		return Image.new()
 
-	return tex.get_image()
+	var image: Image = tex.get_image()
+	if image.is_compressed():
+		image.decompress()
+	if image.get_format() != Image.FORMAT_RGB8:
+		image.convert(Image.FORMAT_RGB8)
+	return image
 
 func on_render_dirty(mask: int):
 	if mask != 0:

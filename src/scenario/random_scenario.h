@@ -1,0 +1,17 @@
+#pragma once
+
+#include <cstdint>
+
+namespace rota::core { struct World; }
+
+namespace rota::scenario {
+
+// Places country_count countries on random capitals and gives every location to the nearest capital.
+// Expects a freshly built map with no countries.
+void generate_random_scenario(
+    rota::core::World& w,
+    std::uint64_t seed,
+    std::uint32_t country_count
+);
+
+}

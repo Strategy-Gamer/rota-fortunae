@@ -8,6 +8,7 @@
 #include <godot_cpp/variant/color.hpp>
 #include <godot_cpp/variant/vector2i.hpp>
 #include <godot_cpp/variant/dictionary.hpp>
+#include <godot_cpp/variant/packed_int32_array.hpp>
 
 namespace godot {
 
@@ -59,6 +60,7 @@ public:
     bool execute_command(CommandType type_id, int actor_civ, const Dictionary& payload);
 
     bool step_tick();
+    bool advance_years(int years);
     int get_tick();
 
     int get_year();
@@ -75,11 +77,9 @@ public:
     int get_location_id_at_pixel(Vector2i pixel) const;
     Color get_location_color(int location_id) const;
 
-    int create_country(
-        const godot::String& name,
-        const godot::Color& color
-    );
+    bool generate_random_scenario(int seed, int country_count);
     int get_country_count() const;
+    PackedInt32Array get_country_ids() const;
 
     godot::String get_country_name(int country_id) const;
     godot::Color get_country_color(int country_id) const;
@@ -95,6 +95,7 @@ public:
     Ref<Image> create_palette_image() const;
 
     Dictionary get_location_summary(int location_id) const;
+    Dictionary get_country_summary(int country_id) const;
 
     int take_render_dirty();
     int64_t get_state_hash();

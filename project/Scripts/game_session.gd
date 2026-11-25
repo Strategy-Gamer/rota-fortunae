@@ -13,7 +13,9 @@ extends Node2D
 @onready var sim_world: SimWorld = $SimWorld
 @onready var map: GameMap = $Map
 
-@export var locationMapPath: String = "res://MapData/uk_eu5.png"
+@export var locationMapPath: String = GameMap.DEFAULT_MAP_PATH
+@export var scenario_seed: int = 0
+@export var scenario_countries: int = 8
 
 signal render_dirty(mask)
 
@@ -37,7 +39,9 @@ signal desync_detected(tick: int, expected: int, actual: int)
 
 func _ready() -> void:
 	Game.bind(self, sim_world, map)
-	map.load_map(locationMapPath) 
+	map.load_map(locationMapPath)
+	if not sim_world.generate_random_scenario(scenario_seed, scenario_countries):
+		push_error("Could not generate a scenario with %d countries" % scenario_countries)
 
 func _physics_process(_delta: float) -> void:
 	"""Drive the synch clock at fixed rate."""

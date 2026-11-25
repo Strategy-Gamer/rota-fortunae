@@ -14,23 +14,32 @@ void TimeProgression::on_tick(rota::core::World& world){
     // Doing this as you can account for each day, month, and year tick 
     // without knowing the internals of how days/months/years work.
     for(uint32_t i = 0; i < days_advanced; i++){
-        //uint32_t curr_month = world.calendar.get_month();
-        uint32_t curr_year = world.calendar.get_year();
+        advance_day(world);
+    }
+}
+void TimeProgression::advance_years(rota::core::World& world, uint32_t years){
+    const uint32_t target_year = world.calendar.get_year() + years;
+    while(world.calendar.get_year() < target_year){
+        advance_day(world);
+    }
+}
+void TimeProgression::advance_day(rota::core::World& world){
+    //uint32_t curr_month = world.calendar.get_month();
+    uint32_t curr_year = world.calendar.get_year();
 
-        world.calendar.add_date(0, 1); // Increment calendar day
-        on_daily(world);
+    world.calendar.add_date(0, 1); // Increment calendar day
+    on_daily(world);
 
-        // TODO: Monthly
-        // if(curr_month != world.calendar.get_month())
-        // on_monthly(world);
+    // TODO: Monthly
+    // if(curr_month != world.calendar.get_month())
+    // on_monthly(world);
 
-        if(curr_year != world.calendar.get_year()) {
-            on_yearly(world);
-            world.render_dirty |= godot::SimWorld::DIRTY_ALL;
-        }
+    if(curr_year != world.calendar.get_year()) {
+        on_yearly(world);
+        world.render_dirty |= godot::SimWorld::DIRTY_ALL;
     }
 
-    rota::countries::destroy_countries(world); // last, so no system sees a slot freed mid-tick
+    rota::countries::destroy_countries(world); // last, so no system sees a slot freed mid-day
 }
 void TimeProgression::on_daily(rota::core::World& world){
     return;

@@ -48,6 +48,7 @@ sources += Glob("src/core/*.cpp")
 sources += Glob("src/utility/*.cpp")
 sources += Glob("src/economy/*.cpp")
 sources += Glob("src/queries/*.cpp")
+sources += Glob("src/scenario/*.cpp")
 
 if env["target"] in ["editor", "template_debug"]:
     try:

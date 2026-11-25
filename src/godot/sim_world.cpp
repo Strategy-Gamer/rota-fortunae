@@ -5,9 +5,10 @@
 #include "../map/map_modes.h"
 #include "../core/command.h"
 #include "../core/hash.h"
-#include "../countries/country_systems.h"
 #include "../time/time_progression.h"
 #include "../queries/location_summary.h"
+#include "../queries/country_summary.h"
+#include "../scenario/random_scenario.h"
 
 #include <algorithm>
 #include <godot_cpp/core/class_db.hpp>
@@ -16,29 +17,6 @@
 
 
 namespace {
-
-std::uint32_t pack_color(
-    const godot::Color& color
-) {
-    const std::uint32_t r =
-        static_cast<std::uint32_t>(
-            color.r * 255.0F
-        );
-
-    const std::uint32_t g =
-        static_cast<std::uint32_t>(
-            color.g * 255.0F
-        );
-
-    const std::uint32_t b =
-        static_cast<std::uint32_t>(
-            color.b * 255.0F
-        );
-
-    return r |
-           (g << 8U) |
-           (b << 16U);
-}
 
 godot::Color unpack_color(
     std::uint32_t packed
@@ -112,6 +90,7 @@ void SimWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("execute_command", "type_id", "actor_civ", "payload"), &SimWorld::execute_command);
     
     ClassDB::bind_method(D_METHOD("step_tick"), &SimWorld::step_tick);
+    ClassDB::bind_method(D_METHOD("advance_years", "years"), &SimWorld::advance_years);
     ClassDB::bind_method(D_METHOD("get_tick"), &SimWorld::get_tick);
     
     ClassDB::bind_method(D_METHOD("get_year"), &SimWorld::get_year);
@@ -133,9 +112,10 @@ void SimWorld::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("get_location_color", "location_id"), &SimWorld::get_location_color);
 
-    ClassDB::bind_method(D_METHOD("create_country","name","color"), &SimWorld::create_country);
+    ClassDB::bind_method(D_METHOD("generate_random_scenario", "seed", "country_count"), &SimWorld::generate_random_scenario);
 
     ClassDB::bind_method(D_METHOD("get_country_count"), &SimWorld::get_country_count);
+    ClassDB::bind_method(D_METHOD("get_country_ids"), &SimWorld::get_country_ids);
 
     ClassDB::bind_method(D_METHOD("get_country_name","country_id"), &SimWorld::get_country_name);
 
@@ -154,6 +134,7 @@ void SimWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("create_palette_image"), &SimWorld::create_palette_image);
 
     ClassDB::bind_method(D_METHOD("get_location_summary", "location_id"), &SimWorld::get_location_summary);
+    ClassDB::bind_method(D_METHOD("get_country_summary", "country_id"), &SimWorld::get_country_summary);
 
     ClassDB::bind_method(D_METHOD("take_render_dirty"), &SimWorld::take_render_dirty);
     ClassDB::bind_method(D_METHOD("get_state_hash"), &SimWorld::get_state_hash);
@@ -168,6 +149,12 @@ bool SimWorld::execute_command(CommandType type_id, int actor_civ, const Diction
 bool SimWorld::step_tick(){
     world.synch_clock.step();
     rota::time::TimeProgression::on_tick(world);
+    return true;
+}
+
+bool SimWorld::advance_years(int years){
+    if (years < 1) return false;
+    rota::time::TimeProgression::advance_years(world, static_cast<uint32_t>(years));
     return true;
 }
 
@@ -192,28 +179,33 @@ bool SimWorld::is_paused(){
     return world.calendar.is_paused();
 }
 
-int SimWorld::create_country(
-    const String& name,
-    const Color& color
-) {
-    const std::string native_name =
-        name.utf8().get_data();
+bool SimWorld::generate_random_scenario(int seed, int country_count) {
+    const int location_count = static_cast<int>(world.geography.location_count());
+    if (world.countries.count() != 0 || country_count < 1 || country_count > location_count) {
+        return false;
+    }
 
-    const rota::countries::CountryID id =
-        rota::countries::create_country(
-            world,
-            native_name,
-            pack_color(color),
-            world.calendar.get_year()
-        );
-
-    return static_cast<int>(id);
+    rota::scenario::generate_random_scenario(
+        world,
+        static_cast<std::uint64_t>(seed),
+        static_cast<std::uint32_t>(country_count)
+    );
+    return true;
 }
 
 int SimWorld::get_country_count() const {
     return static_cast<int>(
         world.countries.count()
     );
+}
+
+PackedInt32Array SimWorld::get_country_ids() const {
+    PackedInt32Array ids;
+    const std::uint32_t slot_count = static_cast<std::uint32_t>(world.countries.alive.size());
+    for (std::uint32_t id = 0; id < slot_count; id++) {
+        if (world.countries.is_valid(id)) ids.push_back(static_cast<int32_t>(id));
+    }
+    return ids;
 }
 
 String SimWorld::get_country_name(
@@ -480,6 +472,18 @@ Dictionary SimWorld::get_location_summary(int location_id) const {
     return d;
 }
 
+Dictionary SimWorld::get_country_summary(int country_id) const {
+    if (!validate_country_id(country_id))
+        return Dictionary();
+    auto s = rota::queries::build_country_summary(world, country_id);
+    Dictionary d;
+    d["name"]              = String(world.countries.names[country_id].c_str());
+    d["location_count"]    = (int64_t)s.location_count;
+    d["population"]        = (int64_t)s.population;
+    d["wealth"]            = s.wealth.to_double();
+    d["wealth_per_capita"] = s.wealth_per_capita.to_double();
+    return d;
+}
 
 int SimWorld::take_render_dirty(){
     int d = world.render_dirty;
