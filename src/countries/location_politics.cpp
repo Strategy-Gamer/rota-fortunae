@@ -9,10 +9,12 @@ void LocationPolitics::initialize(
         location_count,
         INVALID_COUNTRY_ID
     );
+    occupier.assign(location_count, INVALID_COUNTRY_ID);
 }
 
 void LocationPolitics::clear() {
     owner_country.clear();
+    occupier.clear();
 }
 
 CountryID LocationPolitics::get_owner(

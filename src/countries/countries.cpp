@@ -24,6 +24,7 @@ CountryID CountryStore::allocate(
         names.emplace_back();
         display_color_rgb.push_back(0);
         capital.push_back(rota::map::INVALID_LOCATION_ID);
+        rebels_against.push_back(INVALID_COUNTRY_ID);
         location_count.push_back(0);
     }
 
@@ -47,6 +48,7 @@ void CountryStore::free(CountryID id) {
     names[id].clear();
     display_color_rgb[id] = 0;
     capital[id] = rota::map::INVALID_LOCATION_ID;
+    rebels_against[id] = INVALID_COUNTRY_ID;
     location_count[id] = 0;
 
     free_list.push_back(id);
@@ -68,6 +70,7 @@ void CountryStore::clear() {
     names.clear();
     display_color_rgb.clear();
     capital.clear();
+    rebels_against.clear();
     location_count.clear();
     free_list.clear();
     dead_countries.clear();
@@ -82,6 +85,7 @@ void CountryStore::feed_hash(rota::core::Hasher& h) const {
     for (size_t i = 0; i < slot_count; i++) h.feed(founded_year[i]);
     for (size_t i = 0; i < slot_count; i++) h.feed(display_color_rgb[i]);
     for (size_t i = 0; i < slot_count; i++) h.feed(capital[i]);
+    for (size_t i = 0; i < slot_count; i++) h.feed(rebels_against[i]);
 
     // Order decides which slot the next country takes
     for (CountryID id : free_list) h.feed(id);

@@ -13,6 +13,7 @@ const MAP_MODES := [
 	["Elite overproduction", SimWorld.MAP_ELITE_OVERPRODUCTION],
 	["Legitimacy", SimWorld.MAP_LEGITIMACY],
 	["Control", SimWorld.MAP_CONTROL],
+	["Civil war", SimWorld.MAP_WAR],
 	["Location colors", SimWorld.MAP_LOCATION_COLOR],
 ]
 

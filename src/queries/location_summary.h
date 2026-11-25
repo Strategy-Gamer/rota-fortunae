@@ -22,6 +22,7 @@ struct LocationSummary {
     Fixed64         security;
     Fixed64         control;            // its owner's, 1 at the capital
     std::int32_t    owner_country;      // -1 = unowned
+    std::int32_t    controller;         // who holds it: the owner unless occupied; -1 = unowned
 };
 LocationSummary build_location_summary(const rota::core::World& world, rota::map::LocationID loc);
 }

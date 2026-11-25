@@ -1,6 +1,7 @@
 #include "map/map_modes.h"
 
 #include "core/world.h"
+#include "countries/civil_war.h"
 #include "countries/control.h"
 #include "economy/secular_cycle_system.h"
 
@@ -69,8 +70,10 @@ RGBImageData create_map_mode_palette(const rota::core::World& world, MapMode mod
     using rota::countries::CountryID;
 
     switch (mode) {
-        case MapMode::Political:
-            return paint(world, [&](LocationID, CountryID c) { return world.countries.display_color_rgb[c]; });
+        case MapMode::Political: // who holds it, so rebels show where they stand
+            return paint(world, [&](LocationID loc, CountryID) {
+                return world.countries.display_color_rgb[world.location_politics.controller(loc)];
+            });
 
         case MapMode::Phase:
             return paint(world, [&](LocationID, CountryID c) { return PHASE_COLORS[state.phase[c]]; });
@@ -112,6 +115,15 @@ RGBImageData create_map_mode_palette(const rota::core::World& world, MapMode mod
                 return c < Fixed64::from_raw(Fixed64::SCALE / 2)
                     ? ramp(c * 2, rgb(0x7A, 0x0E, 0x0E), rgb(0xF0, 0xD2, 0x3C))
                     : ramp(c * 2 - Fixed64(1), rgb(0xF0, 0xD2, 0x3C), rgb(0x1E, 0x50, 0xB4));
+            });
+        }
+
+        case MapMode::War: {
+            const std::vector<CountryID> rebels = rota::countries::rebel_sides(world);
+            return paint(world, [&](LocationID loc, CountryID c) {
+                if (rebels[c] == rota::countries::INVALID_COUNTRY_ID) return rgb(0x8C, 0x8C, 0x82);
+                if (rota::countries::is_front(world, loc)) return rgb(0xF5, 0x96, 0x1E);
+                return world.location_politics.occupier[loc] == rebels[c] ? rgb(0xB4, 0x1E, 0x1E) : rgb(0x3C, 0x78, 0xC8);
             });
         }
 

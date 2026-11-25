@@ -37,6 +37,7 @@ struct CountryStore {
     std::vector<std::string> names;
     std::vector<std::uint32_t> display_color_rgb;
     std::vector<rota::map::LocationID> capital; // always owned by the country, or INVALID_LOCATION_ID
+    std::vector<CountryID> rebels_against;      // the country a rebel side fights, else INVALID_COUNTRY_ID
     std::vector<std::uint32_t> location_count; // derived from owner_country
 
     // Not keyed by CountryID

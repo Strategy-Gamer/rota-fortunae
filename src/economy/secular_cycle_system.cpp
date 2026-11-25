@@ -2,6 +2,7 @@
 
 #include "core/rng.h"
 #include "core/world.h"
+#include "countries/civil_war.h"
 #include "countries/control.h"
 #include "economy/economy_primitives.h"
 #include "utility/FixedMath.h"
@@ -342,10 +343,8 @@ void apply_crisis(rota::core::World& w, CountryID c, CountryYear& cy, rc::Crisis
             cy.commoner_keep = cy.commoner_keep * (ONE - milli(100) * K_FAMINE * x);
             cy.elite_keep = cy.elite_keep * (ONE - milli(300) * CIVILWAR_CULL * x);
             break;
-        case rc::CRISIS_CIVIL_WAR:
+        case rc::CRISIS_CIVIL_WAR: // its deaths come from the fighting on the map (civil_war.cpp)
             cy.unrest_gain += milli(500) * REVOLT_UNREST * x;
-            cy.commoner_keep = cy.commoner_keep * (ONE - milli(200) * K_FAMINE * x);
-            cy.elite_keep = cy.elite_keep * (ONE - CIVILWAR_CULL * x);
             state.treasury[c] = state.treasury[c] * (ONE - milli(100) * x);
             break;
         case rc::CRISIS_COUP:
@@ -430,7 +429,7 @@ void crises(rota::core::World& w, std::uint64_t year, CountryID c, CountryYear& 
     state.war_weariness[c] = std::max(ZERO, state.war_weariness[c] - WEARY_RELAX) + WEARY_GAIN * violent_load;
 }
 
-void crisis_effects_and_elites(const Pass& p) {
+void crisis_effects_and_elites(const Pass& p, const rc::WarYear& war) {
     auto& eco = p.w.location_economy;
     auto& cyc = p.w.location_secular_cycle;
     const auto& legitimacy = p.w.country_state.legitimacy;
@@ -448,11 +447,12 @@ void crisis_effects_and_elites(const Pass& p) {
         const Fixed64 positions = local_elite_positions(p.w, loc) + cy.state_share * p.control[loc] * elites_before;
 
         cyc.unrest[loc] = std::min(ONE, cyc.unrest[loc] + cy.unrest_gain);
-        if (cy.commoner_keep < ONE) {
-            eco.commoners[loc] = to_heads(cy.commoner_keep * static_cast<std::int64_t>(eco.commoners[loc]),
+        const Fixed64 commoner_keep = cy.commoner_keep * war.commoner_keep[loc];
+        if (commoner_keep < ONE) {
+            eco.commoners[loc] = to_heads(commoner_keep * static_cast<std::int64_t>(eco.commoners[loc]),
                 p.key(STREAM_CRISIS_COMMONERS, loc), 0);
         }
-        const Fixed64 elites = cy.elite_keep * elites_before;
+        const Fixed64 elites = cy.elite_keep * war.elite_keep[loc] * elites_before;
 
         // build by reproduction + upward mobility, clear by culling + downward mobility
         const Fixed64 e_biological = elites * legitimacy[c] * R_E_PREMIUM;
@@ -533,7 +533,8 @@ void run_secular_cycle(rota::core::World& world) {
     each_country([&](CountryID c, CountryYear& cy) { fiscal_and_legitimacy(world, c, cy); });
     unrest(pass);
     each_country([&](CountryID c, CountryYear& cy) { crises(world, pass.year, c, cy); });
-    crisis_effects_and_elites(pass);
+    const rc::WarYear war = rc::run_civil_wars(world);
+    crisis_effects_and_elites(pass, war);
     each_country([&](CountryID c, CountryYear& cy) { phase(world, c, cy); });
 }
 

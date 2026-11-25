@@ -16,6 +16,7 @@ const MODES := {
 	"elite_overproduction": SimWorld.MAP_ELITE_OVERPRODUCTION,
 	"legitimacy": SimWorld.MAP_LEGITIMACY,
 	"control": SimWorld.MAP_CONTROL,
+	"war": SimWorld.MAP_WAR,
 }
 
 func _initialize() -> void:

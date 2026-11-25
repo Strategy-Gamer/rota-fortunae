@@ -18,6 +18,7 @@ enum class MapMode : std::uint8_t {
     EliteOverproduction = 5,
     Legitimacy = 6,
     Control = 7,
+    War = 8,
     Count
 };
 

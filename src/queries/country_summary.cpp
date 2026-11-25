@@ -31,6 +31,7 @@ std::vector<CountrySummary> build_country_summaries(const rota::core::World& wor
         t.positions        += rota::economy::local_elite_positions(world, loc);
         t.unrest           += cyc.unrest[loc] * commoners;
         t.effective_unrest += cyc.effective_unrest[loc] * commoners;
+        if (world.location_politics.occupier[loc] != rota::countries::INVALID_COUNTRY_ID) s.occupied += 1;
     }
 
     for (rota::countries::CountryID c = 0; c < slot_count; c++) {
@@ -39,6 +40,10 @@ std::vector<CountrySummary> build_country_summaries(const rota::core::World& wor
         const Sums& t = sums[c];
 
         s.location_count = world.countries.location_count[c];
+        s.generation = world.countries.generation[c];
+        s.rebels_against = world.countries.rebels_against[c] != rota::countries::INVALID_COUNTRY_ID
+            ? static_cast<std::int32_t>(world.countries.rebels_against[c])
+            : -1;
         s.population = t.commoners + s.elites;
         s.wealth_per_capita = s.population > 0
             ? s.wealth / static_cast<int64_t>(s.population)

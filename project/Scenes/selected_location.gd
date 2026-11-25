@@ -13,6 +13,8 @@ func update_ui(selected_location: int):
 
 	# Update UI Elements
 	$PanelContainer/VBoxContainer/Owner.text = "Location %d, owner: %s" % [selected_location, owner_name]
+	if summary.controller != summary.owner_country:
+		$PanelContainer/VBoxContainer/Owner.text += ", held by %s" % Game.world.get_country_name(summary.controller)
 	$PanelContainer/VBoxContainer/Population.text = "Population: %d (%d commoners)" % [summary.population, summary.commoners]
 	$PanelContainer/VBoxContainer/Wealth.text = "Wealth: %.1f" % summary.wealth
 	$PanelContainer/VBoxContainer/Unrest.text = "Unrest: %.2f stock, %.2f after suppression" % [summary.unrest, summary.effective_unrest]

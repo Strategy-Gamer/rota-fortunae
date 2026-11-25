@@ -47,9 +47,8 @@ const rota::fmath::SampledCurve& halving_curve() {
 
 std::vector<Fixed64> compute_control(const rota::core::World& w) {
     const auto& g = w.geography;
-    const auto& owner = w.location_politics.owner_country;
+    const auto& politics = w.location_politics;
     const LocationID location_count = g.location_count();
-
     const auto& halving = halving_curve();
     std::vector<Fixed64> control(location_count);
     std::vector<std::int64_t> distance(location_count, UNREACHED);
@@ -71,12 +70,14 @@ std::vector<Fixed64> compute_control(const rota::core::World& w) {
             const auto [d, loc] = open.top();
             open.pop();
             if (d > distance[loc]) continue;
-            if (owner[loc] == c) control[loc] = halving(Fixed64(d) / CONTROL_HALF_DISTANCE);
+            if (politics.owner_country[loc] == c && politics.controller(loc) == c) {
+                control[loc] = halving(Fixed64(d) / CONTROL_HALF_DISTANCE);
+            }
 
             for (std::uint32_t i = g.neighbor_offset[loc]; i < g.neighbor_offset[loc + 1]; i++) {
                 const LocationID next = g.neighbors[i];
                 const bool sea = g.kind[next] == LocationKind::Sea;
-                if (!sea && owner[next] != c) continue; // the owner's own land and the sea; never foreign or impassable land
+                if (!sea && politics.controller(next) != c) continue; // land it holds and the sea; never land others hold, or impassable land
 
                 // half the edge lies in each location
                 const std::int64_t next_distance = d + g.neighbor_distance[i] * (travel_cost(g, loc) + travel_cost(g, next)) / 2;

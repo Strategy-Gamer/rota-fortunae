@@ -109,6 +109,7 @@ func _refresh() -> void:
 		"Elites: %s    Wealth per head: %.3f" % [_group(s.elites), s.wealth_per_capita],
 		"Treasury: %s    War-weariness: %.2f" % [_group(int(s.treasury)), s.war_weariness],
 		"Unrest stock U: %.2f    Crises: %s" % [s.unrest, ", ".join(crises) if not crises.is_empty() else "none"],
+		"Rebels hold: %d locations" % s.occupied,
 	])
 	_plot()
 

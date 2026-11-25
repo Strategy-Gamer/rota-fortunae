@@ -11,6 +11,9 @@ namespace rota::core { struct World; }
 namespace rota::queries {
 struct CountrySummary {
     std::uint32_t   location_count;
+    std::uint32_t   occupied;           // owned locations someone else holds
+    std::uint32_t   generation;         // with the ID, the country's permanent key
+    std::int32_t    rebels_against;     // -1 unless this is a rebel side
     std::uint64_t   population;         // commoners + elites
     std::uint64_t   elites;
     Fixed64         wealth;

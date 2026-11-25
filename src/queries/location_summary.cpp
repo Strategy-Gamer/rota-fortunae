@@ -36,6 +36,7 @@ LocationSummary build_location_summary(const rota::core::World& world, rota::map
     s.security           = cyc.security[loc];
     s.control            = control[loc];
     s.owner_country      = world.countries.is_valid(owner) ? static_cast<std::int32_t>(owner) : -1;
+    s.controller         = world.countries.is_valid(owner) ? static_cast<std::int32_t>(world.location_politics.controller(loc)) : -1;
     return s;
 }
 

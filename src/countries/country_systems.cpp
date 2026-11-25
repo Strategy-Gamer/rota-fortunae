@@ -55,12 +55,14 @@ void destroy_countries(rota::core::World& w) {
             continue;
         }
 
-        if (countries.location_count[id] > 0) {
-            const std::uint32_t location_count = w.geography.location_count();
-            for (rota::map::LocationID loc = 0; loc < location_count; loc++) {
-                if (w.location_politics.get_owner(loc) == id) {
-                    set_location_owner(w, loc, INVALID_COUNTRY_ID);
-                }
+        const std::uint32_t location_count = w.geography.location_count();
+        for (rota::map::LocationID loc = 0; loc < location_count; loc++) {
+            if (w.location_politics.get_owner(loc) == id) {
+                set_location_owner(w, loc, INVALID_COUNTRY_ID);
+            }
+            if (w.location_politics.occupier[loc] == id) { // its occupations end with it
+                w.location_politics.occupier[loc] = INVALID_COUNTRY_ID;
+                w.render_dirty |= rota::core::DIRTY_POLITICAL;
             }
         }
 
@@ -99,6 +101,7 @@ void set_location_owner(
     }
 
     w.location_politics.set_owner(location_id, country_id);
+    w.location_politics.occupier[location_id] = INVALID_COUNTRY_ID; // a change of owner ends any occupation
     w.render_dirty |= rota::core::DIRTY_POLITICAL;
 }
 

@@ -24,8 +24,8 @@ func record_if_new_year(world: SimWorld) -> void:
 	for id in summaries:
 		var s: Dictionary = summaries[id]
 		var h: Dictionary = _countries.get(id, {})
-		if h.is_empty():
-			h = {"first_year": year, "phase": PackedByteArray()}
+		if h.is_empty() or h.generation != s.generation:  # a reused slot is a new country
+			h = {"first_year": year, "generation": s.generation, "phase": PackedByteArray()}
 			for key in SERIES:
 				h[key] = PackedFloat32Array()
 			_countries[id] = h

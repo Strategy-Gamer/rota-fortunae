@@ -284,6 +284,12 @@ Choose the lightest storage that fits each store's churn (design-notes/05):
     `DeadCountryRecord` list.
   - **Reviving** allocates a *fresh* slot from an archived record, since the old ID may already be
     reused. The old record stays in the archive as history.
+- **A rebel side is a country** (`rebels_against` names whom it fights), created when a civil war
+  starts and destroyed when its rising ends. It owns nothing: the land it holds stays owned by the
+  country it fights and is **occupied** (`occupier`, invalid unless someone other than the owner
+  holds it). Destroying a country ends its occupations, and changing a location's owner ends
+  any occupation there. Secession and conquest reuse this: a breakaway is the occupier becoming the
+  owner, and a conqueror occupies before it annexes.
 - **The first high-churn store** (pops, units, transient orders) is where the full kit earns its
   place: sparse-set IDs, swap-remove and batched deletes. Those aren't referenced by ID-as-index,
   so dense reordering is fine.
@@ -314,19 +320,21 @@ The game separates them (per `Planning/Rota Fortunae_ Civilizations.txt`):
   suppression ÷ the country's commoners), and **state positions** (military plus funded patronage)
   are split by each location's share of the country's elites, because they are nationally
   competitive.
-- **Control scales the state's reach** (not in FinalSim). Each location's control is
-  1 at its owner's capital and halves every fixed effective distance (about the two weeks' travel
-  that bounded pre-modern empires): the shortest path over the owner's land and the sea, where
-  each km costs by terrain (mountains and jungle several times open ground, sea like open ground)
-  and foreign or impassable land is never crossed ([`control.cpp`](../src/countries/control.cpp)). Collection, the per-capita suppression a location
-  receives, and its elites' weight in the competition for state positions are all multiplied by
-  it, so the frontier pays less, is policed less and is shut out of the court. Control is
-  recomputed each year from ownership, capitals and the map; it is never stored. A capital is
-  always owned by its country: losing it leaves the country without one, and with no control
-  anywhere. Where the capital moves instead is undecided.
-- **Crises are per country.** One set of crises and one war-weariness lull per country; each
-  crisis hits every owned location by the same fraction. They are **load-bearing**: with the crisis
-  rates at zero, FinalSim never leaves fracture.
+- **Control scales the state's reach** (not in FinalSim). Each location's control is 1 at its
+  owner's capital and halves every fixed effective distance (about the two weeks' travel that
+  bounded pre-modern empires): the shortest path over land the owner holds and the sea, where each
+  km costs by terrain (mountains and jungle several times open ground, sea like open ground) and
+  foreign, occupied or impassable land is never crossed
+  ([`control.cpp`](../src/countries/control.cpp)). Collection, the per-capita suppression a
+  location receives, and its elites' weight in the competition for state positions are all
+  multiplied by it, so the frontier pays less, is policed less and is shut out of the court.
+  Occupied land has none. Control is recomputed each year from ownership, occupation, capitals and
+  the map; it is never stored. A capital is always owned by its country: losing it leaves the
+  country without one, and with no control anywhere. Where the capital moves instead is undecided.
+- **Crises are per country.** One set of crises and one war-weariness lull per country; revolt and
+  coup hit every owned location by the same fraction, while a civil war's deaths come from the
+  fighting on the map (below). They are **load-bearing**: with the crisis rates at zero, FinalSim
+  never leaves fracture.
 - **Unowned land sits out** the cycle entirely until a country owns it.
 
 **Step order** keeps FinalSim's sequence as linear passes. Each location pass streams through the
@@ -336,11 +344,32 @@ one row instead of one array per field. The country steps run between the locati
 ascending `CountryID`:
 
 population and economy (locations) → fiscal and legitimacy → unrest (locations) → crises →
-crisis effects and elites (locations) → phase.
+civil wars (locations) → crisis effects and elites (locations) → phase.
 
 A year's crises fold into one factor per country, so each location is touched once for all of
 them. The one-year lags are the review-critical part: security, the army bill, collection and
 legitimacy read *last* year's `U_e`; fracture unrest reads last year's phase.
+
+**Civil war on the map** ([`civil_war.cpp`](../src/countries/civil_war.cpp)). The civil-war crisis
+decides when a war runs and for how long; the map decides who dies. Rebels rise in every location
+more restless than the country's average (never the capital) and occupy it. Each year every front
+(land of one side touching the other's over a border, a strait or one stretch of sea) is
+devastated and may fall, with a chance set by the enemy's share of the two sides' elites, and the
+land behind the rebels' lines is pillaged. A rising that takes the capital or loses all its land
+ends, and a new one rises while the crisis lasts; when the crisis runs out, the rebels' land
+returns (the hook for secession). Three traps; done the other way, each leaves some countries in
+fracture for centuries:
+- **Wars must last their crisis.** The crisis's duration is what clears a fracture; ending the war
+  at the first decisive result cut that short.
+- **Rebels rise wherever unrest is, the core included.** Overproduction often piles up near the
+  capital; risings weighted toward the frontier left those court pockets untouched, and their
+  unrest alone kept the country's mean above the fracture exit.
+- **Devastation scales with the place's own `U_e`, not the crisis's country-wide intensity.** Once
+  most of a country calms, intensity is small, so a lingering overproduced pocket would barely be
+  touched while still holding the mean up.
+
+Civil wars clear harder than the old uniform cull: across eight seeds countries spend about 30% of
+years in fracture (the cull gave about 50%), with as many phase changes as before.
 
 **Units.** Population is in **whole people** at `LOCATION_CAPACITY` per location (FinalSim's cap of
 1). Absolute parameters (`army_base`, `mil_positions`) scale per unit of capacity, so apart from
@@ -393,18 +422,17 @@ collapse mechanic is core, not stretch**.
    showing the selected state's trajectory.
 5. The player can issue **2–3 real commands** that visibly nudge the cycle.
 
-**Next, in order** (the cycle (§10) runs in every country, and the map modes and trajectory panel
-are in). Each step has to show on the map by itself:
-1. **Geography:** adjacency, land, sea and impassable locations, and routes across the sea, on the
-   EU4-based map; scenario countries that are contiguous.
-2. **Control:** a stored capital per country, and effective distance from it (over land and across
-   the sea) sets each location's control, which weakens collection, suppression and access to
-   state positions toward the frontier (§10).
-3. **Civil war on the map:** rebels hold the frontier and high-unrest locations, and elite deaths
-   come from devastation where the two sides meet, replacing the cycle's uniform civil-war cull.
-4. **Breakaways:** a rebel side that wins with low control secedes as a new country (§9). This is
-   the first border change the sim makes by itself.
-5. **Conquest,** then **shallow AI** (a few automated reactions, such as raising taxes under
+**Done:** the cycle (§10) in every country, map modes and the trajectory panel, the EU4-based map
+with adjacency and routes across the sea (§9), control from the capital, and civil wars on the map
+(§10).
+
+**Next, in order.** Each step has to show on the map by itself:
+1. **Breakaways:** when a civil-war crisis runs out, rebels holding low-control land secede as a new
+   country instead of handing it back: the occupier becomes the owner (§9), with a capital of its
+   own. This is the first border change the sim makes by itself.
+2. **Conquest:** a war between countries is the same occupation and fronts with a foreign enemy;
+   `is_front` and the war's strength sums are the places that today assume both sides share an
+   owner. Then **shallow AI** (a few automated reactions, such as raising taxes under
    fiscal stress) and 2–3 player commands. Pacing is tuned so a cycle reads in minutes.
 
 **If ahead, pull in first:** (1) **terrain beyond land and sea** (vegetation, rivers,

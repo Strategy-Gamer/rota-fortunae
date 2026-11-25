@@ -100,6 +100,7 @@ void SimWorld::_bind_methods() {
         { "MAP_ELITE_OVERPRODUCTION", MapMode::EliteOverproduction },
         { "MAP_LEGITIMACY", MapMode::Legitimacy },
         { "MAP_CONTROL", MapMode::Control },
+        { "MAP_WAR", MapMode::War },
     };
     static_assert(sizeof(map_modes) / sizeof(map_modes[0]) == static_cast<std::size_t>(MapMode::Count), "bind every map mode");
     for (const auto& [name, mode] : map_modes) {
@@ -530,6 +531,7 @@ Dictionary SimWorld::get_location_summary(int location_id) const {
     d["security"]             = s.security.to_double();
     d["control"]              = s.control.to_double();
     d["owner_country"]        = s.owner_country;
+    d["controller"]           = s.controller;
     return d;
 }
 
@@ -537,6 +539,9 @@ Dictionary SimWorld::country_summary_to_dictionary(int country_id, const rota::q
     Dictionary d;
     d["name"]                 = String(world.countries.names[country_id].c_str());
     d["location_count"]       = (int64_t)s.location_count;
+    d["occupied"]             = (int64_t)s.occupied;
+    d["generation"]           = (int64_t)s.generation;
+    d["rebels_against"]       = s.rebels_against;
     d["population"]           = (int64_t)s.population;
     d["elites"]               = (int64_t)s.elites;
     d["wealth"]               = s.wealth.to_double();
@@ -583,6 +588,7 @@ int64_t SimWorld::get_state_hash(){
     h.feed(world.seed);
 
     for (auto owner : world.location_politics.owner_country) h.feed(owner);
+    for (auto occupier : world.location_politics.occupier) h.feed(occupier);
 
     world.countries.feed_hash(h);
     world.country_state.feed_hash(h);
