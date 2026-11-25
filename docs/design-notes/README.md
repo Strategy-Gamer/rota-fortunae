@@ -4,8 +4,8 @@ Raw research and AI conversations (ChatGPT, Grok, etc.), pasted here so the
 knowledge lives on git instead of in scattered chat histories.
 
 These are **source material**, not authoritative. Distilled conclusions belong in
-[`../ARCHITECTURE.md`](../ARCHITECTURE.md) or the relevant `Planning/` doc. When a
-note here informs a real decision, summarize it into the architecture doc and link
+[`../DESIGN.md`](../DESIGN.md) or the relevant `Planning/` doc. When a
+note here informs a real decision, summarize it into `DESIGN.md` and link
 back to the note.
 
 ## How to add a note
