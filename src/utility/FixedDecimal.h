@@ -86,7 +86,16 @@ inline uint64_t magnitude(int64_t v) {
 inline int64_t mul_div_round(int64_t a, int64_t b, int64_t d) {
     const bool negative = ((a < 0) != (b < 0)) != (d < 0);
     const uint64_t ud = magnitude(d);
-    const U128 n = add_u64(mul_u64(magnitude(a), magnitude(b)), ud / 2);
+    const uint64_t ua = magnitude(a), ub = magnitude(b);
+
+    // Same result without U128 when the product and its rounding term fit in 64 bits
+    const uint64_t small = ua < ub ? ua : ub, large = ua < ub ? ub : ua;
+    if (ud < (1ULL << 62) && (large < (1ULL << 31) || (small < (1ULL << 20) && large < (1ULL << 43)))) {
+        const uint64_t q = (ua * ub + ud / 2) / ud;
+        return static_cast<int64_t>(negative ? 0 - q : q);
+    }
+
+    const U128 n = add_u64(mul_u64(ua, ub), ud / 2);
     const uint64_t q = div_u64(n, ud).lo;
     return static_cast<int64_t>(negative ? 0 - q : q);
 }
