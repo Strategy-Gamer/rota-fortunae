@@ -27,11 +27,13 @@ var _stock_graph: TrajectoryGraph
 
 func _ready() -> void:
 	custom_minimum_size = Vector2(380, 0)
+	theme = Theme.new()
+	theme.default_font_size = 14
 	var box := VBoxContainer.new()
 	add_child(box)
 
 	_title = Label.new()
-	_title.add_theme_font_size_override("font_size", 20)
+	_title.add_theme_font_size_override("font_size", 18)
 	box.add_child(_title)
 	_phase = Label.new()
 	box.add_child(_phase)
@@ -68,7 +70,7 @@ func _ready() -> void:
 func _add_graph(box: VBoxContainer, title: String) -> TrajectoryGraph:
 	var graph := TrajectoryGraph.new()
 	graph.title = title
-	graph.custom_minimum_size = Vector2(0, 130)
+	graph.custom_minimum_size = Vector2(0, 140)
 	box.add_child(graph)
 	return graph
 
