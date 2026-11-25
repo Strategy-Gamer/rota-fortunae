@@ -268,42 +268,63 @@ Choose the lightest storage that fits each store's churn (design-notes/05):
 ## 10. The secular-cycle simulation
 
 The model is `FinalSim` in [`Planning/new_model.py`](../Planning/new_model.py) (with `economy.py`
-and `extra_functions.py`). Porting it is a **translation, not a redesign**: preserve the update
-rules and their *ordering*, and transfer parameter values rather than expecting bit-identical
-numbers. Mark any genuine deviation in a short comment.
+and `extra_functions.py`), ported to
+[`secular_cycle_system.cpp`](../src/economy/secular_cycle_system.cpp). The port is a **translation,
+not a redesign**: it keeps the update rules, their *ordering* and the parameter values. When the
+Python changes, re-port the rule; don't tune the C++ on its own. One FinalSim tick is one game year
+(`on_yearly`).
 
 **The location/country split.** FinalSim fuses a location's economy and its state into one unit.
 The game separates them (per `Planning/Rota Fortunae_ Civilizations.txt`):
-- **Per location (the default, and authoritative):** pops, population, wealth (split elite/commoner
-  by local wage share), land, productivity, security, control, **elites**, and **unrest**.
-- **Per country (only the state):** state capacity and its variables, meaning treasury, revenue,
-  suppression and legitimacy.
-- **Aggregation connects them.** Country accumulators (total elites, overproduction, aggregate
-  instability, total income) are *derived reads* over the locations. Weighted averages are used for
-  control and security.
-- **Two country→location couplings:** the suppression budget (reduces local unrest) and state elite
-  opportunities (patronage, bureaucracy, military), which are added to each location's pool. Both
-  flow forward within the tick, as in FinalSim.
+- **Per location (the default):** commoners, elites, this year's commoner and elite income,
+  security, and unrest (the `U` stock and the suppressed `U_e`).
+- **Per country (only the state):** legitimacy, treasury, phase, this year's state positions, the
+  crises and war-weariness.
+- **Aggregation connects them.** Budget inputs (income, elites, positions, the suppression bill)
+  are sums over the locations. The phase and the crisis drivers read *commoner-weighted means* of
+  the relative wage, immiseration, security and `U_e`, so a country's phase follows its typical
+  location, not its worst.
+- **Two country→location couplings**, both flowing forward within the year as in FinalSim:
+  suppression is spent **per capita** (each location's `U_e` is its `U` minus the country's
+  suppression ÷ the country's commoners), and **state positions** (military plus funded patronage)
+  are split by each location's share of the country's elites, because they are nationally
+  competitive.
+- **Crises are per country.** One set of crises and one war-weariness lull per country; each
+  crisis hits every owned location by the same fraction. They are **load-bearing**: with the crisis
+  rates at zero, FinalSim never leaves fracture.
+- **Unowned land sits out** the cycle entirely until a country owns it.
 
-**Step order** keeps FinalSim's sequence, split by scope:
-1. Per location: population, economy.
-2. Aggregate, then per country: fiscal, legitimacy. Push the two couplings down.
-3. Per location: unrest (minus the local suppression share), elites.
-4. Aggregate, then per country: gauges, phase.
+**Step order** keeps FinalSim's sequence. Countries are independent, so each one runs the whole
+year before the next (ascending `CountryID`; locations in ascending `LocationID`): population and
+economy per location → fiscal and legitimacy → unrest per location → crises → elites per location →
+phase. The one-year lags are the review-critical part: security, the army bill, collection and
+legitimacy read *last* year's `U_e`; fracture unrest reads last year's phase.
 
-Countries step in ascending `CountryID` order and locations in ascending `LocationID` order.
-FinalSim's one-tick lags (security, felt overproduction, `U_e`) are the review-critical part.
+**Units.** Population is in **whole people** at `LOCATION_CAPACITY` per location (FinalSim's cap of
+1). Absolute parameters (`army_base`, `mil_positions`) scale per unit of capacity, which keeps the
+model scale-invariant: a 100-location country behaves like a 1-location one. Fractional changes in
+commoners and elites become whole people by **keyed stochastic rounding**: the fraction is added as
+one person with that probability, drawn from `keyed_hash(seed, year, stream, id)`. So there is no
+stored remainder and no RNG stream whose call order matters. Crisis rolls use the same keyed draws.
+
+**Deliberate departures from the Python:**
+- New countries start at legitimacy 1. FinalSim's `__init__` resets it to 0 (line 165), which only
+  changes its first ~20 years.
+- Inactive paths were left out: war deaths (`k_war = 0`), famine, epidemic and bankruptcy (rate 0),
+  and the carrying-capacity window (capacity is static). Port each when it's switched on.
+- The random scenario seeds each country's starting population (0.4–0.9 of capacity), or every
+  country would enter strain in the same year.
 
 **Porting traps:**
 - Python's `1e-8`/`1e-9` division guards round to **zero** in `Fixed64`. Use a representable floor
-  instead.
-- Python's true division `/` and integer division `//` differ. `np.clip` becomes a manual
-  `min`/`max`.
-- **Validate qualitatively:** the same growth → strain → crisis → recovery arc, never bit-matching
-  Python floats. Two traps from `Planning/limitations.md` apply: population must approach carrying
+  instead (one person, for example).
+- Python's true division `/` and integer division `//` differ. `np.clip` becomes `std::clamp`.
+- **Checking the port against Python:** set the crisis rates to zero on both sides. That leaves
+  everything deterministic, and a country's yearly trajectory should then match FinalSim to four or
+  five significant figures. With crises on, compare statistics over many seeds (phase split,
+  period, population and elite ranges) instead, because the Python RNG differs.
+- Two traps from `Planning/limitations.md` still apply: population must approach carrying
   capacity, and suppression must not be so cheap that the crisis never fires.
-- **De-risk with one location per country first.** At N=1 the per-location machinery reduces
-  exactly to FinalSim, which allows a straight comparison before scaling out.
 
 **Fixing the model:** when the sim misbehaves, fix the update rule that produces the wrong
 trajectory. Never redefine phases or thresholds, and never add catches, bleeds or resets to force
@@ -327,16 +348,14 @@ collapse mechanic is core, not stretch**.
    showing the selected state's trajectory.
 5. The player can issue **2–3 real commands** that visibly nudge the cycle.
 
-**Next, in order:**
-1. **Port the cycle:** economy primitives, the per-location stores, per-country state, aggregation,
-   then the cycle system, following §10. Start with one location per country, and extend the
-   runner's CSV with the cycle's gauges as they appear.
-2. **Collapse made visible:** crossing an unrest/cohesion threshold triggers a collapse event on the
-   map (fragmentation, anarchy or elite purge), built on the lifecycle systems in §9. Then crises
-   (famine, revolt, civil war, coup) with seeded RNG.
-3. **Many countries at once**, plus shallow AI (let the model drive, with a few automated reactions
-   such as raising taxes under fiscal stress) and 2–3 player commands.
-4. **Watchable:** sim-driven map modes, a trajectory panel, pacing tuned so a cycle reads in
+**Next, in order** (the cycle itself, §10, is ported and runs in every country):
+1. **Collapse made visible:** crossing an unrest/cohesion threshold triggers a collapse event on the
+   map (fragmentation, anarchy or elite purge), built on the lifecycle systems in §9. Revolt, civil
+   war and coup already run inside the cycle; famine and epidemic wait until they're switched on in
+   the Python.
+2. **Shallow AI** (let the model drive, with a few automated reactions such as raising taxes under
+   fiscal stress) and 2–3 player commands.
+3. **Watchable:** sim-driven map modes, a trajectory panel, pacing tuned so a cycle reads in
    minutes.
 
 **If ahead, pull in first:** (1) **terrain** (terrain, rivers, elevation), because the map is the
