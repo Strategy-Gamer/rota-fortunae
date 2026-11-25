@@ -159,6 +159,22 @@ bool chance(Fixed64 p, std::uint64_t key) {
 
 Fixed64 heads(std::int64_t n) { return Fixed64(n); }
 
+// Heads per unit of a location's carrying capacity
+Fixed64 per_capacity(std::int64_t n) { return Fixed64::from_raw(n * Fixed64::SCALE / LOCATION_CAPACITY); }
+
+// The two curves the location passes evaluate every year, sampled once
+const rota::fmath::SampledCurve& wage_share_curve() {
+    static const rota::fmath::SampledCurve curve(milli(3000), 1200,
+        [](Fixed64 pressure) { return get_wage_share(pressure, WAGE_K, WAGE_D_CRIT); });
+    return curve;
+}
+
+const rota::fmath::SampledCurve& attrition_curve() { // U_e^1.5
+    static const rota::fmath::SampledCurve curve(ONE, 1000,
+        [](Fixed64 u) { return u * rota::fmath::sqrt(u); });
+    return curve;
+}
+
 // The divisor of every per-capita mean; FinalSim floors commoners at 1e-8, here at one person
 std::int64_t workers_at(const LocationEconomy& eco, LocationID loc) {
     return std::max<std::int64_t>(eco.commoners[loc], 1);
@@ -184,6 +200,7 @@ struct Pass {
 void population_and_economy(const Pass& p) {
     auto& eco = p.w.location_economy;
     auto& cyc = p.w.location_secular_cycle;
+    const auto& wage_share_at = wage_share_curve();
     const LocationID location_count = p.w.geography.location_count();
 
     for (LocationID loc = 0; loc < location_count; loc++) {
@@ -197,7 +214,7 @@ void population_and_economy(const Pass& p) {
 
         // high fertility well under cap, smoothstep decline as density climbs; low security shrinks the effective cap
         const std::int64_t pop = eco.commoners[loc];
-        const Fixed64 rel = Fixed64::from_raw(pop * Fixed64::SCALE / LOCATION_CAPACITY) / security;
+        const Fixed64 rel = per_capacity(pop) / security;
         Fixed64 t = std::clamp(rel - milli(500), ZERO, ONE);
         t = t * t * (Fixed64(3) - t * 2);
         const Fixed64 birth = std::max(MAX_BIRTH - (MAX_BIRTH - MIN_BIRTH) * t, MIN_BIRTH);
@@ -207,7 +224,7 @@ void population_and_economy(const Pass& p) {
         const std::int64_t workers = workers_at(eco, loc);
         const std::int64_t elites = eco.elites[loc];
 
-        const Fixed64 wage_share = get_wage_share(workers, LOCATION_CAPACITY, WAGE_K, WAGE_D_CRIT);
+        const Fixed64 wage_share = wage_share_at(per_capacity(workers)); // jobs = capacity
         const Fixed64 output = get_output(LOCATION_CAPACITY, workers);
         const Fixed64 wealth = output * CULTIVATED_WEALTH;
         eco.commoner_wealth[loc] = wealth * wage_share;
@@ -413,6 +430,7 @@ void crisis_effects_and_elites(const Pass& p) {
     auto& eco = p.w.location_economy;
     auto& cyc = p.w.location_secular_cycle;
     const auto& legitimacy = p.w.country_state.legitimacy;
+    const auto& attrition = attrition_curve();
     const LocationID location_count = p.w.geography.location_count();
 
     for (LocationID loc = 0; loc < location_count; loc++) {
@@ -444,8 +462,7 @@ void crisis_effects_and_elites(const Pass& p) {
             e_mobility = MU_0 * workers * misery;
         }
 
-        const Fixed64 u_e = cyc.effective_unrest[loc];
-        const Fixed64 e_attrition = elites * K_ATTRITION * u_e * rota::fmath::sqrt(u_e);
+        const Fixed64 e_attrition = elites * K_ATTRITION * attrition(cyc.effective_unrest[loc]);
 
         eco.elites[loc] = to_heads(elites + e_biological + e_mobility - e_attrition, p.key(STREAM_ELITES, loc), 1);
         cy.elites_after += eco.elites[loc];

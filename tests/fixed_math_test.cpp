@@ -1,5 +1,5 @@
 // Standalone accuracy/determinism test for src/utility/FixedMath.{h,cpp}.
-// Deterministic fixed-point exp/ln/pow/sqrt/logistic must track their real-valued
+// Deterministic fixed-point exp/ln/pow/sqrt/logistic and SampledCurve must track their real-valued
 // counterparts within tolerance over the secular-cycle model's domain.
 //
 // Run from repo root:
@@ -81,6 +81,21 @@ int main() {
     check("logistic(1.2,-10,0.9)",  fm::logistic(F(1.2), F(-10), F(0.9)).to_double(), L(1.2,-10,0.9));
     check("logistic(0.5,-10,0.9)",  fm::logistic(F(0.5), F(-10), F(0.9)).to_double(), L(0.5,-10,0.9));
     check("logistic(1.0,7.2,1.0)",  fm::logistic(F(1.0), F(7.2), F(1.0)).to_double(), L(1.0,7.2,1.0));
+
+    // ---- SampledCurve: interpolated tables must stay within ~1e-5 of the real curve, on and off grid ----
+    const fm::SampledCurve sampled_logistic(F(3.0), 1200, [](Fixed64 x) { return fm::logistic(x, F(-10), F(0.9)); });
+    for (double x : {0.0, 0.0013, 0.5, 0.8999, 0.9, 0.93171, 1.05, 1.5, 2.9991, 3.0}) {
+        char l[48]; std::snprintf(l, sizeof l, "sampled logistic(%g)", x);
+        check(l, sampled_logistic(F(x)).to_double(), L(x, -10, 0.9), 1e-5);
+    }
+    check("sampled logistic below 0", sampled_logistic(F(-1.0)).to_double(), L(0, -10, 0.9), 1e-5);
+    check("sampled logistic past max", sampled_logistic(F(7.0)).to_double(), L(3, -10, 0.9), 1e-5);
+
+    const fm::SampledCurve sampled_pow15(F(1.0), 1000, [](Fixed64 u) { return u * fm::sqrt(u); });
+    for (double u : {0.0, 0.0004, 0.001, 0.05, 0.3, 0.6789, 1.0}) {
+        char l[48]; std::snprintf(l, sizeof l, "sampled u^1.5(%g)", u);
+        check(l, sampled_pow15(F(u)).to_double(), std::pow(u, 1.5), 1e-5);
+    }
 
     // ---- underflow probe: smallest real per-tick increments must survive Fixed64 (no rescale needed) ----
     // k_attrition * U_e^1.5 * elites  ~ 0.01 * 0.3^1.5 * 0.02
