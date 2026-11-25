@@ -448,7 +448,7 @@ collapse mechanic is core, not stretch**.
 
 **Definition of done for the prototype:**
 1. Load a scenario with several countries placed on the map.
-2. Press play; time advances at speeds 1–5, paced so a full cycle plays out in **minutes**.
+2. Press play; time advances at speeds 1–6, paced so a full cycle plays out in **minutes**.
 3. Populations grow, wealth accumulates, elites overproduce, unrest climbs, and states hit crisis
    and **visibly collapse** (fragment, lose cohesion or reset elites), then recover.
 4. Map modes for population, wealth, unrest and political update live, along with a country panel
@@ -456,17 +456,28 @@ collapse mechanic is core, not stretch**.
 5. The player can issue **2–3 real commands** that visibly nudge the cycle.
 
 **Done:** the cycle (§10) in every country, map modes and the trajectory panel, the EU4-based map
-with adjacency and routes across the sea (§9), control from the capital, and civil wars on the map
-(§10).
+with adjacency and routes across the sea (§9), control from the capital, civil wars on the map
+(§10), the cycle harness and ledger (§5), and the retune to a ~160-year cycle (§10, cycle shape).
 
-**Next, in order.** Each step has to show on the map by itself:
+**Next, in order.** Each step has to show on the map by itself, and each retune is checked with
+the harness, crises on and off, including its long fractures:
 1. **Breakaways:** when a civil-war crisis runs out, rebels holding low-control land secede as a new
    country instead of handing it back: the occupier becomes the owner (§9), with a capital of its
-   own. This is the first border change the sim makes by itself.
+   own. This is the first border change the sim makes by itself. Decide first:
+   - **What a rebel victory means.** Today, taking the capital only ends the war and its crisis;
+     nothing changes hands. A new dynasty (the rebels take over the state) is the obvious reading.
+   - **Where a lost capital moves.** A country that loses its capital has no control anywhere
+     (§10) until this exists.
+   - **Which land secedes.** The stalemate rule above is the hook; control and distance from the
+     capital decide what is far enough to go.
 2. **Conquest:** a war between countries is the same occupation and fronts with a foreign enemy;
    `is_front` and the war's strength sums are the places that today assume both sides share an
-   owner. Then **shallow AI** (a few automated reactions, such as raising taxes under
-   fiscal stress) and 2–3 player commands. Pacing is tuned so a cycle reads in minutes.
+   owner. It needs a **starting AI** for who declares war on whom and when, which deserves its own
+   design session: tie it to the cycle (expansion in prosperity, predation on fracturing
+   neighbours) rather than to a separate strategy layer. Overextension ("too expensive to hold
+   together") is balanced here, not before. Then **shallow AI** (a few automated reactions, such
+   as raising taxes under fiscal stress) and 2–3 player commands. Pacing is tuned so a cycle reads
+   in minutes.
 
 **If ahead, pull in first:** (1) **terrain beyond land and sea** (vegetation, rivers,
 elevation), because the map is the primary lens; (2) **better AI**, so states feel governed and not merely cycling.
@@ -484,6 +495,12 @@ migration) · partial-map re-evaluation on territory change.
   cleanup.
 - **Scenarios are random only.** Authored scenarios (a fixed start date, chosen countries and
   borders) don't exist yet.
+- **Huge low-control empires can still sit in fracture for over a century** (about 1% of
+  countries over 1000 years, all of 200+ locations). Not the frontier's unrest: weighting the
+  phase's unrest by control made it worse. Breakaways may be the real answer; recheck after them.
+- **A fracture's population loss is still front-loaded with the crises on** (about a sixth in its
+  first 25 years, against an eighth with them off): war deaths come early.
+- **The cycle ledger isn't shown in game.** It is the hook for a panel of a country's flows.
 
 ## 13. Explicitly NOT now (guard against scope creep)
 
