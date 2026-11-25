@@ -52,7 +52,7 @@ write most of the code and the dev reads every diff.
 3. **A store that isn't wired in.** Every authoritative store goes in `World`, gets cleared in
    `World::clear`, and is fed into `SimWorld::get_state_hash`. If it is left out of the hash, you
    get silent desyncs later. Render-dirty flags are presentation state and are never hashed.
-4. **Renumbering command IDs.** `CommandType` in `src/godot/sim_world.h` is a contract with
+4. **Renumbering command IDs.** `CommandType` in `src/core/command.h` is a contract with
    GDScript. Add new IDs inside their domain range and never reuse or renumber one.
 5. **Two sources of truth.** Each fact has one authoritative array. Anything else (reverse
    indexes, palettes, totals) is derived and must be rebuildable.

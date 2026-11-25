@@ -119,15 +119,16 @@ Because prediction is cut, there is no GDScript predictor registry. One table is
 
 ### 4.2 Command type-IDs are a cross-language contract
 
-The `CommandType` enum on `SimWorld` is shared by two languages through `BIND_ENUM_CONSTANT`. If the
-two sides drift, you get **silent desyncs**.
+The `CommandType` enum in [`command.h`](../src/core/command.h) is shared by two languages:
+`SimWorld` binds each ID as a `CMD_*` constant. If the two sides drift, you get **silent desyncs**.
 
 - **C++ is the source of truth.** GDScript reads the bound constants and never hard-codes numbers.
 - **Explicit numbers with domain gaps.** The ranges are documented on the enum itself.
 - **Never renumber or reuse an ID.** Saves, replays and networking depend on them. Retire an ID
   by leaving a gap.
 - **Keep payloads to integers and IDs.** No Godot object state, since a payload has to survive the
-  network and a save file.
+  network and a save file. `SimWorld` decodes the payload into plain named integers before any
+  handler sees it, so the sim compiles without godot-cpp.
 
 ### 4.3 No prediction (supersedes note 01's prediction section)
 
@@ -396,9 +397,6 @@ migration) · partial-map re-evaluation on territory change.
 
 - **Border shader never wired to `id_tex`.** Borders are unrendered. Bundle this with the map-mode
   cleanup.
-- **Sim systems include the Godot bridge header** (`sim_world.h`) only for render-dirty bits. This
-  pulls godot-cpp into code that should be pure C++, and blocks compiling the sim without Godot.
-  The runner doesn't need that fixed (it runs inside Godot); a native C++ runner or C++ tests would.
 - **No land/sea distinction.** Sea zones are ordinary locations, so the random scenario hands them
   to countries and the economy grows population on them. This needs terrain data.
 - **Scenarios are random only.** Authored scenarios (a fixed start date, chosen countries and

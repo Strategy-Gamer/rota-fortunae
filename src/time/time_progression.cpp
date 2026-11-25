@@ -3,7 +3,6 @@
 #include "economy/secular_cycle_system.h"
 #include "../core/world.h"
 #include "../utility/FixedDecimal.h"
-#include "../godot/sim_world.h"
 #include "../countries/country_systems.h"
 
 namespace rota::time {
@@ -36,7 +35,7 @@ void TimeProgression::advance_day(rota::core::World& world){
 
     if(curr_year != world.calendar.get_year()) {
         on_yearly(world);
-        world.render_dirty |= godot::SimWorld::DIRTY_ALL;
+        world.render_dirty |= rota::core::DIRTY_ALL;
     }
 
     rota::countries::destroy_countries(world); // last, so no system sees a slot freed mid-day

@@ -1,7 +1,6 @@
 #include "countries/country_systems.h"
 
 #include "core/world.h"
-#include "godot/sim_world.h"
 
 namespace rota::countries {
 
@@ -97,7 +96,7 @@ void set_location_owner(
     }
 
     w.location_politics.set_owner(location_id, country_id);
-    w.render_dirty |= godot::SimWorld::DIRTY_POLITICAL;
+    w.render_dirty |= rota::core::DIRTY_POLITICAL;
 }
 
 }

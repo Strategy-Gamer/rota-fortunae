@@ -23,42 +23,8 @@ public:
     void build_from_image(const Ref<Image>& image);
     void clear();
 
-    enum RenderDirty : std::uint32_t { 
-        DIRTY_ALL = 1 << 0,
-        DIRTY_POLITICAL = 1 << 1
-        // DIRTY_POPULATION = 1 << 2... 
-    };
-
-    enum CommandType {
-        CMD_NONE = 0,
-        
-        // Time & Debug (1-999)
-        // Time Controls (10-19)
-
-        CMD_TOGGLE_CLOCK = 10,
-        CMD_STEP_CLOCK = 11,
-
-        CMD_TOGGLE_PAUSE = 12,
-        CMD_SET_GAME_SPEED = 13,
-        CMD_ADD_DATE = 14,
-        CMD_SET_DATE = 15,
-
-        // Locations (50-199)
-
-        CMD_SET_LOCATION_OWNER = 20,
-
-        // Countries (200-299)
-
-        // Civilizations (300-399)
-
-        // In-Game Commands (1_000+)
-
-        
-
-        
-    };
-
-    bool execute_command(CommandType type_id, int actor_civ, const Dictionary& payload);
+    // False if a payload field isn't an int or bool, or the command is illegal
+    bool execute_command(int type_id, int actor_civ, const Dictionary& payload);
 
     bool step_tick();
     bool advance_years(int years);
@@ -117,5 +83,3 @@ private:
 };
 
 }
-VARIANT_ENUM_CAST(SimWorld::RenderDirty);
-VARIANT_ENUM_CAST(SimWorld::CommandType);

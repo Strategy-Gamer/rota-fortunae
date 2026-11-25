@@ -13,6 +13,7 @@
 #include <algorithm>
 #include <utility>
 #include <godot_cpp/core/class_db.hpp>
+#include <godot_cpp/variant/array.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
@@ -70,18 +71,23 @@ godot::Ref<godot::Image> image_from_rgb_data(
 namespace godot {
 
 void SimWorld::_bind_methods() {
-    // Dirty Types
-    BIND_ENUM_CONSTANT(DIRTY_ALL);
-    BIND_ENUM_CONSTANT(DIRTY_POLITICAL);
-    
-    // Command Types
-    BIND_ENUM_CONSTANT(CMD_NONE);
-    BIND_ENUM_CONSTANT(CMD_STEP_CLOCK);
-    BIND_ENUM_CONSTANT(CMD_TOGGLE_PAUSE);
-    BIND_ENUM_CONSTANT(CMD_SET_GAME_SPEED);
-    BIND_ENUM_CONSTANT(CMD_ADD_DATE);
-    BIND_ENUM_CONSTANT(CMD_SET_DATE);
-    BIND_ENUM_CONSTANT(CMD_SET_LOCATION_OWNER);
+    // Dirty bits and command IDs: bound from rota::core, their only definition
+    ClassDB::bind_integer_constant(get_class_static(), "RenderDirty", "DIRTY_ALL", rota::core::DIRTY_ALL);
+    ClassDB::bind_integer_constant(get_class_static(), "RenderDirty", "DIRTY_POLITICAL", rota::core::DIRTY_POLITICAL);
+
+    namespace cmd = rota::core::Command;
+    const std::pair<const char*, cmd::CommandType> commands[] = {
+        { "CMD_NONE", cmd::CMD_NONE },
+        { "CMD_STEP_CLOCK", cmd::CMD_STEP_CLOCK },
+        { "CMD_TOGGLE_PAUSE", cmd::CMD_TOGGLE_PAUSE },
+        { "CMD_SET_GAME_SPEED", cmd::CMD_SET_GAME_SPEED },
+        { "CMD_ADD_DATE", cmd::CMD_ADD_DATE },
+        { "CMD_SET_DATE", cmd::CMD_SET_DATE },
+        { "CMD_SET_LOCATION_OWNER", cmd::CMD_SET_LOCATION_OWNER },
+    };
+    for (const auto& [name, type] : commands) {
+        ClassDB::bind_integer_constant(get_class_static(), "CommandType", name, type);
+    }
 
     // Map modes: bound from rota::map::MapMode, their only definition
     using rota::map::MapMode;
@@ -170,8 +176,27 @@ void SimWorld::_bind_methods() {
 
 
 
-bool SimWorld::execute_command(CommandType type_id, int actor_civ, const Dictionary& payload){
-    return rota::core::Command::execute_command(world, actor_civ, type_id, payload);
+bool SimWorld::execute_command(int type_id, int actor_civ, const Dictionary& payload){
+    rota::core::Command::Payload fields;
+    const Array keys = payload.keys();
+    for (int64_t i = 0; i < keys.size(); i++) {
+        const Variant& key = keys[i];
+        const Variant value = payload[key];
+        if (key.get_type() != Variant::STRING && key.get_type() != Variant::STRING_NAME) return false;
+
+        int32_t decoded;
+        if (value.get_type() == Variant::BOOL) {
+            decoded = static_cast<bool>(value) ? 1 : 0;
+        } else if (value.get_type() == Variant::INT) {
+            const int64_t v = value;
+            if (v < INT32_MIN || v > INT32_MAX) return false;
+            decoded = static_cast<int32_t>(v);
+        } else {
+            return false;
+        }
+        fields[String(key).utf8().get_data()] = decoded;
+    }
+    return rota::core::Command::execute_command(world, actor_civ, type_id, fields);
 }
 
 bool SimWorld::step_tick(){

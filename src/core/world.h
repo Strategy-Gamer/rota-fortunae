@@ -16,6 +16,12 @@
 
 namespace rota::core {
 
+    // The only definition: SimWorld binds these as its DIRTY_* constants for GDScript
+    enum RenderDirty : std::uint32_t {
+        DIRTY_ALL = 1 << 0,
+        DIRTY_POLITICAL = 1 << 1
+    };
+
     struct World{
         std::uint32_t render_dirty = 0;
         std::uint64_t seed = 0; // keys every random draw in the sim
