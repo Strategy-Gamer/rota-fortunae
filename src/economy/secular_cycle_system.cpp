@@ -112,8 +112,8 @@ enum Stream : std::uint64_t {
 struct CountryYear {
     // Summed by the population/economy pass; means are weighted by commoners
     std::int64_t locations = 0;
-    Fixed64 workers;
-    Fixed64 elites;
+    std::int64_t workers = 0;
+    std::int64_t elites = 0;
     Fixed64 income;
     Fixed64 collected;
     Fixed64 unrest_burden; // last year's U_e x commoners
@@ -137,7 +137,7 @@ struct CountryYear {
     Fixed64 elite_keep = Fixed64(1);
     Fixed64 unrest_gain;
 
-    Fixed64 elites_after;
+    std::int64_t elites_after = 0;
 };
 
 // Whole people from a fractional count: the fraction becomes one more person with that probability
@@ -157,7 +157,12 @@ bool chance(Fixed64 p, std::uint64_t key) {
     return static_cast<std::int64_t>(key % Fixed64::SCALE) < p.raw_value();
 }
 
-Fixed64 heads(std::uint32_t n) { return Fixed64(static_cast<std::int64_t>(n)); }
+Fixed64 heads(std::int64_t n) { return Fixed64(n); }
+
+// The divisor of every per-capita mean; FinalSim floors commoners at 1e-8, here at one person
+std::int64_t workers_at(const LocationEconomy& eco, LocationID loc) {
+    return std::max<std::int64_t>(eco.commoners[loc], 1);
+}
 
 struct Pass {
     rota::core::World& w;
@@ -191,31 +196,30 @@ void population_and_economy(const Pass& p) {
         cyc.security[loc] = security;
 
         // high fertility well under cap, smoothstep decline as density climbs; low security shrinks the effective cap
-        const Fixed64 pop = heads(eco.commoners[loc]);
-        const Fixed64 rel = pop / (CAPACITY * security);
+        const std::int64_t pop = eco.commoners[loc];
+        const Fixed64 rel = Fixed64::from_raw(pop * Fixed64::SCALE / LOCATION_CAPACITY) / security;
         Fixed64 t = std::clamp(rel - milli(500), ZERO, ONE);
         t = t * t * (Fixed64(3) - t * 2);
         const Fixed64 birth = std::max(MAX_BIRTH - (MAX_BIRTH - MIN_BIRTH) * t, MIN_BIRTH);
         const Fixed64 death = DEATH_BASE + CHILD_MORTALITY * birth;
-        eco.commoners[loc] = to_heads(pop + (birth - death) * pop, p.key(STREAM_POPULATION, loc), 0);
+        eco.commoners[loc] = to_heads(heads(pop) + (birth - death) * pop, p.key(STREAM_POPULATION, loc), 0);
 
-        const Fixed64 workers = heads(std::max<std::uint32_t>(eco.commoners[loc], 1));
-        const Fixed64 elites = heads(eco.elites[loc]);
-        const Fixed64 jobs = CAPACITY;
+        const std::int64_t workers = workers_at(eco, loc);
+        const std::int64_t elites = eco.elites[loc];
 
-        const Fixed64 wage_share = get_wage_share(workers, jobs, WAGE_K, WAGE_D_CRIT);
-        const Fixed64 wealth = get_output(jobs, workers, CULTIVATED_WEALTH);
-        const Fixed64 food = get_output(jobs, workers, CULTIVATED_FOOD);
+        const Fixed64 wage_share = get_wage_share(workers, LOCATION_CAPACITY, WAGE_K, WAGE_D_CRIT);
+        const Fixed64 output = get_output(LOCATION_CAPACITY, workers);
+        const Fixed64 wealth = output * CULTIVATED_WEALTH;
         eco.commoner_wealth[loc] = wealth * wage_share;
         eco.elite_wealth[loc] = wealth - eco.commoner_wealth[loc];
 
-        const Fixed64 income_per_head = wealth / (workers + elites);
-        const Fixed64 w = std::clamp((eco.commoner_wealth[loc] / workers) / income_per_head, MIN_WAGE, ONE);
+        // relative wage: commoner income per head over everyone's, which is the wage share scaled by heads
+        const Fixed64 w = std::clamp(wage_share * (workers + elites) / workers, MIN_WAGE, ONE);
         p.wage[loc] = w;
 
         // immiseration = low wage share + food shortfall (food need is 1 per head at every wealth level)
         const Fixed64 wage_penalty = std::max(ZERO, (W_IMMIS_THRESH - wage_share) / W_IMMIS_THRESH);
-        const Fixed64 food_penalty = std::max(ZERO, ONE - food / workers);
+        const Fixed64 food_penalty = std::max(ZERO, ONE - output * CULTIVATED_FOOD / workers);
         const Fixed64 immiseration = std::min(ONE, wage_penalty + food_penalty);
 
         const Fixed64 last_unrest = cyc.effective_unrest[loc];
@@ -291,7 +295,7 @@ void unrest(const Pass& p) {
         if (!p.owned(loc, c)) continue;
         CountryYear& cy = p.countries[c];
 
-        const Fixed64 elites = heads(eco.elites[loc]);
+        const std::int64_t elites = eco.elites[loc];
         const Fixed64 felt = elites / (local_elite_positions(p.w, loc) + cy.state_share * elites); // local felt overproduction
         Fixed64 u = cyc.unrest[loc];
         if (!cy.fracture) {
@@ -304,7 +308,7 @@ void unrest(const Pass& p) {
         cyc.unrest[loc] = std::clamp(u, ZERO, ONE);
         cyc.effective_unrest[loc] = std::clamp(cyc.unrest[loc] - cy.suppression_per_worker, ZERO, ONE);
 
-        cy.effective_unrest_sum += cyc.effective_unrest[loc] * heads(std::max<std::uint32_t>(eco.commoners[loc], 1));
+        cy.effective_unrest_sum += cyc.effective_unrest[loc] * workers_at(eco, loc);
     }
 }
 
@@ -417,16 +421,16 @@ void crisis_effects_and_elites(const Pass& p) {
         CountryYear& cy = p.countries[c];
 
         // workers and positions as the economy and budget saw them, before this year's crises
-        const Fixed64 workers = heads(std::max<std::uint32_t>(eco.commoners[loc], 1));
-        const Fixed64 elites_before = heads(eco.elites[loc]);
+        const std::int64_t workers = workers_at(eco, loc);
+        const std::int64_t elites_before = eco.elites[loc];
         const Fixed64 positions = local_elite_positions(p.w, loc) + cy.state_share * elites_before;
 
         cyc.unrest[loc] = std::min(ONE, cyc.unrest[loc] + cy.unrest_gain);
         if (cy.commoner_keep < ONE) {
-            eco.commoners[loc] = to_heads(heads(eco.commoners[loc]) * cy.commoner_keep,
+            eco.commoners[loc] = to_heads(cy.commoner_keep * static_cast<std::int64_t>(eco.commoners[loc]),
                 p.key(STREAM_CRISIS_COMMONERS, loc), 0);
         }
-        const Fixed64 elites = elites_before * cy.elite_keep;
+        const Fixed64 elites = cy.elite_keep * elites_before;
 
         // build by reproduction + upward mobility, clear by culling + downward mobility
         const Fixed64 e_biological = elites * legitimacy[c] * R_E_PREMIUM;
@@ -437,14 +441,14 @@ void crisis_effects_and_elites(const Pass& p) {
             const Fixed64 underprod = std::min(ONE, elites / positions); // few elites left -> curb demotion
             e_mobility = elites * MU_DOWN * misery * underprod;
         } else {
-            e_mobility = workers * MU_0 * misery;
+            e_mobility = MU_0 * workers * misery;
         }
 
         const Fixed64 u_e = cyc.effective_unrest[loc];
         const Fixed64 e_attrition = elites * K_ATTRITION * u_e * rota::fmath::sqrt(u_e);
 
         eco.elites[loc] = to_heads(elites + e_biological + e_mobility - e_attrition, p.key(STREAM_ELITES, loc), 1);
-        cy.elites_after += heads(eco.elites[loc]);
+        cy.elites_after += eco.elites[loc];
     }
 }
 
@@ -454,7 +458,7 @@ void phase(rota::core::World& w, CountryID c, const CountryYear& cy) {
     const Fixed64 effective_unrest = cy.effective_unrest_sum / cy.workers;
 
     if (state.phase[c] == rc::PHASE_PROSPERITY) {
-        const bool traditional = wage < W0_TARGET && cy.elites_after > cy.baseline_positions;
+        const bool traditional = wage < W0_TARGET && heads(cy.elites_after) > cy.baseline_positions;
         const bool ibn_khaldun = cy.overproduction > IBN_MARGIN;
         if (traditional || ibn_khaldun) state.phase[c] = rc::PHASE_STRAIN;
     } else if (state.phase[c] == rc::PHASE_STRAIN) {
