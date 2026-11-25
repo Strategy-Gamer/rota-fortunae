@@ -40,24 +40,30 @@ void generate_random_scenario(
             rota::economy::LOCATION_CAPACITY * per_million / 1'000'000));
     }
 
-    for (rota::map::LocationID loc = 0; loc < location_count; loc++) {
-        if (!w.geography.is_land(loc)) continue;
-
-        std::uint32_t nearest = 0;
-        std::int64_t nearest_dist = std::numeric_limits<std::int64_t>::max();
-
-        for (std::uint32_t i = 0; i < country_count; i++) {
-            const std::int64_t dx = w.geography.centroid_x[loc] - w.geography.centroid_x[capitals[i]];
-            const std::int64_t dy = w.geography.centroid_y[loc] - w.geography.centroid_y[capitals[i]];
-            const std::int64_t dist = dx * dx + dy * dy;
-            if (dist < nearest_dist) {
-                nearest = i;
-                nearest_dist = dist;
+    // Every country grows from its capital over land one ring at a time, so territories are
+    // contiguous; land no capital can reach by land or strait stays unowned
+    constexpr std::uint32_t UNCLAIMED = std::numeric_limits<std::uint32_t>::max();
+    std::vector<std::uint32_t> claim(location_count, UNCLAIMED);
+    std::vector<rota::map::LocationID> queue;
+    for (std::uint32_t i = 0; i < country_count; i++) {
+        claim[capitals[i]] = i;
+        queue.push_back(capitals[i]);
+    }
+    for (std::size_t head = 0; head < queue.size(); head++) {
+        const rota::map::LocationID loc = queue[head];
+        const auto& g = w.geography;
+        for (std::uint32_t n = g.neighbor_offset[loc]; n < g.neighbor_offset[loc + 1]; n++) {
+            const rota::map::LocationID next = g.neighbors[n];
+            if (g.is_land(next) && claim[next] == UNCLAIMED) {
+                claim[next] = claim[loc];
+                queue.push_back(next);
             }
         }
+    }
 
-        rota::countries::set_location_owner(w, loc, countries[nearest]);
-        w.location_economy.commoners[loc] = start_commoners[nearest];
+    for (const rota::map::LocationID loc : queue) {
+        rota::countries::set_location_owner(w, loc, countries[claim[loc]]);
+        w.location_economy.commoners[loc] = start_commoners[claim[loc]];
     }
 }
 
