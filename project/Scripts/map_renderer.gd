@@ -18,17 +18,11 @@ var palette_texture: ImageTexture
 
 var selected_location_id: int = -1
 var hovered_location_id: int = -1
-
-enum MapMode {
-	LOCATION_COLOR = 0,
-	POLITICAL = 1,
-}
+var map_mode: int = SimWorld.MAP_POLITICAL
 
 func prepare_rendering() -> void:
 	var id_image: Image = sim_world.create_id_image()
-	var palette_image: Image = sim_world.create_map_mode_palette(
-		MapMode.LOCATION_COLOR
-	)
+	var palette_image: Image = sim_world.create_map_mode_palette(map_mode)
 
 	id_texture = ImageTexture.create_from_image(id_image)
 	palette_texture = ImageTexture.create_from_image(
@@ -69,7 +63,12 @@ func _prepare_border_map() -> void:
 	border_sprite.material = mat
 	border_sprite.visible = true
 
-func set_map_mode(map_mode: int) -> void:
+## Rebuilds the palette of the active map mode, e.g. after the sim changed what it shows
+func refresh() -> void:
+	set_map_mode(map_mode)
+
+func set_map_mode(mode: int) -> void:
+	map_mode = mode
 	var palette_image: Image = (
 		sim_world.create_map_mode_palette(map_mode)
 	)

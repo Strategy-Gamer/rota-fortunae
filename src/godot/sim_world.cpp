@@ -11,6 +11,7 @@
 #include "../scenario/random_scenario.h"
 
 #include <algorithm>
+#include <utility>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/packed_byte_array.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
@@ -81,6 +82,22 @@ void SimWorld::_bind_methods() {
     BIND_ENUM_CONSTANT(CMD_ADD_DATE);
     BIND_ENUM_CONSTANT(CMD_SET_DATE);
     BIND_ENUM_CONSTANT(CMD_SET_LOCATION_OWNER);
+
+    // Map modes: bound from rota::map::MapMode, their only definition
+    using rota::map::MapMode;
+    const std::pair<const char*, MapMode> map_modes[] = {
+        { "MAP_LOCATION_COLOR", MapMode::LocationColor },
+        { "MAP_POLITICAL", MapMode::Political },
+        { "MAP_PHASE", MapMode::Phase },
+        { "MAP_UNREST", MapMode::Unrest },
+        { "MAP_POPULATION_PRESSURE", MapMode::PopulationPressure },
+        { "MAP_ELITE_OVERPRODUCTION", MapMode::EliteOverproduction },
+        { "MAP_LEGITIMACY", MapMode::Legitimacy },
+    };
+    static_assert(sizeof(map_modes) / sizeof(map_modes[0]) == static_cast<std::size_t>(MapMode::Count), "bind every map mode");
+    for (const auto& [name, mode] : map_modes) {
+        ClassDB::bind_integer_constant(get_class_static(), "MapMode", name, static_cast<int>(mode));
+    }
 
     // Method Binds
     ClassDB::bind_method( D_METHOD("build_from_image", "image"), &SimWorld::build_from_image);
@@ -259,20 +276,12 @@ int SimWorld::get_location_owner(
 Ref<Image> SimWorld::create_map_mode_palette(
     int map_mode
 ) const {
-    rota::map::MapMode mode =
-        rota::map::MapMode::LocationColor;
-
-    if (map_mode == 1) {
-        mode = rota::map::MapMode::Political;
+    if (map_mode < 0 || map_mode >= static_cast<int>(rota::map::MapMode::Count)) {
+        return Ref<Image>();
     }
 
-    const rota::map::RGBImageData data =
-        rota::map::create_map_mode_palette(
-            world.geography,
-            world.countries,
-            world.location_politics,
-            mode
-        );
+    const rota::map::RGBImageData data = rota::map::create_map_mode_palette(
+        world, static_cast<rota::map::MapMode>(map_mode));
 
     return image_from_rgb_data(data);
 }

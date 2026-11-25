@@ -492,6 +492,24 @@ Fixed64 local_elite_positions(const rota::core::World&, LocationID) {
     return CULTIVATED_ELITE_OPPS * CAPACITY;
 }
 
+Fixed64 elite_positions(const rota::core::World& world, LocationID loc, std::int64_t country_elites) {
+    const Fixed64 local = local_elite_positions(world, loc);
+    const CountryID owner = world.location_politics.owner_country[loc];
+    if (!world.countries.is_valid(owner) || country_elites <= 0) return local;
+    const std::int64_t elites = world.location_economy.elites[loc];
+    return local + world.country_state.state_positions[owner] * elites / country_elites;
+}
+
+Fixed64 population_pressure_gauge(std::int64_t commoners, std::int64_t capacity) {
+    if (capacity <= 0) return ZERO;
+    const Fixed64 rel = Fixed64::from_raw(commoners * Fixed64::SCALE / capacity);
+    return rota::fmath::logistic(rel, Fixed64(3), ONE); // gentle slope, so it tracks real population in a Turchin-like band
+}
+
+Fixed64 elite_overproduction_gauge(Fixed64 elites_per_position) {
+    return std::clamp((elites_per_position - ONE) / 2, ZERO, ONE); // a surplus of 2x positions reads as 1
+}
+
 // FinalSim's step order as linear passes: locations stream through their arrays in LocationID order,
 // reading and summing into their owner's CountryYear row, and the countries run between those passes.
 void run_secular_cycle(rota::core::World& world) {

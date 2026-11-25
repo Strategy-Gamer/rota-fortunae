@@ -206,7 +206,9 @@ bridge is a **dirty flag**, not signals:
 
 **Map-mode ownership:** palette generation is a C++ query (`map_modes.cpp`), so C++ owns *what the
 palette is*. Active-mode selection, texture and shader belong to the GDScript `MapRenderer`, which
-owns *when and how to show it*.
+owns *when and how to show it*. Mode IDs are defined once, in `rota::map::MapMode`; SimWorld binds
+them as its `MAP_*` constants, and GDScript never hard-codes the numbers. The renderer rebuilds the
+active mode's palette on any dirty bit, since most cycle modes change every year.
 
 ---
 
@@ -390,8 +392,6 @@ migration) · partial-map re-evaluation on territory change.
 
 - **Border shader never wired to `id_tex`.** Borders are unrendered. Bundle this with the map-mode
   cleanup.
-- **The map-mode enum exists three times** (GDScript enum, C++ enum, a magic `if map_mode == 1`).
-  Give it the same single-source `BIND_ENUM_CONSTANT` treatment as `CommandType`.
 - **Sim systems include the Godot bridge header** (`sim_world.h`) only for render-dirty bits. This
   pulls godot-cpp into code that should be pure C++, and blocks compiling the sim without Godot.
   The runner doesn't need that fixed (it runs inside Godot); a native C++ runner or C++ tests would.

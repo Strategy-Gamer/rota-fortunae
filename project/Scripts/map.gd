@@ -101,9 +101,7 @@ func load_map(hex_map_path) -> void:
 	
 	map_renderer.prepare_rendering()
 	print("Map rendering prepared.")
-	map_renderer.set_map_mode(
-		MapRenderer.MapMode.POLITICAL
-	)
+	map_renderer.set_map_mode(SimWorld.MAP_POLITICAL)
 
 # Returns the location image as RGB8, the format SimWorld.build_from_image requires. Empty on failure.
 static func load_map_image(path: String) -> Image:
@@ -121,6 +119,4 @@ static func load_map_image(path: String) -> Image:
 
 func on_render_dirty(mask: int):
 	if mask != 0:
-		map_renderer.set_map_mode(
-			MapRenderer.MapMode.POLITICAL
-		)
+		map_renderer.refresh()

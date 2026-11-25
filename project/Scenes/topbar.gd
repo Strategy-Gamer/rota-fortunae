@@ -2,9 +2,23 @@ extends Control
 
 var set_ownership_toggle = false
 var remove_ownership_toggle = false
-var mapmode = 1
 var gamespeed = 0
 var gamespeeds = [1, 5, 30, 90, 365]
+
+const MAP_MODES := [
+	["Political", SimWorld.MAP_POLITICAL],
+	["Phase", SimWorld.MAP_PHASE],
+	["Unrest", SimWorld.MAP_UNREST],
+	["Population pressure", SimWorld.MAP_POPULATION_PRESSURE],
+	["Elite overproduction", SimWorld.MAP_ELITE_OVERPRODUCTION],
+	["Legitimacy", SimWorld.MAP_LEGITIMACY],
+	["Location colors", SimWorld.MAP_LOCATION_COLOR],
+]
+
+func _ready() -> void:
+	var selector: OptionButton = $PanelContainer/Leftside/MapModeSelector
+	for entry in MAP_MODES:
+		selector.add_item(entry[0], entry[1])
 
 func _process(delta: float):
 	if Game.world != null:
@@ -44,12 +58,6 @@ func _on_remove_owner_button_pressed() -> void:
 	
 
 
-func _on_toggle_mapmodes_button_pressed() -> void:
-	if mapmode == 0:
-		Game._session.map.map_renderer.set_map_mode(MapRenderer.MapMode.POLITICAL)
-		#map.map_renderer.set_map_mode(MapRenderer.MapMode.POLITICAL)
-		mapmode = 1
-	elif mapmode == 1:
-		Game._session.map.map_renderer.set_map_mode(MapRenderer.MapMode.LOCATION_COLOR)
-		#map.map_renderer.set_map_mode(MapRenderer.MapMode.LOCATION_COLOR)
-		mapmode = 0
+func _on_map_mode_selected(index: int) -> void:
+	var selector: OptionButton = $PanelContainer/Leftside/MapModeSelector
+	Game.map.map_renderer.set_map_mode(selector.get_item_id(index))

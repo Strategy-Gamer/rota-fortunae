@@ -32,10 +32,9 @@ text = "Set England"
 layout_mode = 2
 text = "Set Scotland"
 
-[node name="ToggleMapmodesButton" type="Button" parent="PanelContainer/Leftside"]
+[node name="MapModeSelector" type="OptionButton" parent="PanelContainer/Leftside"]
 layout_mode = 2
-text = "Toggle Mapmodes Button
-Current: Political"
+tooltip_text = "Map mode"
 
 [node name="Rightside" type="HBoxContainer" parent="PanelContainer"]
 layout_mode = 2
@@ -56,7 +55,7 @@ text = "-"
 
 [connection signal="pressed" from="PanelContainer/Leftside/SetOwnerButton" to="." method="_on_set_owner_button_pressed"]
 [connection signal="pressed" from="PanelContainer/Leftside/RemoveOwnerButton" to="." method="_on_remove_owner_button_pressed"]
-[connection signal="pressed" from="PanelContainer/Leftside/ToggleMapmodesButton" to="." method="_on_toggle_mapmodes_button_pressed"]
+[connection signal="item_selected" from="PanelContainer/Leftside/MapModeSelector" to="." method="_on_map_mode_selected"]
 [connection signal="pressed" from="PanelContainer/Rightside/PauseButton" to="." method="_on_pause_button_pressed"]
 [connection signal="pressed" from="PanelContainer/Rightside/IncreaseSpeedButton" to="." method="_on_increase_speed_button_pressed"]
 [connection signal="pressed" from="PanelContainer/Rightside/DecreaseSpeedButton" to="." method="_on_decrease_speed_button_pressed"]
