@@ -1,6 +1,6 @@
 #include "time_progression.h"
 
-#include "economy/economy_system.h"
+#include "economy/secular_cycle_system.h"
 #include "../core/world.h"
 #include "../utility/FixedDecimal.h"
 #include "../godot/sim_world.h"
@@ -48,7 +48,7 @@ void TimeProgression::on_monthly(rota::core::World& world){
     return;
 }
 void TimeProgression::on_yearly(rota::core::World& world){
-    rota::economy::EconomySystem::run_economy(world);
+    rota::economy::run_secular_cycle(world);
 }
 
 }

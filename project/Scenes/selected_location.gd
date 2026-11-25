@@ -12,7 +12,7 @@ func update_ui(selected_location: int):
 	$PanelContainer/VBoxContainer/Owner.text = "Owner: " + str(summary.owner_country)
 	$PanelContainer/VBoxContainer/Population.text = "Population: " + str(summary.population)
 	$PanelContainer/VBoxContainer/Wealth.text = "Wealth: " + str(summary.wealth)
-	$PanelContainer/VBoxContainer/Productivity.text = "Prod: " + str(summary.productivity)
+	$PanelContainer/VBoxContainer/Unrest.text = "Unrest: %.2f" % summary.effective_unrest
 	$"PanelContainer/VBoxContainer/Wealth per Capita".text = str(summary.wealth_per_capita)
 	pass
 

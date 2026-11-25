@@ -9,11 +9,14 @@ namespace rota::core { struct World; }
 
 namespace rota::queries {
 struct LocationSummary {
-    std::uint64_t   population;
+    std::uint64_t   population;         // commoners + elites
+    std::uint64_t   elites;
     Fixed64         wealth;
-    Fixed32         productivity;
     Fixed64         wealth_per_capita;  // Derived
-    std::int32_t    owner_country;      // -1 = unowned  
+    Fixed64         unrest;
+    Fixed64         effective_unrest;
+    Fixed64         security;
+    std::int32_t    owner_country;      // -1 = unowned
 };
 LocationSummary build_location_summary(const rota::core::World& world, rota::map::LocationID loc);
 }

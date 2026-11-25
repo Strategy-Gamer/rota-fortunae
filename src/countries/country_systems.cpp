@@ -11,7 +11,9 @@ CountryID create_country(
     std::uint32_t display_color,
     std::uint32_t founded
 ) {
-    return w.countries.allocate(name, display_color, founded);
+    const CountryID id = w.countries.allocate(name, display_color, founded);
+    w.country_state.reset(id);
+    return id;
 }
 
 CountryID revive_country(
@@ -32,7 +34,9 @@ CountryID revive_country(
     rota::core::World& w,
     const DeadCountryRecord& record
 ) {
-    return w.countries.allocate(record.name, record.display_color_rgb, record.founded_year);
+    const CountryID id = w.countries.allocate(record.name, record.display_color_rgb, record.founded_year);
+    w.country_state.reset(id);
+    return id;
 }
 
 void mark_destroy_country(rota::core::World& w, CountryID id) {
@@ -71,6 +75,7 @@ void destroy_countries(rota::core::World& w) {
         });
 
         countries.free(id);
+        w.country_state.reset(id);
     }
 }
 

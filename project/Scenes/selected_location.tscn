@@ -37,9 +37,9 @@ text = "Population:  "
 layout_mode = 2
 text = "Wealth:"
 
-[node name="Productivity" type="Label" parent="PanelContainer/VBoxContainer"]
+[node name="Unrest" type="Label" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2
-text = "Productivity: ###"
+text = "Unrest: ###"
 
 [node name="Wealth per Capita" type="Label" parent="PanelContainer/VBoxContainer"]
 layout_mode = 2

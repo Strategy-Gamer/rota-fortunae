@@ -21,4 +21,13 @@ struct Rng {
     }
 };
 
+// A draw that depends only on its key, so it needs no stored stream and no fixed call order
+inline std::uint64_t keyed_hash(std::uint64_t seed, std::uint64_t a, std::uint64_t b, std::uint64_t c) {
+    Rng r{ seed };
+    r.state ^= Rng{ a }.next();
+    r.state ^= Rng{ b ^ 0xA0761D6478BD642FULL }.next();
+    r.state ^= Rng{ c ^ 0xE7037ED1A0B428DBULL }.next();
+    return r.next();
+}
+
 }

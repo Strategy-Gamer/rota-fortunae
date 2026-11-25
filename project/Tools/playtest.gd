@@ -6,7 +6,7 @@ extends SceneTree
 ##
 ## godot --headless --path project -s res://Tools/playtest.gd -- seed=0 countries=8 years=300 runs=2 out=C:/tmp/run.csv
 
-const CSV_HEADER := "year,hash,country_id,name,locations,population,wealth,wealth_per_capita"
+const CSV_HEADER := "year,hash,country_id,name,locations,population,wealth,wealth_per_capita,elites,phase,P,E,U,U_e,legitimacy,treasury,war_weariness,crises"
 
 func _init() -> void:
 	var args := _parse_args(OS.get_cmdline_user_args())
@@ -76,8 +76,10 @@ func _run(image: Image, seed: int, countries: int, years: int, out_path: String,
 			continue
 		for id in world.get_country_ids():
 			var s: Dictionary = world.get_country_summary(id)
-			var row := "%d,%d,%d,%s,%d,%d,%.3f,%.6f" % [world.get_year(), state_hash, id, s.name,
-					s.location_count, s.population, s.wealth, s.wealth_per_capita]
+			var row := "%d,%d,%d,%s,%d,%d,%.3f,%.6f,%d,%d,%.6f,%.6f,%.6f,%.6f,%.6f,%.3f,%.6f,%d" % [
+					world.get_year(), state_hash, id, s.name, s.location_count, s.population, s.wealth,
+					s.wealth_per_capita, s.elites, s.phase, s.population_pressure, s.elite_overproduction,
+					s.unrest, s.effective_unrest, s.legitimacy, s.treasury, s.war_weariness, s.active_crises]
 			if file != null:
 				file.store_line(row)
 			if report and is_last:

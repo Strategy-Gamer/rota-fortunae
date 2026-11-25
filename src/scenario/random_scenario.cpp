@@ -16,6 +16,7 @@ void generate_random_scenario(
     std::uint64_t seed,
     std::uint32_t country_count
 ) {
+    w.seed = seed;
     rota::core::Rng rng{ seed };
     const std::uint32_t location_count = w.geography.location_count();
 
@@ -27,11 +28,16 @@ void generate_random_scenario(
         }
     }
 
+    // Each country starts at its own point of the growth phase, so cycles don't march in step
     std::vector<rota::countries::CountryID> countries;
+    std::vector<std::uint32_t> start_commoners;
     for (std::uint32_t i = 0; i < country_count; i++) {
         const std::uint32_t color = static_cast<std::uint32_t>(rng.next()) & 0xFFFFFFU;
         countries.push_back(rota::countries::create_country(
             w, "Country " + std::to_string(i + 1), color, w.calendar.get_year()));
+        const std::int64_t per_million = 400'000 + rng.below(500'001);
+        start_commoners.push_back(static_cast<std::uint32_t>(
+            rota::economy::LOCATION_CAPACITY * per_million / 1'000'000));
     }
 
     for (rota::map::LocationID loc = 0; loc < location_count; loc++) {
@@ -49,6 +55,7 @@ void generate_random_scenario(
         }
 
         rota::countries::set_location_owner(w, loc, countries[nearest]);
+        w.location_economy.commoners[loc] = start_commoners[nearest];
     }
 }
 
