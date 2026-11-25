@@ -3,7 +3,7 @@ extends Control
 var set_ownership_toggle = false
 var remove_ownership_toggle = false
 var gamespeed = 0
-var gamespeeds = [1, 5, 30, 90, 365]
+var gamespeeds = [1, 5, 30, 90, 365, 1825]
 
 const MAP_MODES := [
 	["Political", SimWorld.MAP_POLITICAL],
@@ -27,8 +27,8 @@ func _process(delta: float):
 		$PanelContainer/Rightside/PauseButton.text = "Date: " + str(Game.world.get_year()) + "-" + str(Game.world.get_day()) + "\nSpeed: " + str(Game.world.get_speed())
 
 func _set_gamespeed(speed):
-	if speed > 4:
-		speed = 4
+	if speed > len(gamespeeds) - 1:
+		speed = len(gamespeeds) - 1
 	elif speed < 0:
 		speed = 0
 	gamespeed = speed
