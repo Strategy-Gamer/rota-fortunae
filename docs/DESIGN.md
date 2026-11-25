@@ -285,9 +285,9 @@ Choose the lightest storage that fits each store's churn (design-notes/05):
 
 The model is `FinalSim` in [`Planning/new_model.py`](../Planning/new_model.py) (with `economy.py`
 and `extra_functions.py`), ported to
-[`secular_cycle_system.cpp`](../src/economy/secular_cycle_system.cpp). The port is a **translation,
-not a redesign**: it keeps the update rules, their *ordering* and the parameter values. When the
-Python changes, re-port the rule; don't tune the C++ on its own. One FinalSim tick is one game year
+[`secular_cycle_system.cpp`](../src/economy/secular_cycle_system.cpp). The port kept the update
+rules, their *ordering* and the parameter values. **The port is finished:** the C++ is now the
+model, and new rules are designed here, not in the Python first. One FinalSim tick is one game year
 (`on_yearly`).
 
 **The location/country split.** FinalSim fuses a location's economy and its state into one unit.
@@ -330,11 +330,11 @@ commoners and elites become whole people by **keyed stochastic rounding**: the f
 one person with that probability, drawn from `keyed_hash(seed, year, stream, id)`. So there is no
 stored remainder and no RNG stream whose call order matters. Crisis rolls use the same keyed draws.
 
-**Deliberate departures from the Python:**
+**Deliberate departures from the Python at the port:**
 - New countries start at legitimacy 1. FinalSim's `__init__` resets it to 0 (line 165), which only
   changes its first ~20 years.
 - Inactive paths were left out: war deaths (`k_war = 0`), famine, epidemic and bankruptcy (rate 0),
-  and the carrying-capacity window (capacity is static). Port each when it's switched on.
+  and the carrying-capacity window (capacity is static). Add each when a mechanic needs it.
 - The random scenario seeds each country's starting population (0.4–0.9 of capacity), or every
   country would enter strain in the same year.
 
@@ -373,18 +373,22 @@ collapse mechanic is core, not stretch**.
    showing the selected state's trajectory.
 5. The player can issue **2–3 real commands** that visibly nudge the cycle.
 
-**Next, in order** (the cycle itself, §10, is ported and runs in every country):
-1. **Collapse made visible:** crossing an unrest/cohesion threshold triggers a collapse event on the
-   map (fragmentation, anarchy or elite purge), built on the lifecycle systems in §9. Revolt, civil
-   war and coup already run inside the cycle; famine and epidemic wait until they're switched on in
-   the Python.
-2. **Shallow AI** (let the model drive, with a few automated reactions such as raising taxes under
-   fiscal stress) and 2–3 player commands.
-3. **Watchable:** sim-driven map modes, a trajectory panel, pacing tuned so a cycle reads in
-   minutes.
+**Next, in order** (the cycle (§10) runs in every country, and the map modes and trajectory panel
+are in). Each step has to show on the map by itself:
+1. **Geography:** adjacency, land, sea and impassable locations, and routes across the sea, on the
+   EU4-based map; a stored capital per country; scenario countries that are contiguous.
+2. **Control:** effective distance from the capital (over land and across the sea) sets each
+   location's control, which weakens collection, suppression and access to state positions toward
+   the frontier. This deliberately ends the scale-invariance in §10.
+3. **Civil war on the map:** rebels hold the frontier and high-unrest locations, and elite deaths
+   come from devastation where the two sides meet, replacing the cycle's uniform civil-war cull.
+4. **Breakaways:** a rebel side that wins with low control secedes as a new country (§9). This is
+   the first border change the sim makes by itself.
+5. **Conquest,** then **shallow AI** (a few automated reactions, such as raising taxes under
+   fiscal stress) and 2–3 player commands. Pacing is tuned so a cycle reads in minutes.
 
-**If ahead, pull in first:** (1) **terrain** (terrain, rivers, elevation), because the map is the
-primary lens; (2) **better AI**, so states feel governed and not merely cycling.
+**If ahead, pull in first:** (1) **terrain beyond land and sea** (vegetation, rivers,
+elevation), because the map is the primary lens; (2) **better AI**, so states feel governed and not merely cycling.
 
 **Cut to stretch:** pretty UI · curved labels and JFA-SDF borders (design-notes/06) · cultural
 values and traits · deep country mechanics · cohesion modelling beyond the minimal collapse ·
@@ -406,6 +410,6 @@ migration) · partial-map re-evaluation on territory change.
 
 Prediction (cut, §4.3) · threading or a job system (until a profiler shows a freeze; then
 parallelize *within* a tick with a fixed merge order) · stat/modifier/effect/trigger/scope engines
-· an event bus · a flow model · neighbor or border extraction · a location→pixel reverse index ·
+· an event bus · a flow model · a location→pixel reverse index ·
 multiple Godot API objects · dedicated server mode. Each is noted so it isn't forgotten; none is a
 prerequisite for the roadmap.
