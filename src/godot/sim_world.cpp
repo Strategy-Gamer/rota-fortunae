@@ -5,6 +5,7 @@
 #include "../map/map_modes.h"
 #include "../core/command.h"
 #include "../core/hash.h"
+#include "../countries/country_systems.h"
 #include "../time/time_progression.h"
 #include "../queries/location_summary.h"
 
@@ -199,9 +200,11 @@ int SimWorld::create_country(
         name.utf8().get_data();
 
     const rota::countries::CountryID id =
-        world.countries.create_country(
+        rota::countries::create_country(
+            world,
             native_name,
-            pack_color(color)
+            pack_color(color),
+            world.calendar.get_year()
         );
 
     return static_cast<int>(id);
@@ -492,10 +495,7 @@ int64_t SimWorld::get_state_hash(){
 
     for (auto owner : world.location_politics.owner_country) h.feed(owner);
 
-    h.feed(world.countries.count());
-    for (auto alive : world.countries.alive)                h.feed(alive);
-    for (auto color : world.countries.display_color_rgb)    h.feed(color);
-
+    world.countries.feed_hash(h);
     world.location_economy.feed_hash(h);
 
     return static_cast<int64_t>(h.value());

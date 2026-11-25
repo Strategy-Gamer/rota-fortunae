@@ -4,6 +4,7 @@
 #include "../core/world.h"
 #include "../utility/FixedDecimal.h"
 #include "../godot/sim_world.h"
+#include "../countries/country_systems.h"
 
 namespace rota::time {
 void TimeProgression::on_tick(rota::core::World& world){
@@ -28,6 +29,8 @@ void TimeProgression::on_tick(rota::core::World& world){
             world.render_dirty |= godot::SimWorld::DIRTY_ALL;
         }
     }
+
+    rota::countries::destroy_countries(world); // last, so no system sees a slot freed mid-tick
 }
 void TimeProgression::on_daily(rota::core::World& world){
     return;

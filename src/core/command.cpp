@@ -2,6 +2,7 @@
 #include "world.h"
 #include "../godot/sim_world.h"
 #include "../time/time_progression.h"
+#include "../countries/country_systems.h"
 
 namespace rota::core::Command {
     namespace{
@@ -97,23 +98,23 @@ bool cmd_set_location_owner(rota::core::World& world, int actor_civ, const godot
     if(location_id.get_type() != godot::Variant::INT) return false;
 
     if(!world.geography.is_valid_location(location_id)) return false;
-    
+
     if((int)country_id < 0){
-        world.location_politics.set_owner(
+        rota::countries::set_location_owner(
+            world,
             static_cast<rota::map::LocationID>((int)location_id),
             rota::countries::INVALID_COUNTRY_ID
         );
-        world.render_dirty |= godot::SimWorld::DIRTY_POLITICAL;
         return true;
     }
 
     if(!world.countries.is_valid(country_id)) return false;
 
-    world.location_politics.set_owner(
+    rota::countries::set_location_owner(
+        world,
         static_cast<rota::map::LocationID>((int)location_id),
         static_cast<rota::countries::CountryID>((int)country_id)
     );
-    world.render_dirty |= godot::SimWorld::DIRTY_POLITICAL;
     return true;
 }
 }
