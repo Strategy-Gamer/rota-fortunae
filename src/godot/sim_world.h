@@ -46,7 +46,6 @@ public:
     Color get_location_color(int location_id) const;
 
     bool generate_random_scenario(int seed, int country_count);
-    int get_country_count() const;
     PackedInt32Array get_country_ids() const;
 
     godot::String get_country_name(int country_id) const;
@@ -60,7 +59,6 @@ public:
     Vector2i get_location_centroid(int location_id) const;
 
     Ref<Image> create_id_image() const;
-    Ref<Image> create_palette_image() const;
 
     Dictionary get_location_summary(int location_id) const;
     Dictionary get_country_summary(int country_id) const;

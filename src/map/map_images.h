@@ -18,10 +18,6 @@ public:
     static RGBImageData create_id_image(
         const Geography& geography
     );
-
-    static RGBImageData create_palette_image(
-        const Geography& geography
-    );
 };
 
 }

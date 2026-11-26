@@ -148,7 +148,6 @@ void SimWorld::_bind_methods() {
 
     ClassDB::bind_method(D_METHOD("generate_random_scenario", "seed", "country_count"), &SimWorld::generate_random_scenario);
 
-    ClassDB::bind_method(D_METHOD("get_country_count"), &SimWorld::get_country_count);
     ClassDB::bind_method(D_METHOD("get_country_ids"), &SimWorld::get_country_ids);
 
     ClassDB::bind_method(D_METHOD("get_country_name","country_id"), &SimWorld::get_country_name);
@@ -164,8 +163,6 @@ void SimWorld::_bind_methods() {
     ClassDB::bind_method(D_METHOD("get_location_centroid", "location_id"), &SimWorld::get_location_centroid);
 
     ClassDB::bind_method(D_METHOD("create_id_image"), &SimWorld::create_id_image);
-
-    ClassDB::bind_method(D_METHOD("create_palette_image"), &SimWorld::create_palette_image);
 
     ClassDB::bind_method(D_METHOD("get_location_summary", "location_id"), &SimWorld::get_location_summary);
     ClassDB::bind_method(D_METHOD("get_country_summary", "country_id"), &SimWorld::get_country_summary);
@@ -246,12 +243,6 @@ bool SimWorld::generate_random_scenario(int seed, int country_count) {
         static_cast<std::uint32_t>(country_count)
     );
     return true;
-}
-
-int SimWorld::get_country_count() const {
-    return static_cast<int>(
-        world.countries.count()
-    );
 }
 
 PackedInt32Array SimWorld::get_country_ids() const {
@@ -452,30 +443,6 @@ Vector2i SimWorld::get_location_centroid(
 Ref<Image> SimWorld::create_id_image() const {
     const rota::map::RGBImageData data =
         rota::map::MapImages::create_id_image(world.geography);
-
-    PackedByteArray bytes;
-    bytes.resize(static_cast<int64_t>(data.bytes.size()));
-
-    std::copy(
-        data.bytes.begin(),
-        data.bytes.end(),
-        bytes.ptrw()
-    );
-
-    return Image::create_from_data(
-        static_cast<int>(data.width),
-        static_cast<int>(data.height),
-        false,
-        Image::FORMAT_RGB8,
-        bytes
-    );
-}
-
-Ref<Image> SimWorld::create_palette_image() const {
-    const rota::map::RGBImageData data =
-        rota::map::MapImages::create_palette_image(
-            world.geography
-        );
 
     PackedByteArray bytes;
     bytes.resize(static_cast<int64_t>(data.bytes.size()));
