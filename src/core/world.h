@@ -15,6 +15,8 @@
 
 // Master World Store
 
+namespace rota::map { struct LocationData; }
+
 namespace rota::core {
 
     // The only definition: SimWorld binds these as its DIRTY_* constants for GDScript
@@ -38,6 +40,14 @@ namespace rota::core {
         rota::time::Calendar calendar; 
         rota::time::SynchClock synch_clock; 
         
+        // Builds the geography and sizes every per-location store to it
+        void load_map(
+            std::uint32_t width,
+            std::uint32_t height,
+            const std::uint8_t* rgb_bytes,
+            std::size_t rgb_byte_count,
+            const rota::map::LocationData& data
+        );
         void clear();
     };
 

@@ -47,13 +47,9 @@ int main(int argc, char** argv) {
 
     static rota::core::World w; // too big for the stack
     const std::string rgb = slurp(argv[1]);
-    rota::map::MapBuilder::build_from_rgb8(w.geography, std::stoul(argv[2]), std::stoul(argv[3]),
+    w.load_map(std::stoul(argv[2]), std::stoul(argv[3]),
         reinterpret_cast<const std::uint8_t*>(rgb.data()), rgb.size(),
         rota::map::MapBuilder::parse_location_data(slurp(argv[4]), slurp(argv[5])));
-    const auto n = w.geography.location_count();
-    w.location_politics.initialize(n);
-    w.location_economy.initialize(n);
-    w.location_secular_cycle.initialize(n);
     rota::scenario::generate_random_scenario(w, std::stoull(argv[6]), std::stoul(argv[7]));
 
     std::FILE* out = std::fopen(argv[9], "w");

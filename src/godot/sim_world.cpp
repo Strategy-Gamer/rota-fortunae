@@ -356,8 +356,7 @@ void SimWorld::build_from_image(const Ref<Image>& image, const String& location_
     const PackedByteArray godot_bytes = image->get_data();
 
     try {
-        rota::map::MapBuilder::build_from_rgb8(
-            world.geography,
+        world.load_map(
             static_cast<std::uint32_t>(image->get_width()),
             static_cast<std::uint32_t>(image->get_height()),
             godot_bytes.ptr(),
@@ -367,10 +366,6 @@ void SimWorld::build_from_image(const Ref<Image>& image, const String& location_
                 strait_data.utf8().get_data()
             )
         );
-        uint32_t location_count = world.geography.location_count();
-        world.location_politics.initialize(location_count);
-        world.location_economy.initialize(location_count);
-        world.location_secular_cycle.initialize(location_count);
     } catch (const std::exception& exception) {
         world.geography.clear(); // so is_loaded() doesn't report a half-built map
         UtilityFunctions::push_error(exception.what());
