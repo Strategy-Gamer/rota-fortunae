@@ -477,4 +477,7 @@ inline Fixed32 operator/(int32_t lhs, Fixed32 rhs) { return Fixed32(lhs) / rhs; 
 inline Fixed64 operator-(int64_t lhs, Fixed64 rhs) { return Fixed64(lhs) - rhs; }
 inline Fixed64 operator/(int64_t lhs, Fixed64 rhs) { return Fixed64(lhs) / rhs; }
 
+// Thousandths, for writing constants: milli(25) == 0.025
+inline Fixed64 milli(int64_t m) { return Fixed64::from_raw(m * (Fixed64::SCALE / 1000)); }
+
 } // namespace rota

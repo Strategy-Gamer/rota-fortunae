@@ -19,8 +19,6 @@ using rota::countries::CountryID;
 using rota::map::LocationID;
 namespace rc = rota::countries;
 
-Fixed64 milli(std::int64_t m) { return Fixed64::from_raw(m * 1000); }
-
 const Fixed64 ZERO;
 const Fixed64 ONE(1);
 const Fixed64 CAPACITY(LOCATION_CAPACITY);
@@ -110,15 +108,6 @@ const CrisisConfig CRISIS_CFG[rc::CRISIS_COUNT] = {
     { milli(10),  1, 3,  12 }, // coup
 };
 
-// Keys for draws, so no two draws in a year share one
-enum Stream : std::uint64_t {
-    STREAM_POPULATION = 0,
-    STREAM_ELITES = 1,
-    STREAM_CRISIS_ROLL = 2,
-    STREAM_CRISIS_DURATION = STREAM_CRISIS_ROLL + rc::CRISIS_COUNT,
-    STREAM_CRISIS_COMMONERS = STREAM_CRISIS_DURATION + rc::CRISIS_COUNT,
-};
-
 // One country's year. A location touches all of its owner's fields at once, so they sit together.
 struct CountryYear {
     // Summed by the population/economy pass; means are weighted by commoners
@@ -167,12 +156,6 @@ std::uint32_t to_heads(Fixed64 people, std::uint64_t key, std::int64_t floor) {
     return static_cast<std::uint32_t>(std::clamp<std::int64_t>(
         whole, floor, std::numeric_limits<std::uint32_t>::max()));
 }
-
-bool chance(Fixed64 p, std::uint64_t key) {
-    return static_cast<std::int64_t>(key % Fixed64::SCALE) < p.raw_value();
-}
-
-Fixed64 heads(std::int64_t n) { return Fixed64(n); }
 
 // Heads per unit of a location's carrying capacity
 Fixed64 per_capacity(std::int64_t n) { return Fixed64::from_raw(n * Fixed64::SCALE / LOCATION_CAPACITY); }
@@ -233,11 +216,11 @@ void population_and_economy(const Pass& p) {
         const Fixed64 rel = per_capacity(pop) / security;
         Fixed64 t = std::clamp(rel - milli(500), ZERO, ONE);
         t = t * t * (Fixed64(3) - t * 2);
-        const Fixed64 birth = std::max(MAX_BIRTH - (MAX_BIRTH - MIN_BIRTH) * t, MIN_BIRTH);
+        const Fixed64 birth = MAX_BIRTH - (MAX_BIRTH - MIN_BIRTH) * t;
         const Fixed64 natural_death = DEATH_BASE + CHILD_MORTALITY * birth;
         // beyond what security lets the land carry, famine and disease cull the surplus
         const Fixed64 overshoot_death = OVERSHOOT_MORTALITY * std::max(ZERO, rel - ONE);
-        eco.commoners[loc] = to_heads(heads(pop) + (birth - natural_death - overshoot_death) * pop, p.key(STREAM_POPULATION, loc), 0);
+        eco.commoners[loc] = to_heads(Fixed64(pop) + (birth - natural_death - overshoot_death) * pop, p.key(rota::core::STREAM_POPULATION, loc), 0);
         cy.record.births += birth * pop;
         cy.record.natural_deaths += natural_death * pop;
         cy.record.overshoot_deaths += overshoot_death * pop;
@@ -429,12 +412,12 @@ void crises(rota::core::World& w, std::uint64_t year, CountryID c, CountryYear& 
         } else if (!state.in_lull[c]) {
             const Fixed64 drive = drivers[t];
             const Fixed64 p = std::min(CRISIS_HAZARD_CAP, cfg.base * drive * phase_mult);
-            if (drive > ZERO && chance(p, rota::core::keyed_hash(w.seed, year, STREAM_CRISIS_ROLL + t, c))) {
+            if (drive > ZERO && rota::core::chance(p, rota::core::keyed_hash(w.seed, year, rota::core::STREAM_CRISIS_ROLL + t, c))) {
                 cr.active = 1;
                 cr.age = 0;
                 cr.intensity = std::min(ONE, drive * (phase == rc::PHASE_STRAIN ? milli(500) : ONE)); // milder in strain
                 cr.duration = cfg.dmin + static_cast<std::uint32_t>(
-                    rota::core::keyed_hash(w.seed, year, STREAM_CRISIS_DURATION + t, c) % (cfg.dmax - cfg.dmin + 1));
+                    rota::core::keyed_hash(w.seed, year, rota::core::STREAM_CRISIS_DURATION + t, c) % (cfg.dmax - cfg.dmin + 1));
                 apply_crisis(w, c, cy, type, cr.intensity);
             }
         }
@@ -468,7 +451,7 @@ void crisis_effects_and_elites(const Pass& p, const rc::WarYear& war) {
         const std::int64_t commoners = eco.commoners[loc];
         const Fixed64 commoner_keep = cy.commoner_keep * war.commoner_keep[loc];
         if (commoner_keep < ONE) {
-            eco.commoners[loc] = to_heads(commoner_keep * commoners, p.key(STREAM_CRISIS_COMMONERS, loc), 0);
+            eco.commoners[loc] = to_heads(commoner_keep * commoners, p.key(rota::core::STREAM_CRISIS_COMMONERS, loc), 0);
         }
         const Fixed64 elites = cy.elite_keep * war.elite_keep[loc] * elites_before;
         cy.record.crisis_deaths += (ONE - cy.commoner_keep) * commoners;
@@ -490,7 +473,7 @@ void crisis_effects_and_elites(const Pass& p, const rc::WarYear& war) {
 
         const Fixed64 e_attrition = elites * K_ATTRITION * attrition(cyc.effective_unrest[loc]);
 
-        eco.elites[loc] = to_heads(elites + e_biological + e_mobility - e_attrition, p.key(STREAM_ELITES, loc), 1);
+        eco.elites[loc] = to_heads(elites + e_biological + e_mobility - e_attrition, p.key(rota::core::STREAM_ELITES, loc), 1);
         cy.elites_after += eco.elites[loc];
         cy.record.elite_births += e_biological;
         if (e_mobility > ZERO) cy.record.promotions += e_mobility; else cy.record.demotions -= e_mobility;
@@ -504,7 +487,7 @@ void phase(rota::core::World& w, CountryID c, const CountryYear& cy) {
     const Fixed64 effective_unrest = cy.effective_unrest_sum / cy.workers;
 
     if (state.phase[c] == rc::PHASE_PROSPERITY) {
-        const bool traditional = wage < W0_TARGET && heads(cy.elites_after) > cy.baseline_positions;
+        const bool traditional = wage < W0_TARGET && Fixed64(cy.elites_after) > cy.baseline_positions;
         const bool ibn_khaldun = cy.overproduction > IBN_MARGIN;
         if (traditional || ibn_khaldun) state.phase[c] = rc::PHASE_STRAIN;
     } else if (state.phase[c] == rc::PHASE_STRAIN) {

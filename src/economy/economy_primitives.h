@@ -15,8 +15,8 @@ namespace rota::economy {
 // workers / jobs). worker_owned_count is always 0 now (all land is elite-owned), so it is left out.
 inline Fixed64 get_wage_share(Fixed64 pressure, Fixed64 k, Fixed64 d_crit) {
     const Fixed64 base = rota::fmath::logistic(pressure, k, d_crit);
-    const Fixed64 share = base * Fixed64::from_raw(750'000) + Fixed64::from_raw(100'000);
-    return std::clamp(share, Fixed64::from_raw(100'000), Fixed64::from_raw(900'000));
+    const Fixed64 share = base * milli(750) + milli(100);
+    return std::clamp(share, milli(100), milli(900));
 }
 
 // get_output per unit of base productivity, at saturation 1 and exponent 1:

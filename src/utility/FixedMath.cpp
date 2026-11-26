@@ -22,6 +22,8 @@ uint64_t isqrt_u128(rota::detail::U128 n) {
 
 } // namespace
 
+uint64_t isqrt(uint64_t n) { return isqrt_u128(rota::detail::U128{ 0, n }); }
+
 // sqrt(x) = isqrt(raw * SCALE), since (sqrt(x)*SCALE)^2 = raw*SCALE.
 Fixed64 sqrt(Fixed64 x) {
     int64_t r = x.raw_value();

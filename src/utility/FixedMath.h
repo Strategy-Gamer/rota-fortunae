@@ -18,6 +18,9 @@ Fixed64 ln(Fixed64 x);
 Fixed64 pow(Fixed64 base, Fixed64 exponent);
 Fixed64 logistic(Fixed64 x, Fixed64 k, Fixed64 x0);
 
+// floor(sqrt(n)) of a plain integer
+std::uint64_t isqrt(std::uint64_t n);
+
 // A curve sampled at even steps over [0, max] and read back by integer linear interpolation, for hot
 // paths where a series per call costs too much. Below 0 it reads the first sample, past max the last.
 // Build it on first use (a function-local static), never during static init: these functions read

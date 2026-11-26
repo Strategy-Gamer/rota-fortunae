@@ -3,6 +3,7 @@
 #include "core/rng.h"
 #include "core/world.h"
 #include "countries/country_systems.h"
+#include "utility/packed_color.h"
 
 #include <algorithm>
 #include <cstdint>
@@ -13,8 +14,6 @@ namespace {
 
 using rota::map::LocationID;
 using rota::map::LocationKind;
-
-Fixed64 milli(std::int64_t m) { return Fixed64::from_raw(m * 1000); }
 
 const Fixed64 ZERO;
 const Fixed64 ONE(1);
@@ -32,16 +31,7 @@ const Fixed64 PILLAGE_COMMONER_LOSS = milli(5); // behind the rebels' lines, whe
 
 const Fixed64 FRONT_TAKE = milli(500); // chance a front falls, times the enemy's share of strength
 
-const std::uint32_t REBEL_COLOR = 0xC0 | (0x20 << 8) | (0x20 << 16); // crimson, packed r | g << 8 | b << 16
-
-// Keys for draws; the secular cycle's streams are all below 100
-enum Stream : std::uint64_t {
-    STREAM_FRONT_TAKE = 100,
-};
-
-bool chance(Fixed64 p, std::uint64_t key) {
-    return static_cast<std::int64_t>(key % Fixed64::SCALE) < p.raw_value();
-}
+const std::uint32_t REBEL_COLOR = rota::pack_rgb(0xC0, 0x20, 0x20); // crimson
 
 bool at_war(const rota::core::World& w, CountryID c) {
     return w.country_state.crises[c][CRISIS_CIVIL_WAR].active != 0;
@@ -200,7 +190,7 @@ WarYear run_civil_wars(rota::core::World& w) {
         const std::int64_t total = loyal_strength[c] + rebel_strength[c];
         if (total <= 0) continue;
         const Fixed64 enemy_share = Fixed64(rebel_held ? loyal_strength[c] : rebel_strength[c]) / total;
-        if (chance(FRONT_TAKE * enemy_share, rota::core::keyed_hash(w.seed, year, STREAM_FRONT_TAKE, loc))) {
+        if (rota::core::chance(FRONT_TAKE * enemy_share, rota::core::keyed_hash(w.seed, year, rota::core::STREAM_FRONT_TAKE, loc))) {
             taken.push_back(loc);
             out.elite_keep[loc] = out.elite_keep[loc] * (ONE - SACK_ELITE_LOSS * x);
         }

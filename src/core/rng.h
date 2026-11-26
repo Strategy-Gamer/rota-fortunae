@@ -1,5 +1,8 @@
 #pragma once
 
+#include "../countries/country_state.h"
+#include "../utility/FixedDecimal.h"
+
 #include <cstdint>
 
 namespace rota::core {
@@ -28,6 +31,21 @@ inline std::uint64_t keyed_hash(std::uint64_t seed, std::uint64_t a, std::uint64
     r.state ^= Rng{ b ^ 0xA0761D6478BD642FULL }.next();
     r.state ^= Rng{ c ^ 0xE7037ED1A0B428DBULL }.next();
     return r.next();
+}
+
+// The stream key of every keyed draw in the sim, all in one place so no two draws in a year share one
+enum Stream : std::uint64_t {
+    STREAM_POPULATION = 0,
+    STREAM_ELITES = 1,
+    STREAM_CRISIS_ROLL = 2, // one per crisis type
+    STREAM_CRISIS_DURATION = STREAM_CRISIS_ROLL + rota::countries::CRISIS_COUNT,
+    STREAM_CRISIS_COMMONERS = STREAM_CRISIS_DURATION + rota::countries::CRISIS_COUNT,
+    STREAM_FRONT_TAKE = 100,
+};
+
+// True with probability p, from a keyed draw
+inline bool chance(Fixed64 p, std::uint64_t key) {
+    return static_cast<std::int64_t>(key % Fixed64::SCALE) < p.raw_value();
 }
 
 }

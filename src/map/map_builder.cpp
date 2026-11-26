@@ -1,5 +1,8 @@
 #include "map_builder.h"
 
+#include "../utility/FixedMath.h"
+#include "../utility/packed_color.h"
+
 #include <algorithm>
 #include <cstdlib>
 #include <sstream>
@@ -9,30 +12,6 @@
 namespace rota::map {
 
 namespace {
-
-std::uint32_t pack_rgb(
-    std::uint8_t r,
-    std::uint8_t g,
-    std::uint8_t b
-) noexcept {
-    return static_cast<std::uint32_t>(r) |
-           (static_cast<std::uint32_t>(g) << 8U) |
-           (static_cast<std::uint32_t>(b) << 16U);
-}
-
-// floor(sqrt(n)), digit by digit, so map distances are exact integers on every compiler
-std::uint32_t isqrt(std::uint64_t n) {
-    std::uint64_t root = 0;
-    for (std::uint64_t bit = std::uint64_t{ 1 } << 62U; bit != 0; bit >>= 2U) {
-        if (n >= root + bit) {
-            n -= root + bit;
-            root = (root >> 1U) + bit;
-        } else {
-            root >>= 1U;
-        }
-    }
-    return static_cast<std::uint32_t>(root);
-}
 
 // "#rrggbb" -> packed like display_color_rgb
 std::uint32_t parse_color(const std::string& text) {
@@ -308,7 +287,8 @@ void MapBuilder::build_adjacency(
             // each end's scale covers its half of the edge
             const std::int64_t mx = dx * (geography.metres_per_pixel_x[id] + geography.metres_per_pixel_x[other]) / 2;
             const std::int64_t my = dy * (geography.metres_per_pixel_y[id] + geography.metres_per_pixel_y[other]) / 2;
-            geography.neighbor_distance[i] = (isqrt(static_cast<std::uint64_t>(mx * mx + my * my)) + 500) / 1000;
+            geography.neighbor_distance[i] = static_cast<std::uint32_t>(
+                (rota::fmath::isqrt(static_cast<std::uint64_t>(mx * mx + my * my)) + 500) / 1000); // integer, since distances feed the sim
         }
     }
 }
