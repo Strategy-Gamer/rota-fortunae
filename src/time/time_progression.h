@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-namespace rota::core { class World; }
+namespace rota::core { struct World; }
 
 namespace rota::time {
 

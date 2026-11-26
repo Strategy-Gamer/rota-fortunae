@@ -26,7 +26,7 @@ enum CommandType : std::int32_t {
     // Time & Debug (1-999)
     // Time Controls (10-19)
 
-    CMD_TOGGLE_CLOCK = 10,
+    CMD_TOGGLE_CLOCK = 10, // reserved: no handler, and not bound for GDScript
     CMD_STEP_CLOCK = 11,
 
     CMD_TOGGLE_PAUSE = 12,
@@ -34,7 +34,7 @@ enum CommandType : std::int32_t {
     CMD_ADD_DATE = 14,
     CMD_SET_DATE = 15,
 
-    // Locations (50-199)
+    // Locations (20-199)
 
     CMD_SET_LOCATION_OWNER = 20,
 
