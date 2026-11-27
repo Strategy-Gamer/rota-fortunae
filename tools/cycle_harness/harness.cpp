@@ -5,8 +5,8 @@
 // playtest runner's for the same seed and years while no knob is overridden and no control is given.
 //
 // Controls are test interventions: radicalism=X@A-B sets every country's radicalism to X at the
-// start of each year from A to B, and start=X starts every owned location at X commoners per head of
-// capacity.
+// start of each year from A to B, start=X starts every owned location at X commoners per head of
+// capacity, and growth=G grows every location's capacity by G a year (a stand-in for economic growth).
 
 #include "knobs.h"
 
@@ -43,6 +43,7 @@ struct Controls {
     std::uint32_t from = 0, to = 0;
     bool set_start = false;
     rota::Fixed64 start;
+    rota::Fixed64 growth;
 };
 
 Controls parse_controls(int argc, char** argv, int first) {
@@ -59,6 +60,8 @@ Controls parse_controls(int argc, char** argv, int first) {
         } else if (std::sscanf(arg.c_str(), "start=%31[0-9.]", x) == 1) {
             c.set_start = true;
             c.start = rota::Fixed64::from_raw(knobs::parse("start", x));
+        } else if (std::sscanf(arg.c_str(), "growth=%31[0-9.]", x) == 1) {
+            c.growth = rota::Fixed64::from_raw(knobs::parse("growth", x));
         } else {
             std::fprintf(stderr, "unknown control %s\n", argv[i]);
             std::exit(2);
@@ -68,6 +71,9 @@ Controls parse_controls(int argc, char** argv, int first) {
 }
 
 void apply_controls(const Controls& c, rota::core::World& w) {
+    for (auto& capacity : w.location_economy.capacity) {
+        capacity += static_cast<std::uint32_t>((c.growth * static_cast<std::int64_t>(capacity)).raw_value() / rota::Fixed64::SCALE);
+    }
     const std::uint32_t year = w.calendar.get_year();
     if (c.hold_radicalism && year >= c.from && year < c.to) {
         for (auto& r : w.country_state.radicalism) r = c.radicalism;

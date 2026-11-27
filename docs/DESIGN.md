@@ -163,8 +163,9 @@ sync clock; they agree on the sim's outcome by date.
 the same map and scenario generator, runs many seeds in parallel, and reports the cycle's shape and
 the yearly flows in and out of commoners and elites by phase. It builds generated copies of the cycle
 and civil-war sources in which every `const Fixed64` reads an environment override, so any constant
-can be swept without a rebuild or a game change. `--hold-radicalism` and `--start-density` are test
-interventions (a grievance shock or post-war exhaustion; a stressed start). With neither and nothing
+can be swept without a rebuild or a game change. `--hold-radicalism`, `--start-density` and
+`--growth` are test interventions (a grievance shock or post-war exhaustion; a stressed start;
+capacity growing as a stand-in for economic growth). With none of them and nothing
 overridden, its final state hash equals the playtest runner's for the same seed and years: check
 that after changing either. The
 flows come from the **cycle ledger** (`World::cycle_ledger`), which the cycle rewrites every year
