@@ -400,12 +400,19 @@ conditions start to improve.
   the rest back. Only radicalism past the violence threshold (riots, clashes, low-level insurgency)
   damages security or kills elites; below it is advocacy and protest. So security recovers within
   a decade once violence ends, and no longer has to stay low to keep the land empty.
+- **Elites stay dissatisfied until they are nearly cleared, and a state can't regain legitimacy
+  while they are.** Otherwise a fracture fizzled: as violence ebbed, legitimacy recovered and
+  radicalism died with the elites still well over their positions, their births resumed, and the
+  next boom began from there, so the phase read one fracture across cycles.
+- **Suppression is weaker than FinalSim's**, because legitimacy now also holds radicalism back. At
+  FinalSim's strength a small legitimate state, wholly within the army's reach, never turned
+  violent and its elites stalled far over their positions.
 - **The commoners' satisfied wage must sit above the elites' demotion wage.** Below it, a peaceful
   crisis settles where elites neither promote nor demote, and they never clear.
 - **Radicalism is national**, a placeholder for factions' own. Each location gets its share by its
   discontent relative to the country's, which is the rule factions' local support will replace.
 - **Test the peaceful path** with the crises off and `VIOLENCE_ON` near 1 in the harness: cycles
-  there are longer and shallower (about 250 years, population down a tenth) but must still clear
+  there are longer and shallower (about 180 years, population down a tenth) but must still clear
   the elites.
 
 **Civil war on the map** ([`civil_war.cpp`](../src/countries/civil_war.cpp)). The civil-war crisis
@@ -425,12 +432,12 @@ Each war year:
 
 **Cycle shape** (measure it with the cycle harness, §5). The target is the full cycle of about 150
 years that England, France and Rome show, driven by population and elites together; one near 80
-years would mean elites alone drive it. It runs about 160 today, and the elites swing three to four
+years would mean elites alone drive it. It runs about 155 today, and the elites swing three to four
 times over it.
 - **Strain lasts decades.** Momentum carries the population to about the land's capacity after the
   wage turns, while the elites multiply severalfold; elite discontent turns radical only when it
   outgrows the tolerance.
-- **A fracture runs for generations.** Population falls by about a quarter over it and the elites
+- **A fracture runs for generations.** Population falls by a fifth to a quarter over it and the elites
   by about three quarters, mostly by demotion. Crises are occasional: room for a few civil wars,
   not a revolt every few years. Late in it the commoners' wages are high again, and what violence is left
   is the remaining elites' (Turchin's squeeze).
@@ -534,19 +541,15 @@ migration) · partial-map re-evaluation on territory change.
   cleanup.
 - **Scenarios are random only.** Authored scenarios (a fixed start date, chosen countries and
   borders) don't exist yet.
-- **Huge low-control empires can still sit in fracture for over a century** (a few countries in
-  a hundred over 1000 years, all of 500+ locations; see the trap in §10). Breakaways may be the
-  real answer; recheck after them.
+- **Tiny states can simmer before their fracture.** A country of a few locations, all within the
+  army's reach, can hold radicalism about the fracture line without violence for a century or more
+  before it collapses (one or two in a hundred). Huge low-control empires no longer stall (§10's
+  trap), but recheck both after breakaways.
 - **A fracture's population loss is front-loaded with the crises on** (over half of it in the
   first 25 years, against about a quarter with them off): the violence comes in a burst.
 - **Population can't overshoot the land until goods exist.** It peaks about at capacity (the
   pressure gauge's 0.8). A real Malthusian overshoot needs food to run out, and famine, not merely
   being overfull, should be what breaks commoner satisfaction then.
-- **The phase can miss a prosperity.** When a fracture leaves the elites just above the exit's
-  overproduction, the read-out stays in fracture through the next boom, so some countries show
-  fractures of 200 years or more that are two or more cycles. Elite fertility made this commoner:
-  in mid-size countries it turns some full cycles into shallower ones about a century apart, whose
-  elites never fall below the exit.
 - **Elite satisfaction reads only felt overproduction**, not elite income per head, so the squeeze
   on elites late in a fracture shows in demotion rather than in their discontent.
 - **The cycle ledger isn't shown in game.** It is the hook for a panel of a country's flows.

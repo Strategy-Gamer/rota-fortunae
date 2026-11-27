@@ -47,7 +47,7 @@ const Fixed64 TAX_RATE = milli(250);
 const Fixed64 COLLECTION_RADICALISM = milli(500);
 const Fixed64 ARMY_BASE = milli(6);
 const Fixed64 K_SUPPRESS = milli(200);
-const Fixed64 SUPPRESS_REACH = milli(5000);
+const Fixed64 SUPPRESS_REACH = milli(2500);
 const Fixed64 SUPPRESS_LEGIT_FLOOR = milli(500);
 const Fixed64 MIL_POSITIONS = milli(10);
 const Fixed64 K_PATRONAGE = milli(5000);
@@ -63,6 +63,7 @@ const Fixed64 LEGIT_UNPAID_ARMY = milli(500);
 const Fixed64 LEGIT_UNPAID_PATRON = milli(250);
 const Fixed64 LEGIT_FRAG = milli(300);
 const Fixed64 LEGIT_FRAG_TOLERANCE = milli(1500);
+const Fixed64 LEGIT_DIVIDED_ELITES = milli(500); // a state can't regain its standing while its elites are at odds
 
 // Satisfaction falls fast and recovers slowly, more slowly still while its causes persist
 const Fixed64 SATISFACTION_FALL = milli(100);
@@ -71,7 +72,7 @@ const Fixed64 SATISFACTION_STICK = milli(500); // no recovery until the target c
 const Fixed64 SATISFIED_WAGE = milli(600); // commoners are wholly satisfied at this relative wage or above
 const Fixed64 MISERABLE_WAGE = milli(350); // and wholly dissatisfied at this or below
 const Fixed64 TURMOIL_DISCONTENT = milli(800); // commoners lose faith in a society growing radical, per unit of radicalism
-const Fixed64 ELITE_DISCONTENT = milli(500); // per elite over each felt position
+const Fixed64 ELITE_DISCONTENT = milli(1000); // per elite over each felt position
 const Fixed64 DISCONTENT_CAPACITY = milli(300); // share of the land's capacity a wholly dissatisfied people fills
 
 // Radicalism
@@ -134,6 +135,7 @@ struct CountryYear {
     Fixed64 wage_sum;
     Fixed64 immiseration_sum;
     Fixed64 security_sum;
+    Fixed64 elite_discontent_last; // last year's elite dissatisfaction x elites
 
     // The budget, handed down to the later passes
     Fixed64 baseline_positions;
@@ -286,6 +288,7 @@ void population_and_economy(const Pass& p) {
         cy.wage_sum += w * workers;
         cy.immiseration_sum += immiseration * workers;
         cy.security_sum += security * workers;
+        cy.elite_discontent_last += (ONE - cyc.elite_satisfaction[loc]) * elites;
     }
 }
 
@@ -333,7 +336,8 @@ void fiscal_and_legitimacy(rota::core::World& w, CountryID c, CountryYear& cy) {
         - LEGIT_RADICALISM * (cy.radicalism_burden / cy.workers)
         - LEGIT_UNPAID_ARMY * cy.army_shortfall
         - LEGIT_UNPAID_PATRON * patronage_shortfall
-        - LEGIT_FRAG * std::max(ZERO, cy.felt_overproduction - LEGIT_FRAG_TOLERANCE);
+        - LEGIT_FRAG * std::max(ZERO, cy.felt_overproduction - LEGIT_FRAG_TOLERANCE)
+        - LEGIT_DIVIDED_ELITES * (cy.elite_discontent_last / cy.elites);
     target = std::clamp(target, LEGIT_FLOOR, ONE);
     legitimacy = std::clamp(legitimacy + LEGIT_SPEED * (target - legitimacy), ZERO, ONE);
 }
