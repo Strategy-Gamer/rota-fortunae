@@ -11,7 +11,6 @@ namespace rota::economy {
 struct CycleRecord {
     Fixed64 births;
     Fixed64 natural_deaths;   // the base death rate and child mortality
-    Fixed64 overshoot_deaths; // beyond the population security lets the land carry
     Fixed64 crisis_deaths;    // revolt famine
     Fixed64 war_deaths;       // fronts and pillage
 

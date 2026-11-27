@@ -352,7 +352,7 @@ The game separates them (per `Planning/Rota Fortunae_ Civilizations.txt`):
 - **Crises are per country.** One set of crises and one war-weariness lull per country; revolt and
   coup hit every owned location by the same fraction, while a civil war's deaths come from the
   fighting on the map (below). Crises speed the way out of fracture but aren't the only one: with
-  the crisis rates at zero every country still leaves it (FinalSim never did; see overshoot below).
+  the crisis rates at zero every country still leaves it (FinalSim never did; see births below).
 - **Unowned land sits out** the cycle entirely until a country owns it.
 
 **Step order** keeps FinalSim's sequence as linear passes. Each location pass streams through the
@@ -370,10 +370,12 @@ them. The one-year lags are the review-critical part: security, the army bill, c
 legitimacy read *last* year's effective radicalism, and the commoners' target reads last year's
 radicalism.
 
-**Overshoot mortality** (not in FinalSim). Births already fall as population nears the effective
-cap, but past it FinalSim's deaths don't rise, so an overfull country barely shrinks (about −0.1% a
-year). Its wage then stays low, commoners keep being promoted into the elite, and it never leaves
-fracture. Deaths therefore rise with the population beyond that cap.
+**Births can fall below deaths** (FinalSim's lowest birth rate couldn't). Births fall as population
+nears the effective cap, but at FinalSim's floor an overfull country barely shrank (about −0.1% a
+year): its wage stayed low, commoners kept being promoted into the elite, and it never left
+fracture. So insecurity and discontent shrink a people through its births, a generation late,
+rather than by killing a surplus. Extra deaths beyond the cap did that before, and on a cap that
+discontent and insecurity both cut, they took half a fracture's population.
 
 **Satisfaction and radicalism.** Satisfaction is a people's view of society and where it is going,
 not of the government; radicalism is the willingness to act by extraordinary means. Each class has
@@ -416,8 +418,6 @@ conditions start to improve.
   quickly once the surplus is gone (still not at all until most of it has), and radicalism fades
   faster than it builds. Otherwise violence ran on for decades after the elites cleared, deepening
   the crash of both classes.
-- **Security never falls far** (its floor is higher than FinalSim's): violence on top of the
-  turmoil took nearly half a fracture's population at FinalSim's depth.
 - **Suppression is weaker than FinalSim's**, because legitimacy now also holds radicalism back. At
   FinalSim's strength a small legitimate state, wholly within the army's reach, never turned
   violent and its elites stalled far over their positions.
@@ -426,7 +426,7 @@ conditions start to improve.
 - **Radicalism is national**, a placeholder for factions' own. Each location gets its share by its
   discontent relative to the country's, which is the rule factions' local support will replace.
 - **Test the peaceful path** with the crises off and `VIOLENCE_ON` near 1 in the harness: cycles
-  there are longer and shallower (about 220 years, population down two fifths) but must still clear
+  there are longer and shallower (about 200 years, population down over a quarter) but must still clear
   the elites.
 
 **Civil war on the map** ([`civil_war.cpp`](../src/countries/civil_war.cpp)). The civil-war crisis
@@ -452,9 +452,9 @@ times over it.
   the land's capacity, while the elites multiply severalfold; elite discontent turns radical only
   when it outgrows the tolerance.
 - **A fracture runs for generations.** Population falls by about a third over it and the elites
-  by about three quarters, mostly by demotion. Crises are occasional: room for a few civil wars,
-  not a revolt every few years. Late in it the commoners' wages are high again, and what violence is left
-  is the remaining elites' (Turchin's squeeze).
+  by nearly two thirds, mostly by demotion and violence. Crises are occasional: room for a few
+  civil wars, not a revolt every few years. Late in it the commoners' wages are high again, and
+  what violence is left is the remaining elites' (Turchin's squeeze).
 - **The land refills while commoners regain their satisfaction**, which lags the wage and the
   turmoil, not security.
 

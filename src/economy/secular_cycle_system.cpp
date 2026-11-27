@@ -25,13 +25,12 @@ const Fixed64 FULL_PRESSURE = milli(1250); // the gauge's 1, in commoners per he
 
 // Population & vital rates
 const Fixed64 MAX_BIRTH = milli(35);
-const Fixed64 MIN_BIRTH = milli(15);
+const Fixed64 MIN_BIRTH = milli(8); // below the deaths it brings, so births alone can shrink a people
 const Fixed64 DEATH_BASE = milli(10);
 const Fixed64 CHILD_MORTALITY = milli(400);
 const Fixed64 FERTILITY_ADJUST = milli(50); // a year's step toward what conditions call for: the parents were born a generation ago
-const Fixed64 OVERSHOOT_MORTALITY = Fixed64::from_raw(2500); // extra deaths per unit of population beyond the effective cap
 const Fixed64 SECURITY_RECOVERY = milli(50);
-const Fixed64 SECURITY_FLOOR = milli(800);
+const Fixed64 SECURITY_FLOOR = milli(500);
 
 // Economy: one elite-owned cultivated parcel fills each location's land
 const Fixed64 CULTIVATED_FOOD = milli(2500);
@@ -72,7 +71,7 @@ const Fixed64 ELITE_SATISFACTION_RISE = milli(150); // elites' own: once the sur
 const Fixed64 SATISFACTION_STICK = milli(500); // no recovery until the target clears this
 const Fixed64 SATISFIED_WAGE = milli(600); // commoners are wholly satisfied at this relative wage or above
 const Fixed64 MISERABLE_WAGE = milli(120); // and wholly dissatisfied at this or below
-const Fixed64 TURMOIL_DISCONTENT = milli(600); // commoners lose faith in a society growing radical, per unit of radicalism
+const Fixed64 TURMOIL_DISCONTENT = milli(400); // commoners lose faith in a society growing radical, per unit of radicalism
 const Fixed64 ELITE_DISCONTENT = milli(1000); // per elite over each felt position
 const Fixed64 DISCONTENT_CAPACITY = milli(300); // share of the land's capacity a wholly dissatisfied people fills
 
@@ -253,12 +252,9 @@ void population_and_economy(const Pass& p) {
         fertility += FERTILITY_ADJUST * (ONE - t - fertility);
         const Fixed64 birth = MIN_BIRTH + (MAX_BIRTH - MIN_BIRTH) * fertility;
         const Fixed64 natural_death = DEATH_BASE + CHILD_MORTALITY * birth;
-        // beyond what the land carries, famine and disease cull the surplus
-        const Fixed64 overshoot_death = OVERSHOOT_MORTALITY * std::max(ZERO, rel - ONE);
-        eco.commoners[loc] = to_heads(Fixed64(pop) + (birth - natural_death - overshoot_death) * pop, p.key(rota::core::STREAM_POPULATION, loc), 0);
+        eco.commoners[loc] = to_heads(Fixed64(pop) + (birth - natural_death) * pop, p.key(rota::core::STREAM_POPULATION, loc), 0);
         cy.record.births += birth * pop;
         cy.record.natural_deaths += natural_death * pop;
-        cy.record.overshoot_deaths += overshoot_death * pop;
 
         const std::int64_t workers = workers_at(eco, loc);
         const std::int64_t elites = eco.elites[loc];

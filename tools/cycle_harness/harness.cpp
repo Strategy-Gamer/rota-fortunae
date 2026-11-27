@@ -115,7 +115,7 @@ int main(int argc, char** argv) {
     }
     std::fprintf(out, "year,country,generation,locations,occupied,capacity,commoners,elites,phase,"
         "legitimacy,treasury,war_weariness,in_lull,revolt,revolt_new,civil_war,civil_war_new,coup,coup_new,"
-        "births,natural_deaths,overshoot_deaths,crisis_deaths,war_deaths,"
+        "births,natural_deaths,crisis_deaths,war_deaths,"
         "elite_births,promotions,demotions,attrition,elite_crisis_deaths,elite_war_deaths,"
         "wage,immiseration,security,commoner_satisfaction,commoner_satisfaction_target,elite_satisfaction,elite_satisfaction_target,"
         "radicalism,radicalism_target,effective_radicalism,violence,overproduction,felt_overproduction,army_shortfall\n");
@@ -134,14 +134,14 @@ int main(int argc, char** argv) {
             const auto crisis = [&](int t) { return cr[t].active; };
             const auto fresh = [&](int t) { return cr[t].active && cr[t].age == 0 ? 1 : 0; };
             std::fprintf(out, "%u,%u,%u,%u,%u,%llu,%llu,%llu,%u,%.6f,%.3f,%.4f,%u,%u,%d,%u,%d,%u,%d,"
-                "%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,"
+                "%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,"
                 "%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f\n",
                 w.calendar.get_year(), c, s.generation, s.location_count, s.occupied,
                 static_cast<unsigned long long>(s.capacity),
                 static_cast<unsigned long long>(s.population - s.elites), static_cast<unsigned long long>(s.elites),
                 s.phase, d(state.legitimacy[c]), d(state.treasury[c]), d(state.war_weariness[c]), state.in_lull[c],
                 crisis(0), fresh(0), crisis(1), fresh(1), crisis(2), fresh(2),
-                d(r.births), d(r.natural_deaths), d(r.overshoot_deaths), d(r.crisis_deaths), d(r.war_deaths),
+                d(r.births), d(r.natural_deaths), d(r.crisis_deaths), d(r.war_deaths),
                 d(r.elite_births), d(r.promotions), d(r.demotions), d(r.attrition), d(r.elite_crisis_deaths), d(r.elite_war_deaths),
                 d(r.wage), d(r.immiseration), d(r.security), d(r.commoner_satisfaction), d(r.commoner_satisfaction_target),
                 d(r.elite_satisfaction), d(r.elite_satisfaction_target), d(r.radicalism), d(r.radicalism_target),

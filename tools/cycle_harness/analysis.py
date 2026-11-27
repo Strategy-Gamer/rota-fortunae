@@ -7,7 +7,7 @@ from pathlib import Path
 PHASES = ('prosperity', 'strain', 'fracture')
 PROSPERITY, STRAIN, FRACTURE = 0, 1, 2
 CRISES = ('revolt', 'civil_war', 'coup')
-COMMONER_FLOWS = (('births', 1), ('natural_deaths', -1), ('overshoot_deaths', -1), ('crisis_deaths', -1), ('war_deaths', -1))
+COMMONER_FLOWS = (('births', 1), ('natural_deaths', -1), ('crisis_deaths', -1), ('war_deaths', -1))
 ELITE_FLOWS = (('elite_births', 1), ('promotions', 1), ('demotions', -1), ('attrition', -1),
                ('elite_crisis_deaths', -1), ('elite_war_deaths', -1))
 INTS = {'year', 'country', 'generation', 'locations', 'occupied', 'phase', 'in_lull',
