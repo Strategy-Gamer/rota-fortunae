@@ -483,6 +483,7 @@ Dictionary SimWorld::get_location_summary(int location_id) const {
     d["population"]           = (int64_t)s.population;
     d["commoners"]            = (int64_t)s.commoners;
     d["elites"]               = (int64_t)s.elites;
+    d["capacity"]             = (int64_t)s.capacity;
     d["wealth"]               = s.wealth.to_double();
     d["wealth_per_capita"]    = s.wealth_per_capita.to_double();
     d["population_density"]   = s.population_density.to_double();
@@ -507,6 +508,7 @@ Dictionary SimWorld::country_summary_to_dictionary(int country_id, const rota::q
     d["rebels_against"]       = s.rebels_against;
     d["population"]           = (int64_t)s.population;
     d["elites"]               = (int64_t)s.elites;
+    d["capacity"]             = (int64_t)s.capacity;
     d["wealth"]               = s.wealth.to_double();
     d["wealth_per_capita"]    = s.wealth_per_capita.to_double();
     d["phase"]                = (int64_t)s.phase;

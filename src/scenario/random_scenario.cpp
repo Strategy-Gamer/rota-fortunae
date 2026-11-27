@@ -30,14 +30,12 @@ void generate_random_scenario(
 
     // Each country starts at its own point of the growth phase, so cycles don't march in step
     std::vector<rota::countries::CountryID> countries;
-    std::vector<std::uint32_t> start_commoners;
+    std::vector<std::int64_t> start_per_million; // commoners per million heads of capacity
     for (std::uint32_t i = 0; i < country_count; i++) {
         const std::uint32_t color = static_cast<std::uint32_t>(rng.next()) & 0xFFFFFFU;
         countries.push_back(rota::countries::create_country(
             w, "Country " + std::to_string(i + 1), color, w.calendar.get_year()));
-        const std::int64_t per_million = 400'000 + rng.below(500'001);
-        start_commoners.push_back(static_cast<std::uint32_t>(
-            rota::economy::LOCATION_CAPACITY * per_million / 1'000'000));
+        start_per_million.push_back(400'000 + rng.below(500'001));
     }
 
     // Every country grows from its capital over land one ring at a time, so territories are
@@ -63,7 +61,8 @@ void generate_random_scenario(
 
     for (const rota::map::LocationID loc : queue) {
         rota::countries::set_location_owner(w, loc, countries[claim[loc]]);
-        w.location_economy.commoners[loc] = start_commoners[claim[loc]];
+        w.location_economy.commoners[loc] = static_cast<std::uint32_t>(
+            w.location_economy.capacity[loc] * start_per_million[claim[loc]] / 1'000'000);
     }
     for (std::uint32_t i = 0; i < country_count; i++) {
         w.countries.capital[countries[i]] = capitals[i];

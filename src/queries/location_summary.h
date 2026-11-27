@@ -12,6 +12,7 @@ struct LocationSummary {
     std::uint64_t   population;         // commoners + elites
     std::uint64_t   commoners;
     std::uint64_t   elites;
+    std::uint64_t   capacity;           // people its land supports
     Fixed64         wealth;
     Fixed64         wealth_per_capita;  // Derived
     Fixed64         population_density; // commoners per head of carrying capacity

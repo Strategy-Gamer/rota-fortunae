@@ -21,7 +21,6 @@ namespace rc = rota::countries;
 
 const Fixed64 ZERO;
 const Fixed64 ONE(1);
-const Fixed64 CAPACITY(LOCATION_CAPACITY);
 const Fixed64 FULL_PRESSURE = milli(1250); // the gauge's 1, in commoners per head of capacity: above 0.8 the land is overfull
 
 // Population & vital rates
@@ -124,6 +123,7 @@ const CrisisConfig CRISIS_CFG[rc::CRISIS_COUNT] = {
 struct CountryYear {
     // Summed by the population/economy pass; means are weighted by commoners
     std::int64_t locations = 0;
+    std::int64_t capacity = 0;
     std::int64_t workers = 0;
     std::int64_t elites = 0;
     Fixed64 reached_elites; // elites weighted by control, who compete for the state's positions
@@ -176,8 +176,8 @@ std::uint32_t to_heads(Fixed64 people, std::uint64_t key, std::int64_t floor) {
         whole, floor, std::numeric_limits<std::uint32_t>::max()));
 }
 
-// Heads per unit of a location's carrying capacity
-Fixed64 per_capacity(std::int64_t n) { return Fixed64::from_raw(n * Fixed64::SCALE / LOCATION_CAPACITY); }
+// Heads per head of a location's capacity
+Fixed64 per_capacity(std::int64_t n, std::int64_t capacity) { return Fixed64::from_raw(n * Fixed64::SCALE / capacity); }
 
 // The two curves the location passes evaluate every year, sampled once
 const rota::fmath::SampledCurve& wage_share_curve() {
@@ -239,9 +239,10 @@ void population_and_economy(const Pass& p) {
         // insecurity and dissatisfaction shrink the effective cap, mild dissatisfaction hardly at all; fertility falls
         // by smoothstep as density nears it, and follows a generation late
         const std::int64_t pop = eco.commoners[loc];
+        const std::int64_t capacity = eco.capacity[loc];
         const Fixed64 discontent = ONE - cyc.commoner_satisfaction[loc];
         const Fixed64 carried = security * (DISCONTENT_CAPACITY + (ONE - DISCONTENT_CAPACITY) * (ONE - discontent * discontent));
-        const Fixed64 rel = per_capacity(pop) / carried;
+        const Fixed64 rel = per_capacity(pop, capacity) / carried;
         Fixed64 t = std::clamp(rel - milli(500), ZERO, ONE);
         t = t * t * (Fixed64(3) - t * 2);
         Fixed64& fertility = cyc.fertility[loc];
@@ -258,8 +259,8 @@ void population_and_economy(const Pass& p) {
         const std::int64_t workers = workers_at(eco, loc);
         const std::int64_t elites = eco.elites[loc];
 
-        const Fixed64 wage_share = wage_share_at(per_capacity(workers)); // jobs = capacity
-        const Fixed64 output = get_output(LOCATION_CAPACITY, workers);
+        const Fixed64 wage_share = wage_share_at(per_capacity(workers, capacity)); // jobs = capacity
+        const Fixed64 output = get_output(capacity, workers);
         const Fixed64 wealth = output * CULTIVATED_WEALTH;
         eco.commoner_wealth[loc] = wealth * wage_share;
         eco.elite_wealth[loc] = wealth - eco.commoner_wealth[loc];
@@ -274,6 +275,7 @@ void population_and_economy(const Pass& p) {
         const Fixed64 immiseration = std::min(ONE, wage_penalty + food_penalty);
 
         cy.locations += 1;
+        cy.capacity += capacity;
         cy.workers += workers;
         cy.elites += elites;
         cy.reached_elites += p.control[loc] * elites;
@@ -291,7 +293,7 @@ void fiscal_and_legitimacy(rota::core::World& w, CountryID c, CountryYear& cy) {
     auto& state = w.country_state;
 
     // tax the wealth base (collection gated by radicalism), fund army then patronage, run a capped treasury
-    const Fixed64 capacity = CAPACITY * cy.locations;
+    const Fixed64 capacity(cy.capacity);
     const Fixed64 revenue = TAX_RATE * cy.collected;
 
     cy.baseline_positions = CULTIVATED_ELITE_OPPS * capacity + MIL_POSITIONS * capacity;
@@ -567,8 +569,8 @@ void phase(rota::core::World& w, CountryID c, const CountryYear& cy) {
 
 }
 
-Fixed64 local_elite_positions(const rota::core::World&, LocationID) {
-    return CULTIVATED_ELITE_OPPS * CAPACITY;
+Fixed64 local_elite_positions(const rota::core::World& world, LocationID loc) {
+    return CULTIVATED_ELITE_OPPS * static_cast<std::int64_t>(world.location_economy.capacity[loc]);
 }
 
 Fixed64 elite_positions(const rota::core::World& world, LocationID loc, Fixed64 control, Fixed64 reached_country_elites) {

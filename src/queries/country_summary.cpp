@@ -27,6 +27,7 @@ std::vector<CountrySummary> build_country_summaries(const rota::core::World& wor
         const std::int64_t commoners = eco.commoners[loc];
         t.commoners        += eco.commoners[loc];
         s.elites           += eco.elites[loc];
+        s.capacity         += eco.capacity[loc];
         s.wealth           += eco.commoner_wealth[loc] + eco.elite_wealth[loc];
         t.positions        += rota::economy::local_elite_positions(world, loc);
         t.commoner_satisfaction += cyc.commoner_satisfaction[loc] * commoners;
@@ -65,7 +66,7 @@ std::vector<CountrySummary> build_country_summaries(const rota::core::World& wor
         s.elite_satisfaction    = t.elite_satisfaction / static_cast<std::int64_t>(s.elites);
         s.effective_radicalism  = t.effective_radicalism / commoners;
         s.population_pressure = rota::economy::population_pressure_gauge(
-            commoners, rota::economy::LOCATION_CAPACITY * s.location_count);
+            commoners, static_cast<std::int64_t>(s.capacity));
         s.elite_overproduction = rota::economy::elite_overproduction_gauge(
             static_cast<std::int64_t>(s.elites) / (t.positions + state.state_positions[c]));
     }

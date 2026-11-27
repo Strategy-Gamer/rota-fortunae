@@ -81,7 +81,7 @@ RGBImageData create_map_mode_palette(const rota::core::World& world, MapMode mod
 
         case MapMode::PopulationPressure: // density, not the P gauge: the gauge is too gentle to see on a map
             return paint(world, [&](LocationID loc, CountryID) {
-                const Fixed64 density = Fixed64(static_cast<std::int64_t>(eco.commoners[loc])) / rota::economy::LOCATION_CAPACITY;
+                const Fixed64 density = Fixed64(static_cast<std::int64_t>(eco.commoners[loc])) / static_cast<std::int64_t>(eco.capacity[loc]);
                 return ramp((density - milli(600)) * 5 / 2, pack_rgb(0xE8, 0xF0, 0xFA), pack_rgb(0x14, 0x3C, 0x96));
             });
 

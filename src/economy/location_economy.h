@@ -10,14 +10,15 @@ namespace rota::core { class Hasher; }
 
 namespace rota::economy {
 
-// People that one location's land supports, until terrain gives locations their own
-inline constexpr std::int64_t LOCATION_CAPACITY = 100'000;
+// People a location's land supports until something gives it its own
+inline constexpr std::uint32_t DEFAULT_CAPACITY = 100'000;
 
 struct LocationEconomy {
     // Indexed by LocationID.
 
     void initialize(std::uint32_t location_count);
 
+    std::vector<std::uint32_t> capacity; // people its land supports, as jobs and as the population's limit
     std::vector<std::uint32_t> commoners;
     std::vector<std::uint32_t> elites;
     std::vector<Fixed64> commoner_wealth; // this year's income, not an accumulating stock

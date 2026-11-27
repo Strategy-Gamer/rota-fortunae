@@ -36,7 +36,7 @@ MAP_PNG = REPO / 'project/MapData/provinces.png'
 LOCATIONS = REPO / 'project/MapData/provinces_locations.txt'
 STRAITS = REPO / 'project/MapData/provinces_straits.txt'
 KNOBBED = ['src/economy/secular_cycle_system.cpp', 'src/countries/civil_war.cpp']
-NOT_KNOBS = {'ZERO', 'ONE', 'CAPACITY'}
+NOT_KNOBS = {'ZERO', 'ONE'}
 
 
 def knobbed_source(text, path):

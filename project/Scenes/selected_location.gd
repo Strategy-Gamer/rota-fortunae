@@ -21,7 +21,7 @@ func update_ui(selected_location: int):
 	$PanelContainer/VBoxContainer/Radicalism.text = "Radicalism: %.2f after suppression" % summary.effective_radicalism
 	$"PanelContainer/VBoxContainer/Wealth per Capita".text = "Wealth per head: %.3f" % summary.wealth_per_capita
 	$PanelContainer/VBoxContainer/Elites.text = "Elites: %d for %.0f positions (E %.2f)" % [summary.elites, summary.elite_positions, summary.elite_overproduction]
-	$PanelContainer/VBoxContainer/Density.text = "Density: %.2f of carrying capacity" % summary.population_density
+	$PanelContainer/VBoxContainer/Density.text = "Density: %.2f of a capacity of %d" % [summary.population_density, summary.capacity]
 	$PanelContainer/VBoxContainer/Security.text = "Security: %.2f" % summary.security
 	$PanelContainer/VBoxContainer/Control.text = "Control: %.2f" % summary.control
 

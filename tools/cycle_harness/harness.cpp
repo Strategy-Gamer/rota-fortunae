@@ -94,9 +94,10 @@ int main(int argc, char** argv) {
         rota::map::MapBuilder::parse_location_data(slurp(argv[4]), slurp(argv[5])));
     rota::scenario::generate_random_scenario(w, std::stoull(argv[6]), std::stoul(argv[7]));
     if (controls.set_start) {
-        const auto commoners = static_cast<std::uint32_t>((controls.start * rota::economy::LOCATION_CAPACITY).raw_value() / rota::Fixed64::SCALE);
+        auto& eco = w.location_economy;
         for (rota::map::LocationID loc = 0; loc < w.geography.location_count(); loc++) {
-            if (w.countries.is_valid(w.location_politics.owner_country[loc])) w.location_economy.commoners[loc] = commoners;
+            if (!w.countries.is_valid(w.location_politics.owner_country[loc])) continue;
+            eco.commoners[loc] = static_cast<std::uint32_t>((controls.start * static_cast<std::int64_t>(eco.capacity[loc])).raw_value() / rota::Fixed64::SCALE);
         }
     }
     apply_controls(controls, w);
@@ -130,7 +131,7 @@ int main(int argc, char** argv) {
                 "%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,%.2f,"
                 "%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f,%.5f\n",
                 w.calendar.get_year(), c, s.generation, s.location_count, s.occupied,
-                static_cast<unsigned long long>(s.location_count) * rota::economy::LOCATION_CAPACITY,
+                static_cast<unsigned long long>(s.capacity),
                 static_cast<unsigned long long>(s.population - s.elites), static_cast<unsigned long long>(s.elites),
                 s.phase, d(state.legitimacy[c]), d(state.treasury[c]), d(state.war_weariness[c]), state.in_lull[c],
                 crisis(0), fresh(0), crisis(1), fresh(1), crisis(2), fresh(2),

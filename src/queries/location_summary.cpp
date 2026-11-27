@@ -27,7 +27,8 @@ LocationSummary build_location_summary(const rota::core::World& world, rota::map
     s.wealth_per_capita  = s.population > 0
         ? s.wealth / static_cast<int64_t>(s.population)
         : Fixed64();
-    s.population_density = Fixed64(static_cast<std::int64_t>(s.commoners)) / rota::economy::LOCATION_CAPACITY;
+    s.capacity           = eco.capacity[loc];
+    s.population_density = Fixed64(static_cast<std::int64_t>(s.commoners)) / static_cast<std::int64_t>(s.capacity);
     s.elite_positions    = rota::economy::elite_positions(world, loc, control[loc], reached_elites);
     s.elite_overproduction = rota::economy::elite_overproduction_gauge(
         static_cast<std::int64_t>(s.elites) / s.elite_positions);

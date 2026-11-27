@@ -441,10 +441,12 @@ treasury never breaks over the frontier it doesn't bill. How strongly radicalism
 against cycle length (above). After retuning satisfaction, radicalism or legitimacy, check the
 harness's long fractures with the crises on and off, and the peaceful run.
 
-**Units.** Population is in **whole people** at `LOCATION_CAPACITY` per location (FinalSim's cap of
-1). Absolute parameters (`army_base`, `mil_positions`) scale per unit of capacity, so apart from
-control a 100-location country behaves like a 1-location one; control is the one deliberate
-penalty on size. Fractional changes in
+**Units.** Population is in **whole people**. Each location has its own capacity, the people its
+land supports (FinalSim's cap of 1), which is both its jobs and its population's limit; every
+location starts at `DEFAULT_CAPACITY` until something gives it its own. Absolute parameters
+(`army_base`, `mil_positions`, elite positions) scale per head of capacity, so apart from control a
+100-location country behaves like a 1-location one; control is the one deliberate penalty on
+size. Fractional changes in
 commoners and elites become whole people by **keyed stochastic rounding**: the fraction is added as
 one person with that probability, drawn from `keyed_hash(seed, year, stream, id)`. So there is no
 stored remainder and no RNG stream whose call order matters. Crisis rolls use the same keyed draws.

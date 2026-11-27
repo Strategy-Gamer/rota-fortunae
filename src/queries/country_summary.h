@@ -16,6 +16,7 @@ struct CountrySummary {
     std::int32_t    rebels_against;     // -1 unless this is a rebel side
     std::uint64_t   population;         // commoners + elites
     std::uint64_t   elites;
+    std::uint64_t   capacity;           // people its land supports
     Fixed64         wealth;
     Fixed64         wealth_per_capita;  // Derived
 
