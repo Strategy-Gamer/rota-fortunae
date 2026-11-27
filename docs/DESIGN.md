@@ -165,10 +165,9 @@ the yearly flows in and out of commoners and elites by phase. It builds generate
 and civil-war sources in which every `const Fixed64` reads an environment override, so any constant
 can be swept without a rebuild or a game change. `--hold-radicalism`, `--start-density` and
 `--growth` are test interventions (a grievance shock or post-war exhaustion; a stressed start;
-capacity growing as a stand-in for economic growth). With none of them and nothing
-overridden, its final state hash equals the playtest runner's for the same seed and years: check
-that after changing either. The
-flows come from the **cycle ledger** (`World::cycle_ledger`), which the cycle rewrites every year
+capacity growing as a stand-in for economic growth). With none of them and nothing overridden, its
+final state hash equals the playtest runner's for the same seed and years: check that after
+changing either. The flows come from the **cycle ledger** (`World::cycle_ledger`), which the cycle rewrites every year
 and nothing in the sim reads, so it is derived and unhashed; it doubles as the hook for showing
 those flows in game.
 
@@ -424,7 +423,8 @@ Each war year:
 
 **Cycle shape** (measure it with the cycle harness, §5). The target is the full cycle of about 150
 years that England, France and Rome show, driven by population and elites together; one near 80
-years would mean elites alone drive it. It runs about 165 today.
+years would mean elites alone drive it. It runs about 160 today, and the elites swing three to four
+times over it.
 - **Strain lasts decades.** Momentum carries the population to about the land's capacity after the
   wage turns, while the elites multiply severalfold; elite discontent turns radical only when it
   outgrows the tolerance.
@@ -540,6 +540,9 @@ migration) · partial-map re-evaluation on territory change.
 - **Population can't overshoot the land until goods exist.** It peaks about at capacity (the
   pressure gauge's 0.8). A real Malthusian overshoot needs food to run out, and famine, not merely
   being overfull, should be what breaks commoner satisfaction then.
+- **The phase can miss a prosperity.** When a fracture leaves the elites just above the exit's
+  overproduction (radicalism already gone, the land refilling), the read-out stays in fracture
+  through the next boom, so a few countries show fractures of 200 years that are two cycles.
 - **Elite satisfaction reads only felt overproduction**, not elite income per head, so the squeeze
   on elites late in a fracture shows in demotion rather than in their discontent.
 - **The cycle ledger isn't shown in game.** It is the hook for a panel of a country's flows.

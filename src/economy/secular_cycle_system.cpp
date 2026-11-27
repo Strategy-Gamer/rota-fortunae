@@ -55,7 +55,7 @@ const Fixed64 K_ABSORB = milli(2000);
 const Fixed64 TREASURY_YEARS = milli(5000);
 
 // Legitimacy
-const Fixed64 LEGIT_SPEED = milli(50);
+const Fixed64 LEGIT_SPEED = milli(100);
 const Fixed64 LEGIT_FLOOR = ZERO;
 const Fixed64 LEGIT_INSECURITY = milli(150);
 const Fixed64 LEGIT_RADICALISM = milli(600);
@@ -91,7 +91,7 @@ const Fixed64 OVERPROD_EXIT = milli(1200);
 
 // Elite ledger
 const Fixed64 R_E_PREMIUM = milli(20);
-const Fixed64 MU_0 = milli(2);
+const Fixed64 MU_0 = Fixed64::from_raw(500);
 const Fixed64 MU_DOWN = milli(50);
 const Fixed64 K_ATTRITION = milli(10);
 
