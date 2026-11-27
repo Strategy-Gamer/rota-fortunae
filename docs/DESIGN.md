@@ -387,6 +387,8 @@ conditions start to improve.
 - **Fertility follows a generation late**, standing in for the age structure: the parents of this
   year's children were born a generation ago. That momentum carries growth past where conditions
   turn, and keeps births low for decades after a crisis, which makes the boom and the crash.
+- **Dissatisfied elites raise fewer heirs**, as commoners do (on top of FinalSim's scaling of elite
+  births by legitimacy).
 - **Commoners must see the turmoil**, not just their wage. With wage alone, a country without
   violence became a regulator: population settled at the wage where commoners turn dissatisfied,
   elites stalled there, and nothing ever recovered. Radicalism is mostly elite discontent, and it
@@ -541,8 +543,10 @@ migration) · partial-map re-evaluation on territory change.
   pressure gauge's 0.8). A real Malthusian overshoot needs food to run out, and famine, not merely
   being overfull, should be what breaks commoner satisfaction then.
 - **The phase can miss a prosperity.** When a fracture leaves the elites just above the exit's
-  overproduction (radicalism already gone, the land refilling), the read-out stays in fracture
-  through the next boom, so a few countries show fractures of 200 years that are two cycles.
+  overproduction, the read-out stays in fracture through the next boom, so some countries show
+  fractures of 200 years or more that are two or more cycles. Elite fertility made this commoner:
+  in mid-size countries it turns some full cycles into shallower ones about a century apart, whose
+  elites never fall below the exit.
 - **Elite satisfaction reads only felt overproduction**, not elite income per head, so the squeeze
   on elites late in a fracture shows in demotion rather than in their discontent.
 - **The cycle ledger isn't shown in game.** It is the hook for a panel of a country's flows.

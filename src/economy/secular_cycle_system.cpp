@@ -529,7 +529,9 @@ void crisis_effects_and_elites(const Pass& p, const rc::WarYear& war) {
         cy.record.elite_war_deaths += cy.elite_keep * (ONE - war.elite_keep[loc]) * elites_before;
 
         // build by reproduction + upward mobility, clear by culling + downward mobility
-        const Fixed64 e_biological = elites * legitimacy[c] * R_E_PREMIUM;
+        // dissatisfied elites raise fewer heirs, as commoners do, mildly dissatisfied ones hardly fewer
+        const Fixed64 elite_discontent = ONE - cyc.elite_satisfaction[loc];
+        const Fixed64 e_biological = elites * legitimacy[c] * R_E_PREMIUM * (ONE - elite_discontent * elite_discontent);
 
         Fixed64 e_mobility;
         const Fixed64 misery = (W0_TARGET - p.wage[loc]) / p.wage[loc];
