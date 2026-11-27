@@ -55,7 +55,7 @@ const Fixed64 K_ABSORB = milli(2000);
 const Fixed64 TREASURY_YEARS = milli(5000);
 
 // Legitimacy
-const Fixed64 LEGIT_SPEED = milli(100);
+const Fixed64 LEGIT_SPEED = milli(150);
 const Fixed64 LEGIT_FLOOR = ZERO;
 const Fixed64 LEGIT_INSECURITY = milli(150);
 const Fixed64 LEGIT_RADICALISM = milli(600);
@@ -70,8 +70,8 @@ const Fixed64 SATISFACTION_FALL = milli(100);
 const Fixed64 SATISFACTION_RISE = milli(30);
 const Fixed64 SATISFACTION_STICK = milli(500); // no recovery until the target clears this
 const Fixed64 SATISFIED_WAGE = milli(600); // commoners are wholly satisfied at this relative wage or above
-const Fixed64 MISERABLE_WAGE = milli(350); // and wholly dissatisfied at this or below
-const Fixed64 TURMOIL_DISCONTENT = milli(800); // commoners lose faith in a society growing radical, per unit of radicalism
+const Fixed64 MISERABLE_WAGE = milli(120); // and wholly dissatisfied at this or below
+const Fixed64 TURMOIL_DISCONTENT = milli(500); // commoners lose faith in a society growing radical, per unit of radicalism
 const Fixed64 ELITE_DISCONTENT = milli(1000); // per elite over each felt position
 const Fixed64 DISCONTENT_CAPACITY = milli(300); // share of the land's capacity a wholly dissatisfied people fills
 
@@ -92,8 +92,8 @@ const Fixed64 OVERPROD_EXIT = milli(1200);
 
 // Elite ledger
 const Fixed64 R_E_PREMIUM = milli(20);
-const Fixed64 MU_0 = Fixed64::from_raw(500);
-const Fixed64 MU_DOWN = milli(50);
+const Fixed64 MU_0 = Fixed64::from_raw(250);
+const Fixed64 MU_DOWN = milli(40);
 const Fixed64 K_ATTRITION = milli(10);
 
 // Crises
@@ -364,8 +364,8 @@ void satisfaction(const Pass& p) {
         const std::int64_t workers = workers_at(eco, loc);
         const std::int64_t elites = eco.elites[loc];
         const Fixed64 felt = elites / (local_elite_positions(p.w, loc) + cy.state_share * p.control[loc] * elites); // local felt overproduction
-        const Fixed64 commoner_target = std::clamp((p.wage[loc] - MISERABLE_WAGE) / (SATISFIED_WAGE - MISERABLE_WAGE)
-            - TURMOIL_DISCONTENT * p.w.country_state.radicalism[c], ZERO, ONE);
+        const Fixed64 wage_content = std::clamp((p.wage[loc] - MISERABLE_WAGE) / (SATISFIED_WAGE - MISERABLE_WAGE), ZERO, ONE); // a high wage doesn't buy off turmoil
+        const Fixed64 commoner_target = std::max(ZERO, wage_content - TURMOIL_DISCONTENT * p.w.country_state.radicalism[c]);
         const Fixed64 elite_target = std::clamp(ONE - ELITE_DISCONTENT * (felt - ONE), ZERO, ONE);
         cyc.commoner_satisfaction[loc] = approach(cyc.commoner_satisfaction[loc], commoner_target);
         cyc.elite_satisfaction[loc] = approach(cyc.elite_satisfaction[loc], elite_target);

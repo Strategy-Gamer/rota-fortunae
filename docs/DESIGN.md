@@ -394,7 +394,14 @@ conditions start to improve.
   elites stalled there, and nothing ever recovered. Radicalism is mostly elite discontent, and it
   and legitimacy feed each other, so it carries the elite crisis's memory into births. It is a
   vicious circle by design: a radical society discontents its people, who radicalize it further.
-  The cost is that a passing grievance dents commoner satisfaction while it lasts.
+  The cost is that a passing grievance dents commoner satisfaction while it lasts. A high wage
+  doesn't buy the turmoil off, so commoners stay discontented through a fracture even as their
+  wages recover.
+- **Wage misery alone leaves commoners about half content at the population's peak**, so the
+  population grows on through strain and turns down only as the turmoil comes. Wholly miserable
+  from the wage alone, it peaked early in strain and was already falling when fracture began.
+  Letting the effective cap ignore wage misery instead (density already shows it) left nothing to
+  stop the population short of well past capacity.
 - **Elites move radicalism far more than commoners**, since elites carry political and military
   power; discontent below a tolerance stays in ordinary politics, and legitimacy holds a share of
   the rest back. Only radicalism past the violence threshold (riots, clashes, low-level insurgency)
@@ -412,7 +419,7 @@ conditions start to improve.
 - **Radicalism is national**, a placeholder for factions' own. Each location gets its share by its
   discontent relative to the country's, which is the rule factions' local support will replace.
 - **Test the peaceful path** with the crises off and `VIOLENCE_ON` near 1 in the harness: cycles
-  there are longer and shallower (about 180 years, population down a tenth) but must still clear
+  there are longer and shallower (about 230 years, population down a third) but must still clear
   the elites.
 
 **Civil war on the map** ([`civil_war.cpp`](../src/countries/civil_war.cpp)). The civil-war crisis
@@ -432,12 +439,12 @@ Each war year:
 
 **Cycle shape** (measure it with the cycle harness, §5). The target is the full cycle of about 150
 years that England, France and Rome show, driven by population and elites together; one near 80
-years would mean elites alone drive it. It runs about 155 today, and the elites swing three to four
+years would mean elites alone drive it. It runs about 190 today, and the elites swing about four
 times over it.
-- **Strain lasts decades.** Momentum carries the population to about the land's capacity after the
-  wage turns, while the elites multiply severalfold; elite discontent turns radical only when it
-  outgrows the tolerance.
-- **A fracture runs for generations.** Population falls by a fifth to a quarter over it and the elites
+- **Strain lasts decades.** The population grows on, slowing, to a peak late in strain a little past
+  the land's capacity, while the elites multiply severalfold; elite discontent turns radical only
+  when it outgrows the tolerance.
+- **A fracture runs for generations.** Population falls by nearly half over it and the elites
   by about three quarters, mostly by demotion. Crises are occasional: room for a few civil wars,
   not a revolt every few years. Late in it the commoners' wages are high again, and what violence is left
   is the remaining elites' (Turchin's squeeze).
@@ -545,10 +552,8 @@ migration) · partial-map re-evaluation on territory change.
   army's reach, can hold radicalism about the fracture line without violence for a century or more
   before it collapses (one or two in a hundred). Huge low-control empires no longer stall (§10's
   trap), but recheck both after breakaways.
-- **A fracture's population loss is front-loaded with the crises on** (over half of it in the
-  first 25 years, against about a quarter with them off): the violence comes in a burst.
-- **Population can't overshoot the land until goods exist.** It peaks about at capacity (the
-  pressure gauge's 0.8). A real Malthusian overshoot needs food to run out, and famine, not merely
+- **Population can't overshoot the land far until goods exist.** It peaks a little past capacity
+  (the pressure gauge's 0.8 is capacity). A real Malthusian overshoot needs food to run out, and famine, not merely
   being overfull, should be what breaks commoner satisfaction then.
 - **Elite satisfaction reads only felt overproduction**, not elite income per head, so the squeeze
   on elites late in a fracture shows in demotion rather than in their discontent.
