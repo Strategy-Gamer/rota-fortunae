@@ -1,6 +1,7 @@
 """Secular-cycle tuning harness: runs the sim natively over the real map, many seeds at once.
 
-  py tools/cycle_harness/cycle.py run NAME [--seeds 4] [--years 600] [--countries 12] [--no-crises] [KNOB=VALUE ...]
+  py tools/cycle_harness/cycle.py run NAME [--seeds 4] [--years 600] [--countries 12] [--no-crises]
+                                    [--hold-radicalism X@A-B] [KNOB=VALUE ...]
   py tools/cycle_harness/cycle.py summary NAME            full report for one run
   py tools/cycle_harness/cycle.py compare NAME [NAME ...] one line per run
   py tools/cycle_harness/cycle.py trace NAME [--seed 0] [--country 0] [--start 1] [--end 9999] [--every 1]
@@ -11,6 +12,9 @@ Every `const Fixed64` in the cycle and civil-war sources is a knob under its own
 crisis's row of CRISIS_CFG is CRISIS_<TYPE>_BASE, _MIN_YEARS, _MAX_YEARS and _COOLDOWN. Values are
 decimals in the constant's own units. Knobs exist only in the harness build; the game is untouched.
 The build regenerates itself whenever a source changes. Runs land in tools/cycle_harness/runs/.
+
+--hold-radicalism X@A-B is a test intervention: every country's radicalism is set to X at the start of
+each year from A to B.
 """
 import argparse
 import os
@@ -122,9 +126,10 @@ def cmd_run(args):
     if out.exists():
         shutil.rmtree(out)
     out.mkdir(parents=True)
-    (out / 'knobs.txt').write_text(''.join(f'{k}={v}\n' for k, v in sorted(overrides.items())))
+    controls = [f'radicalism={args.hold_radicalism}'] if args.hold_radicalism else []
+    (out / 'knobs.txt').write_text(''.join(f'{k}={v}\n' for k, v in sorted(overrides.items())) + ''.join(f'{c}\n' for c in controls))
     procs = [subprocess.Popen([str(EXE), str(rgb), width, height, str(LOCATIONS), str(STRAITS), str(seed),
-                               str(args.countries), str(args.years), str(out / f's{seed}.csv')],
+                               str(args.countries), str(args.years), str(out / f's{seed}.csv'), *controls],
                               env=env, stdout=subprocess.PIPE, text=True)
              for seed in range(args.seeds)]
     hashes = []
@@ -146,6 +151,7 @@ def main():
     run.add_argument('--years', type=int, default=600)
     run.add_argument('--countries', type=int, default=12)
     run.add_argument('--no-crises', action='store_true')
+    run.add_argument('--hold-radicalism', metavar='X@A-B')
     run.add_argument('knobs', nargs='*', metavar='KNOB=VALUE')
     summary = sub.add_parser('summary')
     summary.add_argument('name')

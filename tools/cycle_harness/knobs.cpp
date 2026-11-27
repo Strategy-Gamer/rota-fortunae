@@ -30,6 +30,8 @@ std::string decimal(std::int64_t raw) {
     std::exit(2);
 }
 
+}
+
 // Exact: digits map straight onto Fixed64's raw micro-units, so no float touches sim state
 std::int64_t parse(const char* name, const char* text) {
     const char* p = text;
@@ -49,8 +51,6 @@ std::int64_t parse(const char* name, const char* text) {
     for (; places < 6; places++) frac *= 10;
     const std::int64_t raw = whole * Fixed64::SCALE + frac;
     return negative ? -raw : raw;
-}
-
 }
 
 Fixed64 fixed(const char* name, Fixed64 value) {

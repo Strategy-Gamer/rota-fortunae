@@ -1,8 +1,11 @@
 // Native secular-cycle runner, built and driven by cycle.py.
-//   harness <map.rgb> <width> <height> <locations.txt> <straits.txt> <seed> <countries> <years> <out.csv>
+//   harness <map.rgb> <width> <height> <locations.txt> <straits.txt> <seed> <countries> <years> <out.csv> [control ...]
 //   harness --knobs
 // Writes one row per country with land per year, and prints the final state hash, which matches the
-// playtest runner's for the same seed and years while no knob is overridden.
+// playtest runner's for the same seed and years while no knob is overridden and no control is given.
+//
+// The one control is a test intervention: radicalism=X@A-B sets every country's radicalism to X at
+// the start of each year from A to B.
 
 #include "knobs.h"
 
@@ -33,6 +36,38 @@ std::string slurp(const char* path) {
 
 double d(rota::Fixed64 x) { return x.to_double(); }
 
+struct Controls {
+    bool hold_radicalism = false;
+    rota::Fixed64 radicalism;
+    std::uint32_t from = 0, to = 0;
+};
+
+Controls parse_controls(int argc, char** argv, int first) {
+    Controls c;
+    for (int i = first; i < argc; i++) {
+        const std::string arg = argv[i];
+        char x[32];
+        unsigned a, b;
+        if (std::sscanf(arg.c_str(), "radicalism=%31[0-9.]@%u-%u", x, &a, &b) == 3) {
+            c.hold_radicalism = true;
+            c.radicalism = rota::Fixed64::from_raw(knobs::parse("radicalism", x));
+            c.from = a;
+            c.to = b;
+        } else {
+            std::fprintf(stderr, "unknown control %s\n", argv[i]);
+            std::exit(2);
+        }
+    }
+    return c;
+}
+
+void apply_controls(const Controls& c, rota::core::World& w) {
+    const std::uint32_t year = w.calendar.get_year();
+    if (c.hold_radicalism && year >= c.from && year < c.to) {
+        for (auto& r : w.country_state.radicalism) r = c.radicalism;
+    }
+}
+
 }
 
 int main(int argc, char** argv) {
@@ -40,10 +75,11 @@ int main(int argc, char** argv) {
         knobs::list(stdout);
         return 0;
     }
-    if (argc != 10) {
-        std::fprintf(stderr, "usage: harness <map.rgb> <width> <height> <locations.txt> <straits.txt> <seed> <countries> <years> <out.csv>\n");
+    if (argc < 10) {
+        std::fprintf(stderr, "usage: harness <map.rgb> <width> <height> <locations.txt> <straits.txt> <seed> <countries> <years> <out.csv> [control ...]\n");
         return 2;
     }
+    const Controls controls = parse_controls(argc, argv, 10);
 
     static rota::core::World w; // too big for the stack
     const std::string rgb = slurp(argv[1]);
@@ -51,6 +87,7 @@ int main(int argc, char** argv) {
         reinterpret_cast<const std::uint8_t*>(rgb.data()), rgb.size(),
         rota::map::MapBuilder::parse_location_data(slurp(argv[4]), slurp(argv[5])));
     rota::scenario::generate_random_scenario(w, std::stoull(argv[6]), std::stoul(argv[7]));
+    apply_controls(controls, w);
 
     std::FILE* out = std::fopen(argv[9], "w");
     if (!out) {
@@ -67,6 +104,7 @@ int main(int argc, char** argv) {
     const std::uint32_t years = std::stoul(argv[8]);
     for (std::uint32_t y = 0; y < years; y++) {
         rota::time::TimeProgression::advance_years(w, 1);
+        apply_controls(controls, w);
         const auto summaries = rota::queries::build_country_summaries(w);
         const auto& state = w.country_state;
         for (rota::countries::CountryID c = 0; c < summaries.size(); c++) {

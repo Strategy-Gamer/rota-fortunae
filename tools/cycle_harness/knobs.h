@@ -16,6 +16,9 @@ using rota::Fixed64;
 Fixed64 fixed(const char* name, Fixed64 value);
 std::uint32_t whole(const char* name, std::uint32_t value);
 
+// A decimal with at most six places, exactly; exits naming NAME if it isn't one
+std::int64_t parse(const char* name, const char* text);
+
 // Every knob with its source value and the value in use
 void list(std::FILE* out);
 
