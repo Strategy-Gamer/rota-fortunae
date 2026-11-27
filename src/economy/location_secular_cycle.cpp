@@ -5,21 +5,24 @@
 namespace rota::economy {
 
 void LocationSecularCycle::initialize(std::uint32_t count) {
-    unrest.assign(count, Fixed64());
-    effective_unrest.assign(count, Fixed64());
+    commoner_satisfaction.assign(count, Fixed64(1));
+    elite_satisfaction.assign(count, Fixed64(1));
+    effective_radicalism.assign(count, Fixed64());
     security.assign(count, Fixed64(1));
 }
 
 void LocationSecularCycle::clear() {
-    unrest.clear();
-    effective_unrest.clear();
+    commoner_satisfaction.clear();
+    elite_satisfaction.clear();
+    effective_radicalism.clear();
     security.clear();
 }
 
 void LocationSecularCycle::feed_hash(rota::core::Hasher& h) const {
-    const size_t location_count = unrest.size();
-    for (size_t i = 0; i < location_count; i++) h.feed(unrest[i].raw_value());
-    for (size_t i = 0; i < location_count; i++) h.feed(effective_unrest[i].raw_value());
+    const size_t location_count = security.size();
+    for (size_t i = 0; i < location_count; i++) h.feed(commoner_satisfaction[i].raw_value());
+    for (size_t i = 0; i < location_count; i++) h.feed(elite_satisfaction[i].raw_value());
+    for (size_t i = 0; i < location_count; i++) h.feed(effective_radicalism[i].raw_value());
     for (size_t i = 0; i < location_count; i++) h.feed(security[i].raw_value());
 }
 

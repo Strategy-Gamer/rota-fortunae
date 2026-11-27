@@ -31,8 +31,9 @@ LocationSummary build_location_summary(const rota::core::World& world, rota::map
     s.elite_positions    = rota::economy::elite_positions(world, loc, control[loc], reached_elites);
     s.elite_overproduction = rota::economy::elite_overproduction_gauge(
         static_cast<std::int64_t>(s.elites) / s.elite_positions);
-    s.unrest             = cyc.unrest[loc];
-    s.effective_unrest   = cyc.effective_unrest[loc];
+    s.commoner_satisfaction = cyc.commoner_satisfaction[loc];
+    s.elite_satisfaction = cyc.elite_satisfaction[loc];
+    s.effective_radicalism = cyc.effective_radicalism[loc];
     s.security           = cyc.security[loc];
     s.control            = control[loc];
     s.owner_country      = world.countries.is_valid(owner) ? static_cast<std::int32_t>(owner) : -1;

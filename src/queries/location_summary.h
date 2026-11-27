@@ -17,8 +17,9 @@ struct LocationSummary {
     Fixed64         population_density; // commoners per head of carrying capacity
     Fixed64         elite_positions;    // its land's plus its elites' share of the owner's
     Fixed64         elite_overproduction; // the E gauge for this location
-    Fixed64         unrest;
-    Fixed64         effective_unrest;
+    Fixed64         commoner_satisfaction;
+    Fixed64         elite_satisfaction;
+    Fixed64         effective_radicalism; // its owner's radicalism as it shows here, after suppression
     Fixed64         security;
     Fixed64         control;            // its owner's, 1 at the capital
     std::int32_t    owner_country;      // -1 = unowned

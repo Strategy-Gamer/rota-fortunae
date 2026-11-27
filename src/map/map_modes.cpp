@@ -69,9 +69,14 @@ RGBImageData create_map_mode_palette(const rota::core::World& world, MapMode mod
         case MapMode::Phase:
             return paint(world, [&](LocationID, CountryID c) { return PHASE_COLORS[state.phase[c]]; });
 
-        case MapMode::Unrest:
+        case MapMode::Radicalism:
             return paint(world, [&](LocationID loc, CountryID) {
-                return ramp(world.location_secular_cycle.effective_unrest[loc], pack_rgb(0xEE, 0xE8, 0xDC), pack_rgb(0xA0, 0x10, 0x10));
+                return ramp(world.location_secular_cycle.effective_radicalism[loc], pack_rgb(0xEE, 0xE8, 0xDC), pack_rgb(0xA0, 0x10, 0x10));
+            });
+
+        case MapMode::Satisfaction: // the commoners'
+            return paint(world, [&](LocationID loc, CountryID) {
+                return ramp(world.location_secular_cycle.commoner_satisfaction[loc], pack_rgb(0x5A, 0x3C, 0x8C), pack_rgb(0xE6, 0xDC, 0x8C));
             });
 
         case MapMode::PopulationPressure: // density, not the P gauge: the gauge is too gentle to see on a map

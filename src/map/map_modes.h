@@ -13,12 +13,13 @@ enum class MapMode : std::uint8_t {
     LocationColor = 0,
     Political = 1,
     Phase = 2,
-    Unrest = 3,
+    Radicalism = 3,
     PopulationPressure = 4,
     EliteOverproduction = 5,
     Legitimacy = 6,
     Control = 7,
     War = 8,
+    Satisfaction = 9,
     Count
 };
 

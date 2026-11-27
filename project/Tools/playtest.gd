@@ -6,7 +6,7 @@ extends SceneTree
 ##
 ## godot --headless --path project -s res://Tools/playtest.gd -- seed=0 countries=8 years=300 runs=2 out=C:/tmp/run.csv
 
-const CSV_HEADER := "year,hash,country_id,name,locations,population,wealth,wealth_per_capita,elites,phase,P,E,U,U_e,legitimacy,treasury,war_weariness,crises,occupied,rebels_against"
+const CSV_HEADER := "year,hash,country_id,name,locations,population,wealth,wealth_per_capita,elites,phase,P,E,commoner_satisfaction,elite_satisfaction,radicalism,effective_radicalism,legitimacy,treasury,war_weariness,crises,occupied,rebels_against"
 
 func _init() -> void:
 	var args := _parse_args(OS.get_cmdline_user_args())
@@ -78,10 +78,10 @@ func _run(image: Image, map_path: String, seed: int, countries: int, years: int,
 		var summaries: Dictionary = world.get_country_summaries()
 		for id in world.get_country_ids():
 			var s: Dictionary = summaries[id]
-			var row := "%d,%d,%d,%s,%d,%d,%.3f,%.6f,%d,%d,%.6f,%.6f,%.6f,%.6f,%.6f,%.3f,%.6f,%d,%d,%d" % [
+			var row := "%d,%d,%d,%s,%d,%d,%.3f,%.6f,%d,%d,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.6f,%.3f,%.6f,%d,%d,%d" % [
 					world.get_year(), state_hash, id, s.name, s.location_count, s.population, s.wealth,
 					s.wealth_per_capita, s.elites, s.phase, s.population_pressure, s.elite_overproduction,
-					s.unrest, s.effective_unrest, s.legitimacy, s.treasury, s.war_weariness, s.active_crises,
+					s.commoner_satisfaction, s.elite_satisfaction, s.radicalism, s.effective_radicalism, s.legitimacy, s.treasury, s.war_weariness, s.active_crises,
 					s.occupied, s.rebels_against]
 			if file != null:
 				file.store_line(row)

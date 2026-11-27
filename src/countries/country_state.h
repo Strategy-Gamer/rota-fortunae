@@ -38,6 +38,7 @@ struct CountryState{
     // Indexed by CountryID, reset in lockstep with CountryStore slots.
 
     std::vector<Fixed64> legitimacy;
+    std::vector<Fixed64> radicalism; // willingness to act by extraordinary means; stands in for factions' own
     std::vector<Fixed64> treasury;
     std::vector<Fixed64> state_positions; // military + funded patronage, from this year's budget
     std::vector<std::uint8_t> phase;

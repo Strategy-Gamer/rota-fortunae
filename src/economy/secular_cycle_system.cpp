@@ -29,7 +29,7 @@ const Fixed64 MIN_BIRTH = milli(15);
 const Fixed64 DEATH_BASE = milli(10);
 const Fixed64 CHILD_MORTALITY = milli(400);
 const Fixed64 OVERSHOOT_MORTALITY = milli(5); // extra deaths per unit of population beyond the effective cap
-const Fixed64 SECURITY_RECOVERY = milli(5); // order returns over generations, and the land refills with it
+const Fixed64 SECURITY_RECOVERY = milli(50);
 const Fixed64 SECURITY_FLOOR = milli(500);
 
 // Economy: one elite-owned cultivated parcel fills each location's land
@@ -43,7 +43,7 @@ const Fixed64 MIN_WAGE = Fixed64::from_raw(100);
 
 // State fiscal; army base and military positions are per unit of carrying capacity
 const Fixed64 TAX_RATE = milli(250);
-const Fixed64 COLLECTION_UNREST = milli(500);
+const Fixed64 COLLECTION_RADICALISM = milli(500);
 const Fixed64 ARMY_BASE = milli(6);
 const Fixed64 K_SUPPRESS = milli(200);
 const Fixed64 SUPPRESS_REACH = milli(5000);
@@ -57,25 +57,35 @@ const Fixed64 TREASURY_YEARS = milli(5000);
 const Fixed64 LEGIT_SPEED = milli(50);
 const Fixed64 LEGIT_FLOOR = ZERO;
 const Fixed64 LEGIT_INSECURITY = milli(150);
-const Fixed64 LEGIT_UNREST = milli(300);
+const Fixed64 LEGIT_RADICALISM = milli(600);
 const Fixed64 LEGIT_UNPAID_ARMY = milli(500);
 const Fixed64 LEGIT_UNPAID_PATRON = milli(250);
 const Fixed64 LEGIT_FRAG = milli(300);
 const Fixed64 LEGIT_FRAG_TOLERANCE = milli(1500);
 
-// Unrest & phase
+// Satisfaction falls fast and recovers slowly, more slowly still while its causes persist
+const Fixed64 SATISFACTION_FALL = milli(100);
+const Fixed64 SATISFACTION_RISE = milli(30);
+const Fixed64 SATISFACTION_STICK = milli(500); // no recovery until the target clears this
+const Fixed64 SATISFIED_WAGE = milli(600); // commoners are wholly satisfied at this relative wage or above
+const Fixed64 MISERABLE_WAGE = milli(350); // and wholly dissatisfied at this or below
+const Fixed64 TURMOIL_DISCONTENT = milli(800); // commoners lose faith in a society growing radical, per unit of radicalism
+const Fixed64 ELITE_DISCONTENT = milli(500); // per elite over each felt position
+const Fixed64 DISCONTENT_CAPACITY = milli(300); // share of the land's capacity a wholly dissatisfied people fills
+
+// Radicalism
+const Fixed64 RADICALISM_RATE = milli(200);
+const Fixed64 RADICAL_COMMONERS = milli(250); // each class's weight in the country's discontent: elites carry the power
+const Fixed64 RADICAL_ELITES = milli(1000);
+const Fixed64 RADICAL_TOLERANCE = milli(400); // discontent below this stays within ordinary politics
+const Fixed64 RADICAL_LEGITIMACY = milli(800); // share of the discontent a fully legitimate state keeps from radicalism
+const Fixed64 VIOLENCE_ON = milli(400); // below this, political activity is advocacy and protest
+
+// Phase
 const Fixed64 W0_TARGET = milli(500);
-const Fixed64 UNREST_WAGE = milli(20); // outside fracture, unrest builds slowly, so strain can last decades
-const Fixed64 UNREST_FELT = milli(15);
-const Fixed64 FRACTURE_UNREST_DRIFT = milli(50); // in fracture, mobilization feeds on itself
-const Fixed64 FRACTURE_UNREST_WAGE = milli(100);
-const Fixed64 FRACTURE_UNREST_FELT = milli(200);
-const Fixed64 FRACTURE_FELT_BASE = milli(500);
-const Fixed64 FRACTURE_CALM_FELT = milli(1150); // below this felt overproduction, fracture unrest ebbs
-const Fixed64 FRACTURE_CALM = milli(100);
 const Fixed64 IBN_MARGIN = milli(2000);
-const Fixed64 U_FRACTURE_ON = milli(250);
-const Fixed64 U_EXIT_THRESH = milli(100);
+const Fixed64 FRACTURE_RADICALISM = milli(250);
+const Fixed64 EXIT_RADICALISM = milli(100);
 const Fixed64 OVERPROD_EXIT = milli(1200);
 
 // Elite ledger
@@ -88,7 +98,7 @@ const Fixed64 K_ATTRITION = milli(10);
 const Fixed64 CRISIS_FRAC_MULT = milli(1500);
 const Fixed64 CRISIS_HAZARD_CAP = milli(500);
 const Fixed64 K_FAMINE = milli(60);
-const Fixed64 REVOLT_UNREST = milli(300);
+const Fixed64 REVOLT_RADICALISM = milli(300);
 const Fixed64 CIVILWAR_CULL = milli(10);
 const Fixed64 COUP_CULL = milli(20);
 const Fixed64 COUP_LEGIT_SHOCK = milli(200);
@@ -117,8 +127,8 @@ struct CountryYear {
     Fixed64 reached_elites; // elites weighted by control, who compete for the state's positions
     Fixed64 income;
     Fixed64 collected;
-    Fixed64 unrest_burden; // last year's U_e x commoners
-    Fixed64 reached_unrest; // the same, weighted by control: what the army can be sent to put down
+    Fixed64 radicalism_burden; // last year's effective radicalism x commoners
+    Fixed64 reached_radicalism; // the same, weighted by control: what the army can be sent to put down
     Fixed64 wage_sum;
     Fixed64 immiseration_sum;
     Fixed64 security_sum;
@@ -130,14 +140,21 @@ struct CountryYear {
     Fixed64 army_shortfall;
     Fixed64 suppression_per_worker;
     Fixed64 state_share;         // state positions per reached elite: nationally competitive, but the frontier is out of reach
-    bool fracture = false;       // last year's phase, read by the unrest pass
 
-    Fixed64 effective_unrest_sum;
+    // Summed by the satisfaction pass, weighted by each class's heads
+    Fixed64 commoner_discontent_sum;
+    Fixed64 elite_discontent_sum;
+    Fixed64 commoner_target_sum;
+    Fixed64 elite_target_sum;
+    Fixed64 discontent; // both classes' mean dissatisfaction, by their political weight
+    Fixed64 radicalism_target;
+
+    Fixed64 effective_radicalism_sum;
+    Fixed64 violence_sum;
 
     // This year's crises, folded into one effect on every owned location
     Fixed64 commoner_keep = Fixed64(1);
     Fixed64 elite_keep = Fixed64(1);
-    Fixed64 unrest_gain;
 
     std::int64_t elites_after = 0;
 
@@ -167,10 +184,15 @@ const rota::fmath::SampledCurve& wage_share_curve() {
     return curve;
 }
 
-const rota::fmath::SampledCurve& attrition_curve() { // U_e^1.5
+const rota::fmath::SampledCurve& attrition_curve() { // violence^1.5
     static const rota::fmath::SampledCurve curve(ONE, 1000,
         [](Fixed64 u) { return u * rota::fmath::sqrt(u); });
     return curve;
+}
+
+// Political activity past the threshold of violence: riots, clashes, low-level insurgency
+Fixed64 violence(Fixed64 radicalism) {
+    return std::max(ZERO, radicalism - VIOLENCE_ON) / (ONE - VIOLENCE_ON);
 }
 
 // The divisor of every per-capita mean; FinalSim floors commoners at 1e-8, here at one person
@@ -207,18 +229,20 @@ void population_and_economy(const Pass& p) {
         if (!p.owned(loc, c)) continue;
         CountryYear& cy = p.countries[c];
 
-        Fixed64 security = std::min(cyc.security[loc] + SECURITY_RECOVERY, ONE - cyc.effective_unrest[loc]);
+        const Fixed64 last_radicalism = cyc.effective_radicalism[loc];
+        Fixed64 security = std::min(cyc.security[loc] + SECURITY_RECOVERY, ONE - violence(last_radicalism));
         security = std::max(security, SECURITY_FLOOR);
         cyc.security[loc] = security;
 
-        // high fertility well under cap, smoothstep decline as density climbs; low security shrinks the effective cap
+        // high fertility well under cap, smoothstep decline as density climbs; insecurity and dissatisfaction shrink the effective cap
         const std::int64_t pop = eco.commoners[loc];
-        const Fixed64 rel = per_capacity(pop) / security;
+        const Fixed64 carried = security * (DISCONTENT_CAPACITY + (ONE - DISCONTENT_CAPACITY) * cyc.commoner_satisfaction[loc]);
+        const Fixed64 rel = per_capacity(pop) / carried;
         Fixed64 t = std::clamp(rel - milli(500), ZERO, ONE);
         t = t * t * (Fixed64(3) - t * 2);
         const Fixed64 birth = MAX_BIRTH - (MAX_BIRTH - MIN_BIRTH) * t;
         const Fixed64 natural_death = DEATH_BASE + CHILD_MORTALITY * birth;
-        // beyond what security lets the land carry, famine and disease cull the surplus
+        // beyond what the land carries, famine and disease cull the surplus
         const Fixed64 overshoot_death = OVERSHOOT_MORTALITY * std::max(ZERO, rel - ONE);
         eco.commoners[loc] = to_heads(Fixed64(pop) + (birth - natural_death - overshoot_death) * pop, p.key(rota::core::STREAM_POPULATION, loc), 0);
         cy.record.births += birth * pop;
@@ -243,15 +267,14 @@ void population_and_economy(const Pass& p) {
         const Fixed64 food_penalty = std::max(ZERO, ONE - output * CULTIVATED_FOOD / workers);
         const Fixed64 immiseration = std::min(ONE, wage_penalty + food_penalty);
 
-        const Fixed64 last_unrest = cyc.effective_unrest[loc];
         cy.locations += 1;
         cy.workers += workers;
         cy.elites += elites;
         cy.reached_elites += p.control[loc] * elites;
         cy.income += wealth;
-        cy.collected += wealth * (ONE - last_unrest * COLLECTION_UNREST) * p.control[loc];
-        cy.unrest_burden += last_unrest * workers;
-        cy.reached_unrest += last_unrest * p.control[loc] * workers;
+        cy.collected += wealth * (ONE - last_radicalism * COLLECTION_RADICALISM) * p.control[loc];
+        cy.radicalism_burden += last_radicalism * workers;
+        cy.reached_radicalism += last_radicalism * p.control[loc] * workers;
         cy.wage_sum += w * workers;
         cy.immiseration_sum += immiseration * workers;
         cy.security_sum += security * workers;
@@ -261,7 +284,7 @@ void population_and_economy(const Pass& p) {
 void fiscal_and_legitimacy(rota::core::World& w, CountryID c, CountryYear& cy) {
     auto& state = w.country_state;
 
-    // tax the wealth base (collection gated by unrest), fund army then patronage, run a capped treasury
+    // tax the wealth base (collection gated by radicalism), fund army then patronage, run a capped treasury
     const Fixed64 capacity = CAPACITY * cy.locations;
     const Fixed64 revenue = TAX_RATE * cy.collected;
 
@@ -271,7 +294,7 @@ void fiscal_and_legitimacy(rota::core::World& w, CountryID c, CountryYear& cy) {
     const Fixed64 absorb_fraction = ONE / (ONE + K_ABSORB * std::max(ZERO, cy.overproduction - ONE)); // patronage can't keep pace
     const Fixed64 desired_patronage = excess_elites * absorb_fraction * K_PATRONAGE;
     // the state pays to hold down mobilization POTENTIAL, so overproduction drains even a solvent treasury
-    const Fixed64 army_cost = ARMY_BASE * capacity + K_SUPPRESS * cy.reached_unrest;
+    const Fixed64 army_cost = ARMY_BASE * capacity + K_SUPPRESS * cy.reached_radicalism;
 
     const Fixed64 funds = state.treasury[c] + revenue;
     const Fixed64 army_paid = std::min(army_cost, funds); // army is paid before patronage
@@ -284,7 +307,7 @@ void fiscal_and_legitimacy(rota::core::World& w, CountryID c, CountryYear& cy) {
 
     const Fixed64 legit_effect = SUPPRESS_LEGIT_FLOOR + (ONE - SUPPRESS_LEGIT_FLOOR) * state.legitimacy[c];
     const Fixed64 suppression = SUPPRESS_REACH * army_paid * legit_effect;
-    cy.suppression_per_worker = suppression / cy.workers; // per capita, so a big realm's coercion doesn't dwarf the bounded unrest
+    cy.suppression_per_worker = suppression / cy.workers; // per capita, so a big realm's coercion doesn't dwarf the bounded radicalism
 
     const Fixed64 max_treasury = TREASURY_YEARS * TAX_RATE * cy.income;
     state.treasury[c] = std::clamp(state.treasury[c] + revenue - army_paid - patronage_paid, ZERO, max_treasury);
@@ -293,14 +316,13 @@ void fiscal_and_legitimacy(rota::core::World& w, CountryID c, CountryYear& cy) {
     state.state_positions[c] = MIL_POSITIONS * capacity + patronage_jobs;
     cy.state_share = cy.reached_elites > ZERO ? state.state_positions[c] / cy.reached_elites : ZERO; // zero without a capital
     cy.felt_overproduction = cy.elites / (cy.baseline_positions + patronage_jobs);
-    cy.fracture = state.phase[c] == rc::PHASE_FRACTURE;
 
-    // legitimacy relaxes toward a target pulled down by insecurity, unrest, unpaid obligations and overproduction
+    // legitimacy relaxes toward a target pulled down by insecurity, radicalism, unpaid obligations and overproduction
     Fixed64& legitimacy = state.legitimacy[c];
     const Fixed64 insecurity = std::max(ZERO, ONE - cy.security_sum / cy.workers);
     Fixed64 target = ONE
         - LEGIT_INSECURITY * insecurity
-        - LEGIT_UNREST * (cy.unrest_burden / cy.workers)
+        - LEGIT_RADICALISM * (cy.radicalism_burden / cy.workers)
         - LEGIT_UNPAID_ARMY * cy.army_shortfall
         - LEGIT_UNPAID_PATRON * patronage_shortfall
         - LEGIT_FRAG * std::max(ZERO, cy.felt_overproduction - LEGIT_FRAG_TOLERANCE);
@@ -308,7 +330,15 @@ void fiscal_and_legitimacy(rota::core::World& w, CountryID c, CountryYear& cy) {
     legitimacy = std::clamp(legitimacy + LEGIT_SPEED * (target - legitimacy), ZERO, ONE);
 }
 
-void unrest(const Pass& p) {
+// Moves toward the target: falls fast and recovers slowly, the more slowly the worse conditions still are
+Fixed64 approach(Fixed64 satisfaction, Fixed64 target) {
+    const Fixed64 rate = target < satisfaction
+        ? SATISFACTION_FALL
+        : SATISFACTION_RISE * std::max(ZERO, target - SATISFACTION_STICK) / (ONE - SATISFACTION_STICK);
+    return satisfaction + rate * (target - satisfaction);
+}
+
+void satisfaction(const Pass& p) {
     auto& cyc = p.w.location_secular_cycle;
     const auto& eco = p.w.location_economy;
     const LocationID location_count = p.w.geography.location_count();
@@ -318,20 +348,52 @@ void unrest(const Pass& p) {
         if (!p.owned(loc, c)) continue;
         CountryYear& cy = p.countries[c];
 
+        // commoners judge society by their wage and its turmoil, elites by the positions open to them
+        const std::int64_t workers = workers_at(eco, loc);
         const std::int64_t elites = eco.elites[loc];
         const Fixed64 felt = elites / (local_elite_positions(p.w, loc) + cy.state_share * p.control[loc] * elites); // local felt overproduction
-        Fixed64 u = cyc.unrest[loc];
-        if (!cy.fracture) {
-            u += UNREST_WAGE * (W0_TARGET - p.wage[loc]) + UNREST_FELT * (felt - ONE);
-        } else {
-            u += FRACTURE_UNREST_DRIFT + FRACTURE_UNREST_WAGE * (W0_TARGET - p.wage[loc])
-                + FRACTURE_UNREST_FELT * (felt - (cyc.effective_unrest[loc] * 2 + FRACTURE_FELT_BASE));
-            if (felt < FRACTURE_CALM_FELT) u -= FRACTURE_CALM;
-        }
-        cyc.unrest[loc] = std::clamp(u, ZERO, ONE);
-        cyc.effective_unrest[loc] = std::clamp(cyc.unrest[loc] - cy.suppression_per_worker * p.control[loc], ZERO, ONE);
+        const Fixed64 commoner_target = std::clamp((p.wage[loc] - MISERABLE_WAGE) / (SATISFIED_WAGE - MISERABLE_WAGE)
+            - TURMOIL_DISCONTENT * p.w.country_state.radicalism[c], ZERO, ONE);
+        const Fixed64 elite_target = std::clamp(ONE - ELITE_DISCONTENT * (felt - ONE), ZERO, ONE);
+        cyc.commoner_satisfaction[loc] = approach(cyc.commoner_satisfaction[loc], commoner_target);
+        cyc.elite_satisfaction[loc] = approach(cyc.elite_satisfaction[loc], elite_target);
 
-        cy.effective_unrest_sum += cyc.effective_unrest[loc] * workers_at(eco, loc);
+        cy.commoner_target_sum += commoner_target * workers;
+        cy.elite_target_sum += elite_target * elites;
+        cy.commoner_discontent_sum += (ONE - cyc.commoner_satisfaction[loc]) * workers;
+        cy.elite_discontent_sum += (ONE - cyc.elite_satisfaction[loc]) * elites;
+    }
+}
+
+// Radicalism moves toward the country's discontent, part of which legitimacy keeps in check
+void radicalism(rota::core::World& w, CountryID c, CountryYear& cy) {
+    auto& state = w.country_state;
+    cy.discontent = RADICAL_COMMONERS * (cy.commoner_discontent_sum / cy.workers) + RADICAL_ELITES * (cy.elite_discontent_sum / cy.elites);
+    cy.radicalism_target = std::clamp((cy.discontent - RADICAL_TOLERANCE) / (ONE - RADICAL_TOLERANCE), ZERO, ONE)
+        * (ONE - RADICAL_LEGITIMACY * state.legitimacy[c]);
+    state.radicalism[c] += RADICALISM_RATE * (cy.radicalism_target - state.radicalism[c]);
+}
+
+// Spread evenly where everyone is content, toward the discontented as discontent grows; the army
+// holds it down where it reaches
+void local_radicalism(const Pass& p) {
+    auto& cyc = p.w.location_secular_cycle;
+    const auto& eco = p.w.location_economy;
+    const auto& radicalism = p.w.country_state.radicalism;
+    const LocationID location_count = p.w.geography.location_count();
+
+    for (LocationID loc = 0; loc < location_count; loc++) {
+        CountryID c;
+        if (!p.owned(loc, c)) continue;
+        CountryYear& cy = p.countries[c];
+
+        const Fixed64 discontent = RADICAL_COMMONERS * (ONE - cyc.commoner_satisfaction[loc]) + RADICAL_ELITES * (ONE - cyc.elite_satisfaction[loc]);
+        const Fixed64 here = std::min(ONE, radicalism[c] * (ONE + discontent) / (ONE + cy.discontent));
+        cyc.effective_radicalism[loc] = std::clamp(here - cy.suppression_per_worker * p.control[loc], ZERO, ONE);
+
+        const std::int64_t workers = workers_at(eco, loc);
+        cy.effective_radicalism_sum += cyc.effective_radicalism[loc] * workers;
+        cy.violence_sum += violence(cyc.effective_radicalism[loc]) * workers;
     }
 }
 
@@ -340,12 +402,12 @@ void apply_crisis(rota::core::World& w, CountryID c, CountryYear& cy, rc::Crisis
     auto& state = w.country_state;
     switch (type) {
         case rc::CRISIS_REVOLT:
-            cy.unrest_gain += REVOLT_UNREST * x;
+            state.radicalism[c] = std::min(ONE, state.radicalism[c] + REVOLT_RADICALISM * x);
             cy.commoner_keep = cy.commoner_keep * (ONE - milli(100) * K_FAMINE * x);
             cy.elite_keep = cy.elite_keep * (ONE - milli(300) * CIVILWAR_CULL * x);
             break;
         case rc::CRISIS_CIVIL_WAR: // its deaths come from the fighting on the map (civil_war.cpp)
-            cy.unrest_gain += milli(500) * REVOLT_UNREST * x;
+            state.radicalism[c] = std::min(ONE, state.radicalism[c] + milli(500) * REVOLT_RADICALISM * x);
             state.treasury[c] = state.treasury[c] * (ONE - milli(100) * x);
             break;
         case rc::CRISIS_COUP:
@@ -372,13 +434,13 @@ void crises(rota::core::World& w, std::uint64_t year, CountryID c, CountryYear& 
         return;
     }
 
-    const Fixed64 effective_unrest = cy.effective_unrest_sum / cy.workers;
+    const Fixed64 effective_radicalism = cy.effective_radicalism_sum / cy.workers;
     const Fixed64 immiseration = cy.immiseration_sum / cy.workers;
     const Fixed64 op = std::max(ZERO, cy.felt_overproduction - ONE);
     const Fixed64 low_legit = ONE - state.legitimacy[c];
     const Fixed64 drivers[rc::CRISIS_COUNT] = {
-        milli(400) * immiseration + milli(400) * effective_unrest + milli(300) * low_legit,
-        milli(500) * op + milli(500) * effective_unrest,
+        milli(400) * immiseration + milli(400) * effective_radicalism + milli(300) * low_legit,
+        milli(500) * op + milli(500) * effective_radicalism,
         milli(500) * op + milli(500) * low_legit,
     };
     const Fixed64 phase_mult = phase == rc::PHASE_STRAIN ? ONE : CRISIS_FRAC_MULT;
@@ -447,7 +509,6 @@ void crisis_effects_and_elites(const Pass& p, const rc::WarYear& war) {
         const std::int64_t elites_before = eco.elites[loc];
         const Fixed64 positions = local_elite_positions(p.w, loc) + cy.state_share * p.control[loc] * elites_before;
 
-        cyc.unrest[loc] = std::min(ONE, cyc.unrest[loc] + cy.unrest_gain);
         const std::int64_t commoners = eco.commoners[loc];
         const Fixed64 commoner_keep = cy.commoner_keep * war.commoner_keep[loc];
         if (commoner_keep < ONE) {
@@ -471,7 +532,7 @@ void crisis_effects_and_elites(const Pass& p, const rc::WarYear& war) {
             e_mobility = MU_0 * workers * misery;
         }
 
-        const Fixed64 e_attrition = elites * K_ATTRITION * attrition(cyc.effective_unrest[loc]);
+        const Fixed64 e_attrition = elites * K_ATTRITION * attrition(violence(cyc.effective_radicalism[loc]));
 
         eco.elites[loc] = to_heads(elites + e_biological + e_mobility - e_attrition, p.key(rota::core::STREAM_ELITES, loc), 1);
         cy.elites_after += eco.elites[loc];
@@ -484,7 +545,7 @@ void crisis_effects_and_elites(const Pass& p, const rc::WarYear& war) {
 void phase(rota::core::World& w, CountryID c, const CountryYear& cy) {
     auto& state = w.country_state;
     const Fixed64 wage = cy.wage_sum / cy.workers;
-    const Fixed64 effective_unrest = cy.effective_unrest_sum / cy.workers;
+    const Fixed64 effective_radicalism = cy.effective_radicalism_sum / cy.workers;
 
     if (state.phase[c] == rc::PHASE_PROSPERITY) {
         const bool traditional = wage < W0_TARGET && Fixed64(cy.elites_after) > cy.baseline_positions;
@@ -492,8 +553,8 @@ void phase(rota::core::World& w, CountryID c, const CountryYear& cy) {
         if (traditional || ibn_khaldun) state.phase[c] = rc::PHASE_STRAIN;
     } else if (state.phase[c] == rc::PHASE_STRAIN) {
         const bool fiscal_break = state.treasury[c] <= ZERO && cy.army_shortfall > ZERO;
-        if (effective_unrest > U_FRACTURE_ON || fiscal_break) state.phase[c] = rc::PHASE_FRACTURE;
-    } else if (cy.overproduction < OVERPROD_EXIT && effective_unrest < U_EXIT_THRESH) {
+        if (effective_radicalism > FRACTURE_RADICALISM || fiscal_break) state.phase[c] = rc::PHASE_FRACTURE;
+    } else if (cy.overproduction < OVERPROD_EXIT && effective_radicalism < EXIT_RADICALISM) {
         state.phase[c] = rc::PHASE_PROSPERITY;
     }
 }
@@ -539,7 +600,9 @@ void run_secular_cycle(rota::core::World& world) {
 
     population_and_economy(pass);
     each_country([&](CountryID c, CountryYear& cy) { fiscal_and_legitimacy(world, c, cy); });
-    unrest(pass);
+    satisfaction(pass);
+    each_country([&](CountryID c, CountryYear& cy) { radicalism(world, c, cy); });
+    local_radicalism(pass);
     each_country([&](CountryID c, CountryYear& cy) { crises(world, pass.year, c, cy); });
     const rc::WarYear war = rc::run_civil_wars(world);
     for (const CountryID c : war.decided) { // won outright, so the crisis ends early
@@ -556,7 +619,14 @@ void run_secular_cycle(rota::core::World& world) {
         r.wage = cy.wage_sum / cy.workers;
         r.immiseration = cy.immiseration_sum / cy.workers;
         r.security = cy.security_sum / cy.workers;
-        r.effective_unrest = cy.effective_unrest_sum / cy.workers;
+        r.commoner_satisfaction = Fixed64(1) - cy.commoner_discontent_sum / cy.workers;
+        r.commoner_satisfaction_target = cy.commoner_target_sum / cy.workers;
+        r.elite_satisfaction = Fixed64(1) - cy.elite_discontent_sum / cy.elites;
+        r.elite_satisfaction_target = cy.elite_target_sum / cy.elites;
+        r.radicalism = world.country_state.radicalism[c];
+        r.radicalism_target = cy.radicalism_target;
+        r.effective_radicalism = cy.effective_radicalism_sum / cy.workers;
+        r.violence = cy.violence_sum / cy.workers;
         r.overproduction = cy.overproduction;
         r.felt_overproduction = cy.felt_overproduction;
         r.army_shortfall = cy.army_shortfall;

@@ -309,28 +309,31 @@ Choose the lightest storage that fits each store's churn (design-notes/05):
 
 ## 10. The secular-cycle simulation
 
-The model is `FinalSim` in [`Planning/new_model.py`](../Planning/new_model.py) (with `economy.py`
-and `extra_functions.py`), ported to
-[`secular_cycle_system.cpp`](../src/economy/secular_cycle_system.cpp). The port kept the update
-rules, their *ordering* and the parameter values. **The port is finished:** the C++ is now the
-model, and new rules are designed here, not in the Python first. One FinalSim tick is one game year
-(`on_yearly`).
+The model began as `FinalSim` in [`Planning/new_model.py`](../Planning/new_model.py) (with
+`economy.py` and `extra_functions.py`), ported to
+[`secular_cycle_system.cpp`](../src/economy/secular_cycle_system.cpp) with its update rules, their
+*ordering* and its parameter values. **The C++ is now the model**, and new rules are designed here,
+not in the Python first. FinalSim's unrest has since been replaced by satisfaction and radicalism
+(below); the population, wage and elite-mobility rules are still FinalSim's. One tick is one game
+year (`on_yearly`).
 
 **The location/country split.** FinalSim fuses a location's economy and its state into one unit.
 The game separates them (per `Planning/Rota Fortunae_ Civilizations.txt`):
 - **Per location (the default):** commoners, elites, this year's commoner and elite income,
-  security, and unrest (the `U` stock and the suppressed `U_e`).
-- **Per country (only the state):** legitimacy, treasury, phase, this year's state positions, the
-  crises and war-weariness.
+  security, each class's satisfaction, and effective radicalism (the country's radicalism as it
+  shows there, after suppression).
+- **Per country (only the state):** legitimacy, radicalism, treasury, phase, this year's state
+  positions, the crises and war-weariness.
 - **Aggregation connects them.** Budget inputs (income, elites, positions, the suppression bill)
-  are sums over the locations. The phase and the crisis drivers read *commoner-weighted means* of
-  the relative wage, immiseration, security and `U_e`, so a country's phase follows its typical
+  are sums over the locations, and radicalism moves toward the mean discontent of both classes.
+  The phase and the crisis drivers read *commoner-weighted means* of the relative wage,
+  immiseration, security and effective radicalism, so a country's phase follows its typical
   location, not its worst.
-- **Two country→location couplings**, both flowing forward within the year as in FinalSim:
-  suppression is spent **per capita** (each location's `U_e` is its `U` minus the country's
-  suppression ÷ the country's commoners), and **state positions** (military plus funded patronage)
-  are split by each location's share of the country's elites, because they are nationally
-  competitive.
+- **Three country→location couplings**, all flowing forward within the year: radicalism is
+  **spread** over the locations toward the discontented; suppression is spent **per capita** (the
+  country's suppression ÷ its commoners comes off each location's share); and **state positions**
+  (military plus funded patronage) are split by each location's share of the country's elites,
+  because they are nationally competitive.
 - **Control scales the state's reach** (not in FinalSim). Each location's control is 1 at its
   owner's capital and halves every fixed effective distance (about the two weeks' travel that
   bounded pre-modern empires): the shortest path over land the owner holds and the sea, where each
@@ -339,7 +342,7 @@ The game separates them (per `Planning/Rota Fortunae_ Civilizations.txt`):
   ([`control.cpp`](../src/countries/control.cpp)). Collection, the per-capita suppression a
   location receives, and its elites' weight in the competition for state positions are all
   multiplied by it, so the frontier pays less, is policed less and is shut out of the court. The
-  army's suppression bill likewise counts only the unrest it can reach; billed for the whole realm,
+  army's suppression bill likewise counts only the radicalism it can reach; billed for the whole realm,
   a sprawling state went bankrupt policing a frontier it couldn't touch and never calmed its core.
   Occupied land has none. Control is recomputed each year from ownership, occupation, capitals and
   the map; it is never stored. A capital is always owned by its country: losing it leaves the
@@ -356,18 +359,47 @@ location arrays in `LocationID` order and reads or sums into its owner's row of 
 one row instead of one array per field. The country steps run between the location passes, in
 ascending `CountryID`:
 
-population and economy (locations) → fiscal and legitimacy → unrest (locations) → crises →
-civil wars (locations) → crisis effects and elites (locations) → phase.
+population and economy (locations) → fiscal and legitimacy → satisfaction (locations) →
+radicalism → its spread and suppression (locations) → crises → civil wars (locations) → crisis
+effects and elites (locations) → phase.
 
 A year's crises fold into one factor per country, so each location is touched once for all of
 them. The one-year lags are the review-critical part: security, the army bill, collection and
-legitimacy read *last* year's `U_e`; fracture unrest reads last year's phase.
+legitimacy read *last* year's effective radicalism, and the commoners' target reads last year's
+radicalism.
 
-**Overshoot mortality** (not in FinalSim). Births already fall as population nears the cap that
-security allows, but past it FinalSim's deaths don't rise, so an insecure, overfull country barely
-shrinks (about −0.1% a year). Its wage then stays low, commoners keep being promoted into the elite,
-and it settles into a permanent fracture. Deaths therefore rise with the population beyond that
-cap. That alone lets every country leave fracture with the crises off.
+**Overshoot mortality** (not in FinalSim). Births already fall as population nears the effective
+cap, but past it FinalSim's deaths don't rise, so an overfull country barely shrinks (about −0.1% a
+year). Its wage then stays low, commoners keep being promoted into the elite, and it never leaves
+fracture. Deaths therefore rise with the population beyond that cap.
+
+**Satisfaction and radicalism.** Satisfaction is a people's view of society and where it is going,
+not of the government; radicalism is the willingness to act by extraordinary means. Each class has
+its own satisfaction per location, a stock that moves toward a target: commoners judge their
+relative wage and the country's radicalism, elites their felt overproduction. It falls fast and
+recovers slowly, and not at all until the target clears a stickiness level, so it stays low after
+conditions start to improve.
+- **Dissatisfaction lowers the effective cap** (with security), so it lowers the level where births
+  equal deaths, not growth well below it: a discontented people far from its land's limit still
+  grows quickly.
+- **Commoners must see the turmoil**, not just their wage. With wage alone, a country without
+  violence became a regulator: population settled at the wage where commoners turn dissatisfied,
+  elites stalled there, and nothing ever recovered. Radicalism is mostly elite discontent, and it
+  and legitimacy feed each other, so it carries the elite crisis's memory into births. It is a
+  vicious circle by design: a radical society discontents its people, who radicalize it further.
+  The cost is that a passing grievance dents commoner satisfaction while it lasts.
+- **Elites move radicalism far more than commoners**, since elites carry political and military
+  power; discontent below a tolerance stays in ordinary politics, and legitimacy holds a share of
+  the rest back. Only radicalism past the violence threshold (riots, clashes, low-level insurgency)
+  damages security or kills elites; below it is advocacy and protest. So security recovers within
+  a decade once violence ends, and no longer has to stay low to keep the land empty.
+- **The commoners' satisfied wage must sit above the elites' demotion wage.** Below it, a peaceful
+  crisis settles where elites neither promote nor demote, and they never clear.
+- **Radicalism is national**, a placeholder for factions' own. Each location gets its share by its
+  discontent relative to the country's, which is the rule factions' local support will replace.
+- **Test the peaceful path** with the crises off and `VIOLENCE_ON` near 1 in the harness: cycles
+  there are longer and shallower (about 250 years, population down a tenth) but must still clear
+  the elites.
 
 **Civil war on the map** ([`civil_war.cpp`](../src/countries/civil_war.cpp)). The civil-war crisis
 decides when a war starts and how long it may last; the map decides where it is fought. Rebels rise
@@ -378,31 +410,31 @@ Each war year:
 - **Commoners fall where the armies are:** on every front (land of one side touching the other's
   over a border, a strait or one stretch of sea), which may also fall to the enemy by its share of
   the two sides' elites, and behind the rebels' lines, where they live off the land. These scale
-  with the place's own `U_e`: fighting is as fierce as the people there are mobilized.
+  with the place's own effective radicalism: fighting is as fierce as the people there are
+  mobilized.
 - **A decisive result ends the war** and its crisis: the rebels take the capital, or hold nothing.
   The crisis's cooldown leaves room for several wars in one fracture. If the crisis runs out first,
   the rebels' land returns (the hook for secession).
 
-**Cycle shape** (retuned since the port; measure it with the cycle harness, §5). The target is the
-full cycle of about 150 years that England, France and Rome show, driven by population and elites
-together; one near 80 years would mean elites alone drive it, and FinalSim's values gave about 90.
-- **Strain lasts decades.** Outside fracture, unrest builds only slowly from low wages and felt
-  overproduction, so the elites multiply severalfold before patronage drains the treasury and the
-  unpaid army stops suppressing.
-- **A fracture runs for generations.** Population falls by about a quarter over it, gradually
-  rather than in its first decades, and the elites by about two thirds, mostly by demotion. Crises
-  are occasional: room for a few civil wars, not a revolt every few years.
-- **Order returns slowly afterwards.** Security recovers over generations, so the land refills
-  slowly and prosperity is long.
+**Cycle shape** (measure it with the cycle harness, §5). The target is the full cycle of about 150
+years that England, France and Rome show, driven by population and elites together; one near 80
+years would mean elites alone drive it. It runs about 185 today (open debt, §12).
+- **Strain lasts decades.** Commoners stop the population short of the land's limit, at a wage
+  just above the demotion wage, while the elites multiply severalfold; elite discontent turns
+  radical only when it outgrows the tolerance.
+- **A fracture runs for generations.** Population falls by about a fifth over it (nearly a third at
+  its lowest) and the elites by about three quarters, mostly by demotion. Crises are occasional: room for a few civil wars, not a
+  revolt every few years. Late in it the commoners' wages are high again, and what violence is left
+  is the remaining elites' (Turchin's squeeze).
+- **The land refills while commoners regain their satisfaction**, which lags the wage and the
+  turmoil, not security.
 
-**Falling population is what ends a fracture:** it raises the wage, which drives demotion and calms
-unrest. With gentle culling that exit has two knife edges. Once a location's felt overproduction
-nears 1, its fracture unrest settles close to the exit level, so whether the country's mean gets
-under it hangs on how many locations still sit above the calm band. And if security and population
-recover before the elites are cleared, the wage sags, demotion stalls just above the exit, and the
-fracture can last centuries. Fast security recovery and a narrow calm band both produced such
-traps. After retuning culling, unrest or security, check the harness's long fractures with the
-crises on and off.
+**Two traps.** A huge low-control empire can settle into a simmering equilibrium: radicalism just
+past violence, legitimacy middling, and elite births balancing demotion for centuries, because its
+treasury never breaks over the frontier it doesn't bill. How strongly radicalism erodes legitimacy
+(`LEGIT_RADICALISM`) is what tips it out. And the commoners' wage band trades the peaceful path
+against cycle length (above). After retuning satisfaction, radicalism or legitimacy, check the
+harness's long fractures with the crises on and off, and the peaceful run.
 
 **Units.** Population is in **whole people** at `LOCATION_CAPACITY` per location (FinalSim's cap of
 1). Absolute parameters (`army_base`, `mil_positions`) scale per unit of capacity, so apart from
@@ -424,12 +456,9 @@ stored remainder and no RNG stream whose call order matters. Crisis rolls use th
 - Python's `1e-8`/`1e-9` division guards round to **zero** in `Fixed64`. Use a representable floor
   instead (one person, for example).
 - Python's true division `/` and integer division `//` differ. `np.clip` becomes `std::clamp`.
-- **Checking the port against Python:** set the crisis rates to zero on both sides. That leaves
-  everything deterministic, and a country's yearly trajectory should then track FinalSim closely:
-  population and elites to about four significant figures over the first two centuries, with
-  identical phases. Unrest is close to bang-bang, so near a sharp transition it can flip a year
-  early or late. With crises on, compare statistics over many seeds (phase split,
-  period, population and elite ranges) instead, because the Python RNG differs.
+- **The C++ no longer tracks FinalSim.** At the port, with the crises off, a country's trajectory
+  matched it to about four significant figures over two centuries; satisfaction and radicalism
+  ended that, so there is no longer a Python reference to check against.
 - Two traps from `Planning/limitations.md` still apply: population must approach carrying
   capacity, and suppression must not be so cheap that the crisis never fires.
 
@@ -449,15 +478,15 @@ collapse mechanic is core, not stretch**.
 **Definition of done for the prototype:**
 1. Load a scenario with several countries placed on the map.
 2. Press play; time advances at speeds 1–6, paced so a full cycle plays out in **minutes**.
-3. Populations grow, wealth accumulates, elites overproduce, unrest climbs, and states hit crisis
+3. Populations grow, wealth accumulates, elites overproduce, radicalism climbs, and states hit crisis
    and **visibly collapse** (fragment, lose cohesion or reset elites), then recover.
-4. Map modes for population, wealth, unrest and political update live, along with a country panel
+4. Map modes for population, wealth, satisfaction, radicalism and political update live, along with a country panel
    showing the selected state's trajectory.
 5. The player can issue **2–3 real commands** that visibly nudge the cycle.
 
 **Done:** the cycle (§10) in every country, map modes and the trajectory panel, the EU4-based map
 with adjacency and routes across the sea (§9), control from the capital, civil wars on the map
-(§10), the cycle harness and ledger (§5), and the retune to a ~160-year cycle (§10, cycle shape).
+(§10), the cycle harness and ledger (§5), and satisfaction and radicalism in place of unrest (§10).
 
 **Next, in order.** Each step has to show on the map by itself, and each retune is checked with
 the harness, crises on and off, including its long fractures:
@@ -495,11 +524,15 @@ migration) · partial-map re-evaluation on territory change.
   cleanup.
 - **Scenarios are random only.** Authored scenarios (a fixed start date, chosen countries and
   borders) don't exist yet.
-- **Huge low-control empires can still sit in fracture for over a century** (about 1% of
-  countries over 1000 years, all of 200+ locations). Not the frontier's unrest: weighting the
-  phase's unrest by control made it worse. Breakaways may be the real answer; recheck after them.
-- **A fracture's population loss is still front-loaded with the crises on** (about a sixth in its
-  first 25 years, against an eighth with them off): war deaths come early.
+- **Huge low-control empires can still sit in fracture for over a century** (a few countries in
+  a hundred over 1000 years, all of 500+ locations; see the trap in §10). Breakaways may be the
+  real answer; recheck after them.
+- **A fracture's population loss is front-loaded with the crises on** (three quarters of it in the
+  first 25 years, against about half with them off): the violence comes in a burst.
+- **The cycle runs about 185 years**, against the 150 targeted, mostly a long strain: with wages
+  held above the demotion wage, elites grow only by reproduction.
+- **Elite satisfaction reads only felt overproduction**, not elite income per head, so the squeeze
+  on elites late in a fracture shows in demotion rather than in their discontent.
 - **The cycle ledger isn't shown in game.** It is the hook for a panel of a country's flows.
 
 ## 13. Explicitly NOT now (guard against scope creep)

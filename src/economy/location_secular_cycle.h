@@ -14,8 +14,9 @@ struct LocationSecularCycle {
 
     void initialize(std::uint32_t location_count);
 
-    std::vector<Fixed64> unrest;           // FinalSim's U: the mobilization stock
-    std::vector<Fixed64> effective_unrest; // U_e: unrest left after suppression
+    std::vector<Fixed64> commoner_satisfaction; // with society at large, not with the government
+    std::vector<Fixed64> elite_satisfaction;
+    std::vector<Fixed64> effective_radicalism; // the owner's radicalism as it shows here, after suppression
     std::vector<Fixed64> security;
 
     void clear();

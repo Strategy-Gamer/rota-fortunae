@@ -5,7 +5,7 @@ extends Node
 ## Presentation state: recorded here from queries, never hashed, and empty again after a load.
 
 const MAX_YEARS := 400
-const SERIES := ["population_pressure", "elite_overproduction", "effective_unrest", "legitimacy",
+const SERIES := ["population_pressure", "elite_overproduction", "commoner_satisfaction", "effective_radicalism", "legitimacy",
 		"population", "elites"]
 
 signal recorded

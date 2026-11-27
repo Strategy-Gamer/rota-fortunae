@@ -189,7 +189,7 @@ def trace(lives, seed, country, start, end, every):
     rows = next((r for r in lives if r[0]['seed'] == seed and r[0]['country'] == country), None)
     if rows is None:
         raise SystemExit(f'no country {country} in seed {seed}')
-    head = ('year ph  dens  wage     E  felt   U_e legit   sec armsh |'
+    head = ('year ph  dens  wage     E  felt  Sc/t*     Se/t*     R/R*      Re   vio legit   sec armsh |'
             ' births  natd  over  cris   war   net |  ebir  prom  demo  attr  ecri  ewar   net | crises')
     out = [head]
     for prev, row in zip(rows, rows[1:]):
@@ -201,7 +201,11 @@ def trace(lives, seed, country, start, end, every):
         ef = [sign * row[n] / e * 100 for n, sign in ELITE_FLOWS]
         crises = ''.join(ch.upper() if row[k + '_new'] else ch if row[k] else '.' for ch, k in zip('rwc', CRISES))
         out.append(f'{row["year"]:4} {row["phase"]:2} {row["density"]:5.2f} {row["wage"]:5.2f} {row["overproduction"]:5.2f}'
-                   f' {row["felt_overproduction"]:5.2f} {row["effective_unrest"]:5.2f} {row["legitimacy"]:5.2f}'
+                   f' {row["felt_overproduction"]:5.2f}'
+                   f' {row["commoner_satisfaction"]:4.2f}/{row["commoner_satisfaction_target"]:4.2f}'
+                   f' {row["elite_satisfaction"]:4.2f}/{row["elite_satisfaction_target"]:4.2f}'
+                   f' {row["radicalism"]:4.2f}/{row["radicalism_target"]:4.2f}'
+                   f' {row["effective_radicalism"]:5.2f} {row["violence"]:5.2f} {row["legitimacy"]:5.2f}'
                    f' {row["security"]:5.2f} {row["army_shortfall"]:5.2f} |'
                    + ''.join(f'{x:6.2f}' for x in cf) + f'{(row["commoners"] - prev["commoners"]) / c * 100:6.2f} |'
                    + ''.join(f'{x:6.2f}' for x in ef) + f'{(row["elites"] - prev["elites"]) / e * 100:6.2f} | {crises}')

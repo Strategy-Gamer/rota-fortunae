@@ -8,7 +8,8 @@ var gamespeeds = [1, 5, 30, 90, 365, 1825]
 const MAP_MODES := [
 	["Political", SimWorld.MAP_POLITICAL],
 	["Phase", SimWorld.MAP_PHASE],
-	["Unrest", SimWorld.MAP_UNREST],
+	["Satisfaction", SimWorld.MAP_SATISFACTION],
+	["Radicalism", SimWorld.MAP_RADICALISM],
 	["Population pressure", SimWorld.MAP_POPULATION_PRESSURE],
 	["Elite overproduction", SimWorld.MAP_ELITE_OVERPRODUCTION],
 	["Legitimacy", SimWorld.MAP_LEGITIMACY],

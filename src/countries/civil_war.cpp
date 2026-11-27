@@ -23,7 +23,7 @@ const Fixed64 ONE(1);
 const Fixed64 WAR_ELITE_LOSS = milli(15);
 const Fixed64 SACK_ELITE_LOSS = milli(80);
 
-// Per war-year where the armies are, scaled by the place's effective unrest: fighting and foraging
+// Per war-year where the armies are, scaled by the place's effective radicalism: fighting and foraging
 // are as fierce as the people there are mobilized
 const Fixed64 FRONT_COMMONER_LOSS = milli(12);
 const Fixed64 FRONT_SECURITY_LOSS = milli(300);
@@ -41,8 +41,8 @@ Fixed64 intensity(const rota::core::World& w, CountryID c) {
     return w.country_state.crises[c][CRISIS_CIVIL_WAR].intensity;
 }
 
-// Rebels rise in every location more restless (effective unrest) than the country's commoner-weighted
-// average, or failing that the most restless one; never in the capital
+// Rebels rise in every location more radical (after suppression) than the country's commoner-weighted
+// average, or failing that the most radical one; never in the capital
 void ignite(rota::core::World& w, const std::vector<CountryID>& igniting) {
     const auto& politics = w.location_politics;
     const auto& eco = w.location_economy;
@@ -56,33 +56,33 @@ void ignite(rota::core::World& w, const std::vector<CountryID>& igniting) {
         return w.countries.is_valid(c) && igniting_flag[c] ? c : INVALID_COUNTRY_ID;
     };
 
-    const auto& unrest = w.location_secular_cycle.effective_unrest;
-    std::vector<Fixed64> unrest_sum(slot_count);
+    const auto& radicalism = w.location_secular_cycle.effective_radicalism;
+    std::vector<Fixed64> radicalism_sum(slot_count);
     std::vector<std::int64_t> workers(slot_count, 0);
     for (LocationID loc = 0; loc < location_count; loc++) {
         const CountryID c = igniting_owner(loc);
         if (c == INVALID_COUNTRY_ID) continue;
         const std::int64_t heads = std::max<std::int64_t>(eco.commoners[loc], 1);
-        unrest_sum[c] += unrest[loc] * heads;
+        radicalism_sum[c] += radicalism[loc] * heads;
         workers[c] += heads;
     }
     const auto above_average = [&](LocationID loc, CountryID c) {
-        return unrest[loc] * workers[c] > unrest_sum[c];
+        return radicalism[loc] * workers[c] > radicalism_sum[c];
     };
 
     std::vector<std::uint32_t> rising(slot_count, 0);
-    std::vector<LocationID> most_restless(slot_count, rota::map::INVALID_LOCATION_ID);
+    std::vector<LocationID> most_radical(slot_count, rota::map::INVALID_LOCATION_ID);
     for (LocationID loc = 0; loc < location_count; loc++) {
         const CountryID c = igniting_owner(loc);
         if (c == INVALID_COUNTRY_ID || loc == w.countries.capital[c]) continue;
         if (above_average(loc, c)) rising[c] += 1;
-        const LocationID best = most_restless[c];
-        if (best == rota::map::INVALID_LOCATION_ID || unrest[loc] > unrest[best]) most_restless[c] = loc;
+        const LocationID best = most_radical[c];
+        if (best == rota::map::INVALID_LOCATION_ID || radicalism[loc] > radicalism[best]) most_radical[c] = loc;
     }
 
     std::vector<CountryID> rebels(slot_count, INVALID_COUNTRY_ID);
     for (const CountryID c : igniting) {
-        if (most_restless[c] == rota::map::INVALID_LOCATION_ID) continue;
+        if (most_radical[c] == rota::map::INVALID_LOCATION_ID) continue;
         rebels[c] = create_country(w, w.countries.names[c] + " Rebels", REBEL_COLOR, w.calendar.get_year());
         w.countries.rebels_against[rebels[c]] = c;
     }
@@ -90,7 +90,7 @@ void ignite(rota::core::World& w, const std::vector<CountryID>& igniting) {
     for (LocationID loc = 0; loc < location_count; loc++) {
         const CountryID c = igniting_owner(loc);
         if (c == INVALID_COUNTRY_ID || rebels[c] == INVALID_COUNTRY_ID || loc == w.countries.capital[c]) continue;
-        if (rising[c] > 0 ? above_average(loc, c) : loc == most_restless[c]) {
+        if (rising[c] > 0 ? above_average(loc, c) : loc == most_radical[c]) {
             w.location_politics.occupier[loc] = rebels[c];
         }
     }
@@ -176,7 +176,7 @@ WarYear run_civil_wars(rota::core::World& w) {
         out.elite_keep[loc] = ONE - WAR_ELITE_LOSS * x;
         if (!fighting(c)) continue; // a war no rebels could rise for is fought at court
 
-        const Fixed64 fierceness = w.location_secular_cycle.effective_unrest[loc];
+        const Fixed64 fierceness = w.location_secular_cycle.effective_radicalism[loc];
         const bool rebel_held = politics.occupier[loc] == rebels[c];
         if (!is_front(w, loc)) {
             if (rebel_held) out.commoner_keep[loc] = ONE - PILLAGE_COMMONER_LOSS * fierceness;

@@ -5,13 +5,14 @@ extends SceneTree
 ## map mode. Needs a real window, not --headless, since it captures what the renderer drew. The game
 ## starts maximized; size=WxH captures at a fixed window size instead.
 ##
-## godot --path project -s res://Tools/screenshot.gd -- out=C:/tmp size=1600x900 years=150 location=200 modes=phase,unrest
+## godot --path project -s res://Tools/screenshot.gd -- out=C:/tmp size=1600x900 years=150 location=200 modes=phase,radicalism
 
 const MODES := {
 	"location_color": SimWorld.MAP_LOCATION_COLOR,
 	"political": SimWorld.MAP_POLITICAL,
 	"phase": SimWorld.MAP_PHASE,
-	"unrest": SimWorld.MAP_UNREST,
+	"satisfaction": SimWorld.MAP_SATISFACTION,
+	"radicalism": SimWorld.MAP_RADICALISM,
 	"population_pressure": SimWorld.MAP_POPULATION_PRESSURE,
 	"elite_overproduction": SimWorld.MAP_ELITE_OVERPRODUCTION,
 	"legitimacy": SimWorld.MAP_LEGITIMACY,

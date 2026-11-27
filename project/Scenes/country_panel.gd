@@ -1,13 +1,14 @@
 extends PanelContainer
 
-## Debug panel for the selected location's owner: phase, FinalSim's four gauges, the state's stocks,
+## Debug panel for the selected location's owner: phase, the cycle's gauges, the state's stocks,
 ## active crises, and the trajectory graphs. Built in code; the final UI will be hand-made.
 
 const GAUGES := [
 	["P  population pressure", "population_pressure", Color(0.35, 0.55, 1.0)],
 	["E  elite overproduction", "elite_overproduction", Color(1.0, 0.6, 0.2)],
-	["U  instability", "effective_unrest", Color(1.0, 0.3, 0.3)],
-	["S  legitimacy", "legitimacy", Color(0.4, 0.85, 0.5)],
+	["C  commoner satisfaction", "commoner_satisfaction", Color(0.9, 0.85, 0.4)],
+	["R  radicalism", "effective_radicalism", Color(1.0, 0.3, 0.3)],
+	["L  legitimacy", "legitimacy", Color(0.4, 0.85, 0.5)],
 ]
 const CRISIS_NAMES := {
 	SimWorld.CRISIS_REVOLT: "Revolt",
@@ -108,7 +109,8 @@ func _refresh() -> void:
 		"Locations: %d    Population: %s" % [s.location_count, _group(s.population)],
 		"Elites: %s    Wealth per head: %.3f" % [_group(s.elites), s.wealth_per_capita],
 		"Treasury: %s    War-weariness: %.2f" % [_group(int(s.treasury)), s.war_weariness],
-		"Unrest stock U: %.2f    Crises: %s" % [s.unrest, ", ".join(crises) if not crises.is_empty() else "none"],
+		"Elite satisfaction: %.2f    Radicalism stock: %.2f" % [s.elite_satisfaction, s.radicalism],
+		"Crises: %s" % (", ".join(crises) if not crises.is_empty() else "none"),
 		"Rebels hold: %d locations" % s.occupied,
 	])
 	_plot()

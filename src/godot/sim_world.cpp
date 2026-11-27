@@ -94,12 +94,13 @@ void SimWorld::_bind_methods() {
         { "MAP_LOCATION_COLOR", MapMode::LocationColor },
         { "MAP_POLITICAL", MapMode::Political },
         { "MAP_PHASE", MapMode::Phase },
-        { "MAP_UNREST", MapMode::Unrest },
+        { "MAP_RADICALISM", MapMode::Radicalism },
         { "MAP_POPULATION_PRESSURE", MapMode::PopulationPressure },
         { "MAP_ELITE_OVERPRODUCTION", MapMode::EliteOverproduction },
         { "MAP_LEGITIMACY", MapMode::Legitimacy },
         { "MAP_CONTROL", MapMode::Control },
         { "MAP_WAR", MapMode::War },
+        { "MAP_SATISFACTION", MapMode::Satisfaction },
     };
     static_assert(sizeof(map_modes) / sizeof(map_modes[0]) == static_cast<std::size_t>(MapMode::Count), "bind every map mode");
     for (const auto& [name, mode] : map_modes) {
@@ -487,8 +488,9 @@ Dictionary SimWorld::get_location_summary(int location_id) const {
     d["population_density"]   = s.population_density.to_double();
     d["elite_positions"]      = s.elite_positions.to_double();
     d["elite_overproduction"] = s.elite_overproduction.to_double();
-    d["unrest"]               = s.unrest.to_double();
-    d["effective_unrest"]     = s.effective_unrest.to_double();
+    d["commoner_satisfaction"] = s.commoner_satisfaction.to_double();
+    d["elite_satisfaction"]   = s.elite_satisfaction.to_double();
+    d["effective_radicalism"] = s.effective_radicalism.to_double();
     d["security"]             = s.security.to_double();
     d["control"]              = s.control.to_double();
     d["owner_country"]        = s.owner_country;
@@ -510,8 +512,10 @@ Dictionary SimWorld::country_summary_to_dictionary(int country_id, const rota::q
     d["phase"]                = (int64_t)s.phase;
     d["population_pressure"]  = s.population_pressure.to_double();
     d["elite_overproduction"] = s.elite_overproduction.to_double();
-    d["unrest"]               = s.unrest.to_double();
-    d["effective_unrest"]     = s.effective_unrest.to_double();
+    d["commoner_satisfaction"] = s.commoner_satisfaction.to_double();
+    d["elite_satisfaction"]   = s.elite_satisfaction.to_double();
+    d["radicalism"]           = s.radicalism.to_double();
+    d["effective_radicalism"] = s.effective_radicalism.to_double();
     d["legitimacy"]           = s.legitimacy.to_double();
     d["treasury"]             = s.treasury.to_double();
     d["war_weariness"]        = s.war_weariness.to_double();

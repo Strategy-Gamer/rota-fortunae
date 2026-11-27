@@ -17,7 +17,8 @@ func update_ui(selected_location: int):
 		$PanelContainer/VBoxContainer/Owner.text += ", held by %s" % Game.world.get_country_name(summary.controller)
 	$PanelContainer/VBoxContainer/Population.text = "Population: %d (%d commoners)" % [summary.population, summary.commoners]
 	$PanelContainer/VBoxContainer/Wealth.text = "Wealth: %.1f" % summary.wealth
-	$PanelContainer/VBoxContainer/Unrest.text = "Unrest: %.2f stock, %.2f after suppression" % [summary.unrest, summary.effective_unrest]
+	$PanelContainer/VBoxContainer/Satisfaction.text = "Satisfaction: commoners %.2f, elites %.2f" % [summary.commoner_satisfaction, summary.elite_satisfaction]
+	$PanelContainer/VBoxContainer/Radicalism.text = "Radicalism: %.2f after suppression" % summary.effective_radicalism
 	$"PanelContainer/VBoxContainer/Wealth per Capita".text = "Wealth per head: %.3f" % summary.wealth_per_capita
 	$PanelContainer/VBoxContainer/Elites.text = "Elites: %d for %.0f positions (E %.2f)" % [summary.elites, summary.elite_positions, summary.elite_overproduction]
 	$PanelContainer/VBoxContainer/Density.text = "Density: %.2f of carrying capacity" % summary.population_density

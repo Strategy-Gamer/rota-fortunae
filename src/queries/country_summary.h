@@ -19,12 +19,14 @@ struct CountrySummary {
     Fixed64         wealth;
     Fixed64         wealth_per_capita;  // Derived
 
-    // Secular-cycle read-outs; FinalSim's four gauges are P, E, U and S (= legitimacy)
+    // Secular-cycle read-outs
     std::uint8_t    phase;
     Fixed64         population_pressure;
     Fixed64         elite_overproduction;
-    Fixed64         unrest;             // pop-weighted mobilization stock
-    Fixed64         effective_unrest;   // pop-weighted, after suppression
+    Fixed64         commoner_satisfaction; // commoner-weighted
+    Fixed64         elite_satisfaction;    // elite-weighted
+    Fixed64         radicalism;            // the country's stock
+    Fixed64         effective_radicalism;  // commoner-weighted, after suppression
     Fixed64         legitimacy;
     Fixed64         treasury;
     Fixed64         war_weariness;

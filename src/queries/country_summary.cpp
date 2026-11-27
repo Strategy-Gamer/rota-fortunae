@@ -12,7 +12,7 @@ std::vector<CountrySummary> build_country_summaries(const rota::core::World& wor
 
     struct Sums {
         std::uint64_t commoners = 0;
-        Fixed64 positions, unrest, effective_unrest;
+        Fixed64 positions, commoner_satisfaction, elite_satisfaction, effective_radicalism;
     };
     const std::size_t slot_count = world.countries.alive.size();
     std::vector<CountrySummary> out(slot_count, CountrySummary{});
@@ -29,8 +29,9 @@ std::vector<CountrySummary> build_country_summaries(const rota::core::World& wor
         s.elites           += eco.elites[loc];
         s.wealth           += eco.commoner_wealth[loc] + eco.elite_wealth[loc];
         t.positions        += rota::economy::local_elite_positions(world, loc);
-        t.unrest           += cyc.unrest[loc] * commoners;
-        t.effective_unrest += cyc.effective_unrest[loc] * commoners;
+        t.commoner_satisfaction += cyc.commoner_satisfaction[loc] * commoners;
+        t.elite_satisfaction    += cyc.elite_satisfaction[loc] * static_cast<std::int64_t>(eco.elites[loc]);
+        t.effective_radicalism  += cyc.effective_radicalism[loc] * commoners;
         if (world.location_politics.occupier[loc] != rota::countries::INVALID_COUNTRY_ID) s.occupied += 1;
     }
 
@@ -53,14 +54,16 @@ std::vector<CountrySummary> build_country_summaries(const rota::core::World& wor
         s.legitimacy    = state.legitimacy[c];
         s.treasury      = state.treasury[c];
         s.war_weariness = state.war_weariness[c];
+        s.radicalism    = state.radicalism[c];
         for (std::uint32_t type = 0; type < rota::countries::CRISIS_COUNT; type++) {
             if (state.crises[c][type].active) s.active_crises |= 1U << type;
         }
 
         if (s.location_count == 0 || t.commoners == 0) continue;
         const std::int64_t commoners = static_cast<std::int64_t>(t.commoners);
-        s.unrest           = t.unrest / commoners;
-        s.effective_unrest = t.effective_unrest / commoners;
+        s.commoner_satisfaction = t.commoner_satisfaction / commoners;
+        s.elite_satisfaction    = t.elite_satisfaction / static_cast<std::int64_t>(s.elites);
+        s.effective_radicalism  = t.effective_radicalism / commoners;
         s.population_pressure = rota::economy::population_pressure_gauge(
             commoners, rota::economy::LOCATION_CAPACITY * s.location_count);
         s.elite_overproduction = rota::economy::elite_overproduction_gauge(

@@ -18,15 +18,22 @@ struct CycleRecord {
     Fixed64 elite_births;
     Fixed64 promotions;
     Fixed64 demotions;
-    Fixed64 attrition;          // instability: effective unrest
+    Fixed64 attrition;          // political violence
     Fixed64 elite_crisis_deaths; // revolt and coup culls
     Fixed64 elite_war_deaths;
 
-    // Commoner-weighted means, as the phase and the crises read them
+    // Commoner-weighted means, as the phase and the crises read them; elite satisfaction is elite-weighted
     Fixed64 wage;
     Fixed64 immiseration;
     Fixed64 security;
-    Fixed64 effective_unrest;
+    Fixed64 commoner_satisfaction;
+    Fixed64 commoner_satisfaction_target;
+    Fixed64 elite_satisfaction;
+    Fixed64 elite_satisfaction_target;
+    Fixed64 radicalism; // the country's stock, before it is spread over the locations and suppressed
+    Fixed64 radicalism_target;
+    Fixed64 effective_radicalism;
+    Fixed64 violence;
     Fixed64 overproduction;      // elites over baseline positions
     Fixed64 felt_overproduction; // elites over funded positions
     Fixed64 army_shortfall;
