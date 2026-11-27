@@ -396,7 +396,8 @@ conditions start to improve.
   vicious circle by design: a radical society discontents its people, who radicalize it further.
   The cost is that a passing grievance dents commoner satisfaction while it lasts. A high wage
   doesn't buy the turmoil off, so commoners stay discontented through a fracture even as their
-  wages recover.
+  wages recover. Without violence that is all that keeps the land from refilling before the elites
+  clear, so weighed too lightly the peaceful path stalls.
 - **Wage misery alone leaves commoners about half content at the population's peak**, so the
   population grows on through strain and turns down only as the turmoil comes. Wholly miserable
   from the wage alone, it peaked early in strain and was already falling when fracture began.
@@ -411,6 +412,12 @@ conditions start to improve.
   while they are.** Otherwise a fracture fizzled: as violence ebbed, legitimacy recovered and
   radicalism died with the elites still well over their positions, their births resumed, and the
   next boom began from there, so the phase read one fracture across cycles.
+- **Once the elites clear, the country calms within a few years.** Elites regain satisfaction
+  quickly once the surplus is gone (still not at all until most of it has), and radicalism fades
+  faster than it builds. Otherwise violence ran on for decades after the elites cleared, deepening
+  the crash of both classes.
+- **Security never falls far** (its floor is higher than FinalSim's): violence on top of the
+  turmoil took nearly half a fracture's population at FinalSim's depth.
 - **Suppression is weaker than FinalSim's**, because legitimacy now also holds radicalism back. At
   FinalSim's strength a small legitimate state, wholly within the army's reach, never turned
   violent and its elites stalled far over their positions.
@@ -419,7 +426,7 @@ conditions start to improve.
 - **Radicalism is national**, a placeholder for factions' own. Each location gets its share by its
   discontent relative to the country's, which is the rule factions' local support will replace.
 - **Test the peaceful path** with the crises off and `VIOLENCE_ON` near 1 in the harness: cycles
-  there are longer and shallower (about 230 years, population down a third) but must still clear
+  there are longer and shallower (about 220 years, population down two fifths) but must still clear
   the elites.
 
 **Civil war on the map** ([`civil_war.cpp`](../src/countries/civil_war.cpp)). The civil-war crisis
@@ -439,12 +446,12 @@ Each war year:
 
 **Cycle shape** (measure it with the cycle harness, §5). The target is the full cycle of about 150
 years that England, France and Rome show, driven by population and elites together; one near 80
-years would mean elites alone drive it. It runs about 190 today, and the elites swing about four
+years would mean elites alone drive it. It runs about 165 today, and the elites swing three to four
 times over it.
 - **Strain lasts decades.** The population grows on, slowing, to a peak late in strain a little past
   the land's capacity, while the elites multiply severalfold; elite discontent turns radical only
   when it outgrows the tolerance.
-- **A fracture runs for generations.** Population falls by nearly half over it and the elites
+- **A fracture runs for generations.** Population falls by about a third over it and the elites
   by about three quarters, mostly by demotion. Crises are occasional: room for a few civil wars,
   not a revolt every few years. Late in it the commoners' wages are high again, and what violence is left
   is the remaining elites' (Turchin's squeeze).

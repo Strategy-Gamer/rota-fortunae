@@ -29,9 +29,9 @@ const Fixed64 MIN_BIRTH = milli(15);
 const Fixed64 DEATH_BASE = milli(10);
 const Fixed64 CHILD_MORTALITY = milli(400);
 const Fixed64 FERTILITY_ADJUST = milli(50); // a year's step toward what conditions call for: the parents were born a generation ago
-const Fixed64 OVERSHOOT_MORTALITY = milli(5); // extra deaths per unit of population beyond the effective cap
+const Fixed64 OVERSHOOT_MORTALITY = Fixed64::from_raw(2500); // extra deaths per unit of population beyond the effective cap
 const Fixed64 SECURITY_RECOVERY = milli(50);
-const Fixed64 SECURITY_FLOOR = milli(500);
+const Fixed64 SECURITY_FLOOR = milli(800);
 
 // Economy: one elite-owned cultivated parcel fills each location's land
 const Fixed64 CULTIVATED_FOOD = milli(2500);
@@ -55,7 +55,7 @@ const Fixed64 K_ABSORB = milli(2000);
 const Fixed64 TREASURY_YEARS = milli(5000);
 
 // Legitimacy
-const Fixed64 LEGIT_SPEED = milli(150);
+const Fixed64 LEGIT_SPEED = milli(100);
 const Fixed64 LEGIT_FLOOR = ZERO;
 const Fixed64 LEGIT_INSECURITY = milli(150);
 const Fixed64 LEGIT_RADICALISM = milli(600);
@@ -68,15 +68,17 @@ const Fixed64 LEGIT_DIVIDED_ELITES = milli(500); // a state can't regain its sta
 // Satisfaction falls fast and recovers slowly, more slowly still while its causes persist
 const Fixed64 SATISFACTION_FALL = milli(100);
 const Fixed64 SATISFACTION_RISE = milli(30);
+const Fixed64 ELITE_SATISFACTION_RISE = milli(150); // elites' own: once the surplus has gone, competition for positions ends
 const Fixed64 SATISFACTION_STICK = milli(500); // no recovery until the target clears this
 const Fixed64 SATISFIED_WAGE = milli(600); // commoners are wholly satisfied at this relative wage or above
 const Fixed64 MISERABLE_WAGE = milli(120); // and wholly dissatisfied at this or below
-const Fixed64 TURMOIL_DISCONTENT = milli(500); // commoners lose faith in a society growing radical, per unit of radicalism
+const Fixed64 TURMOIL_DISCONTENT = milli(600); // commoners lose faith in a society growing radical, per unit of radicalism
 const Fixed64 ELITE_DISCONTENT = milli(1000); // per elite over each felt position
 const Fixed64 DISCONTENT_CAPACITY = milli(300); // share of the land's capacity a wholly dissatisfied people fills
 
 // Radicalism
 const Fixed64 RADICALISM_RATE = milli(200);
+const Fixed64 RADICALISM_FADE = milli(400); // the rate down, once the grievance has passed: exhaustion
 const Fixed64 RADICAL_COMMONERS = milli(250); // each class's weight in the country's discontent: elites carry the power
 const Fixed64 RADICAL_ELITES = milli(1000);
 const Fixed64 RADICAL_TOLERANCE = milli(400); // discontent below this stays within ordinary politics
@@ -92,8 +94,8 @@ const Fixed64 OVERPROD_EXIT = milli(1200);
 
 // Elite ledger
 const Fixed64 R_E_PREMIUM = milli(20);
-const Fixed64 MU_0 = Fixed64::from_raw(250);
-const Fixed64 MU_DOWN = milli(40);
+const Fixed64 MU_0 = Fixed64::from_raw(500);
+const Fixed64 MU_DOWN = milli(50);
 const Fixed64 K_ATTRITION = milli(10);
 
 // Crises
@@ -343,10 +345,10 @@ void fiscal_and_legitimacy(rota::core::World& w, CountryID c, CountryYear& cy) {
 }
 
 // Moves toward the target: falls fast and recovers slowly, the more slowly the worse conditions still are
-Fixed64 approach(Fixed64 satisfaction, Fixed64 target) {
+Fixed64 approach(Fixed64 satisfaction, Fixed64 target, Fixed64 rise) {
     const Fixed64 rate = target < satisfaction
         ? SATISFACTION_FALL
-        : SATISFACTION_RISE * std::max(ZERO, target - SATISFACTION_STICK) / (ONE - SATISFACTION_STICK);
+        : rise * std::max(ZERO, target - SATISFACTION_STICK) / (ONE - SATISFACTION_STICK);
     return satisfaction + rate * (target - satisfaction);
 }
 
@@ -367,8 +369,8 @@ void satisfaction(const Pass& p) {
         const Fixed64 wage_content = std::clamp((p.wage[loc] - MISERABLE_WAGE) / (SATISFIED_WAGE - MISERABLE_WAGE), ZERO, ONE); // a high wage doesn't buy off turmoil
         const Fixed64 commoner_target = std::max(ZERO, wage_content - TURMOIL_DISCONTENT * p.w.country_state.radicalism[c]);
         const Fixed64 elite_target = std::clamp(ONE - ELITE_DISCONTENT * (felt - ONE), ZERO, ONE);
-        cyc.commoner_satisfaction[loc] = approach(cyc.commoner_satisfaction[loc], commoner_target);
-        cyc.elite_satisfaction[loc] = approach(cyc.elite_satisfaction[loc], elite_target);
+        cyc.commoner_satisfaction[loc] = approach(cyc.commoner_satisfaction[loc], commoner_target, SATISFACTION_RISE);
+        cyc.elite_satisfaction[loc] = approach(cyc.elite_satisfaction[loc], elite_target, ELITE_SATISFACTION_RISE);
 
         cy.commoner_target_sum += commoner_target * workers;
         cy.elite_target_sum += elite_target * elites;
@@ -383,7 +385,8 @@ void radicalism(rota::core::World& w, CountryID c, CountryYear& cy) {
     cy.discontent = RADICAL_COMMONERS * (cy.commoner_discontent_sum / cy.workers) + RADICAL_ELITES * (cy.elite_discontent_sum / cy.elites);
     cy.radicalism_target = std::clamp((cy.discontent - RADICAL_TOLERANCE) / (ONE - RADICAL_TOLERANCE), ZERO, ONE)
         * (ONE - RADICAL_LEGITIMACY * state.legitimacy[c]);
-    state.radicalism[c] += RADICALISM_RATE * (cy.radicalism_target - state.radicalism[c]);
+    const Fixed64 rate = cy.radicalism_target < state.radicalism[c] ? RADICALISM_FADE : RADICALISM_RATE;
+    state.radicalism[c] += rate * (cy.radicalism_target - state.radicalism[c]);
 }
 
 // Spread evenly where everyone is content, toward the discontented as discontent grows; the army
