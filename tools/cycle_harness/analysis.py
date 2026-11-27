@@ -52,7 +52,7 @@ def cycles(lives):
             dens = [r['density'] for r in seg]
             phases = Counter(r['phase'] for r in seg)
             out.append({'years': b - a, 'phases': phases, 'e_peak': max(e), 'e_swing': max(e) / min(e),
-                        'density_swing': max(dens) / min(dens)})
+                        'density_peak': max(dens), 'density_swing': max(dens) / min(dens)})
     return out
 
 
@@ -140,7 +140,7 @@ def compact(lives, name):
     return (f'{name:16} P/S/F {s[0]:.2f}/{s[1]:.2f}/{s[2]:.2f}  period {median([c["years"] for c in cy])}'
             f' (P {median([c["phases"][0] for c in cy])} S {median([c["phases"][1] for c in cy])} F {median([c["phases"][2] for c in cy])})'
             f'  E swing {median([c["e_swing"] for c in cy])} peak {median([c["e_peak"] for c in cy])}'
-            f'  pop swing {median([c["density_swing"] for c in cy])}'
+            f'  pop swing {median([c["density_swing"] for c in cy])} peak {median([c["density_peak"] for c in cy])}'
             f'  fracture pop x{median([f["commoners"] for f in fr])} (25y x{median([f["commoners_25"] for f in fr if f["commoners_25"]])})'
             f'  wars/fracture 0:{wars[0]} 1:{wars[1]} 2:{wars[2]} 3+:{wars[3]}'
             f'  crises/century S {per_century(STRAIN):.1f} F {per_century(FRACTURE):.1f}'

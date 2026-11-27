@@ -9,6 +9,7 @@ void LocationSecularCycle::initialize(std::uint32_t count) {
     elite_satisfaction.assign(count, Fixed64(1));
     effective_radicalism.assign(count, Fixed64());
     security.assign(count, Fixed64(1));
+    fertility.assign(count, Fixed64(1));
 }
 
 void LocationSecularCycle::clear() {
@@ -16,6 +17,7 @@ void LocationSecularCycle::clear() {
     elite_satisfaction.clear();
     effective_radicalism.clear();
     security.clear();
+    fertility.clear();
 }
 
 void LocationSecularCycle::feed_hash(rota::core::Hasher& h) const {
@@ -24,6 +26,7 @@ void LocationSecularCycle::feed_hash(rota::core::Hasher& h) const {
     for (size_t i = 0; i < location_count; i++) h.feed(elite_satisfaction[i].raw_value());
     for (size_t i = 0; i < location_count; i++) h.feed(effective_radicalism[i].raw_value());
     for (size_t i = 0; i < location_count; i++) h.feed(security[i].raw_value());
+    for (size_t i = 0; i < location_count; i++) h.feed(fertility[i].raw_value());
 }
 
 }

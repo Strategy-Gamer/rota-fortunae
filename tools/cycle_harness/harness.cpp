@@ -4,8 +4,9 @@
 // Writes one row per country with land per year, and prints the final state hash, which matches the
 // playtest runner's for the same seed and years while no knob is overridden and no control is given.
 //
-// The one control is a test intervention: radicalism=X@A-B sets every country's radicalism to X at
-// the start of each year from A to B.
+// Controls are test interventions: radicalism=X@A-B sets every country's radicalism to X at the
+// start of each year from A to B, and start=X starts every owned location at X commoners per head of
+// capacity.
 
 #include "knobs.h"
 
@@ -40,6 +41,8 @@ struct Controls {
     bool hold_radicalism = false;
     rota::Fixed64 radicalism;
     std::uint32_t from = 0, to = 0;
+    bool set_start = false;
+    rota::Fixed64 start;
 };
 
 Controls parse_controls(int argc, char** argv, int first) {
@@ -53,6 +56,9 @@ Controls parse_controls(int argc, char** argv, int first) {
             c.radicalism = rota::Fixed64::from_raw(knobs::parse("radicalism", x));
             c.from = a;
             c.to = b;
+        } else if (std::sscanf(arg.c_str(), "start=%31[0-9.]", x) == 1) {
+            c.set_start = true;
+            c.start = rota::Fixed64::from_raw(knobs::parse("start", x));
         } else {
             std::fprintf(stderr, "unknown control %s\n", argv[i]);
             std::exit(2);
@@ -87,6 +93,12 @@ int main(int argc, char** argv) {
         reinterpret_cast<const std::uint8_t*>(rgb.data()), rgb.size(),
         rota::map::MapBuilder::parse_location_data(slurp(argv[4]), slurp(argv[5])));
     rota::scenario::generate_random_scenario(w, std::stoull(argv[6]), std::stoul(argv[7]));
+    if (controls.set_start) {
+        const auto commoners = static_cast<std::uint32_t>((controls.start * rota::economy::LOCATION_CAPACITY).raw_value() / rota::Fixed64::SCALE);
+        for (rota::map::LocationID loc = 0; loc < w.geography.location_count(); loc++) {
+            if (w.countries.is_valid(w.location_politics.owner_country[loc])) w.location_economy.commoners[loc] = commoners;
+        }
+    }
     apply_controls(controls, w);
 
     std::FILE* out = std::fopen(argv[9], "w");

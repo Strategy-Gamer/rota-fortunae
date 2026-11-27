@@ -1,7 +1,7 @@
 """Secular-cycle tuning harness: runs the sim natively over the real map, many seeds at once.
 
   py tools/cycle_harness/cycle.py run NAME [--seeds 4] [--years 600] [--countries 12] [--no-crises]
-                                    [--hold-radicalism X@A-B] [KNOB=VALUE ...]
+                                    [--hold-radicalism X@A-B] [--start-density X] [KNOB=VALUE ...]
   py tools/cycle_harness/cycle.py summary NAME            full report for one run
   py tools/cycle_harness/cycle.py compare NAME [NAME ...] one line per run
   py tools/cycle_harness/cycle.py trace NAME [--seed 0] [--country 0] [--start 1] [--end 9999] [--every 1]
@@ -13,8 +13,9 @@ crisis's row of CRISIS_CFG is CRISIS_<TYPE>_BASE, _MIN_YEARS, _MAX_YEARS and _CO
 decimals in the constant's own units. Knobs exist only in the harness build; the game is untouched.
 The build regenerates itself whenever a source changes. Runs land in tools/cycle_harness/runs/.
 
---hold-radicalism X@A-B is a test intervention: every country's radicalism is set to X at the start of
-each year from A to B.
+Two test interventions: --hold-radicalism X@A-B sets every country's radicalism to X at the start of
+each year from A to B, and --start-density X starts every owned location at X commoners per head of
+capacity instead of the scenario's spread.
 """
 import argparse
 import os
@@ -126,7 +127,7 @@ def cmd_run(args):
     if out.exists():
         shutil.rmtree(out)
     out.mkdir(parents=True)
-    controls = [f'radicalism={args.hold_radicalism}'] if args.hold_radicalism else []
+    controls = ([f'radicalism={args.hold_radicalism}'] if args.hold_radicalism else []) +         ([f'start={args.start_density}'] if args.start_density else [])
     (out / 'knobs.txt').write_text(''.join(f'{k}={v}\n' for k, v in sorted(overrides.items())) + ''.join(f'{c}\n' for c in controls))
     procs = [subprocess.Popen([str(EXE), str(rgb), width, height, str(LOCATIONS), str(STRAITS), str(seed),
                                str(args.countries), str(args.years), str(out / f's{seed}.csv'), *controls],
@@ -152,6 +153,7 @@ def main():
     run.add_argument('--countries', type=int, default=12)
     run.add_argument('--no-crises', action='store_true')
     run.add_argument('--hold-radicalism', metavar='X@A-B')
+    run.add_argument('--start-density', metavar='X')
     run.add_argument('knobs', nargs='*', metavar='KNOB=VALUE')
     summary = sub.add_parser('summary')
     summary.add_argument('name')

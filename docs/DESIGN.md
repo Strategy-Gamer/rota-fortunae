@@ -163,10 +163,10 @@ sync clock; they agree on the sim's outcome by date.
 the same map and scenario generator, runs many seeds in parallel, and reports the cycle's shape and
 the yearly flows in and out of commoners and elites by phase. It builds generated copies of the cycle
 and civil-war sources in which every `const Fixed64` reads an environment override, so any constant
-can be swept without a rebuild or a game change. `--hold-radicalism` is a test intervention between
-years (a grievance shock, or exhaustion after a war). With nothing overridden or held, its final
-state hash equals the playtest runner's for the same seed and years: check that after changing
-either. The
+can be swept without a rebuild or a game change. `--hold-radicalism` and `--start-density` are test
+interventions (a grievance shock or post-war exhaustion; a stressed start). With neither and nothing
+overridden, its final state hash equals the playtest runner's for the same seed and years: check
+that after changing either. The
 flows come from the **cycle ledger** (`World::cycle_ledger`), which the cycle rewrites every year
 and nothing in the sim reads, so it is derived and unhashed; it doubles as the hook for showing
 those flows in game.
@@ -383,7 +383,10 @@ recovers slowly, and not at all until the target clears a stickiness level, so i
 conditions start to improve.
 - **Dissatisfaction lowers the effective cap** (with security), so it lowers the level where births
   equal deaths, not growth well below it: a discontented people far from its land's limit still
-  grows quickly.
+  grows quickly. Mild dissatisfaction hardly moves it; severe dissatisfaction disproportionately.
+- **Fertility follows a generation late**, standing in for the age structure: the parents of this
+  year's children were born a generation ago. That momentum carries growth past where conditions
+  turn, and keeps births low for decades after a crisis, which makes the boom and the crash.
 - **Commoners must see the turmoil**, not just their wage. With wage alone, a country without
   violence became a regulator: population settled at the wage where commoners turn dissatisfied,
   elites stalled there, and nothing ever recovered. Radicalism is mostly elite discontent, and it
@@ -420,13 +423,13 @@ Each war year:
 
 **Cycle shape** (measure it with the cycle harness, §5). The target is the full cycle of about 150
 years that England, France and Rome show, driven by population and elites together; one near 80
-years would mean elites alone drive it. It runs about 185 today (open debt, §12).
-- **Strain lasts decades.** Commoners stop the population short of the land's limit, at a wage
-  just above the demotion wage, while the elites multiply severalfold; elite discontent turns
-  radical only when it outgrows the tolerance.
-- **A fracture runs for generations.** Population falls by about a fifth over it (nearly a third at
-  its lowest) and the elites by about three quarters, mostly by demotion. Crises are occasional: room for a few civil wars, not a
-  revolt every few years. Late in it the commoners' wages are high again, and what violence is left
+years would mean elites alone drive it. It runs about 165 today.
+- **Strain lasts decades.** Momentum carries the population to about the land's capacity after the
+  wage turns, while the elites multiply severalfold; elite discontent turns radical only when it
+  outgrows the tolerance.
+- **A fracture runs for generations.** Population falls by about a quarter over it and the elites
+  by about three quarters, mostly by demotion. Crises are occasional: room for a few civil wars,
+  not a revolt every few years. Late in it the commoners' wages are high again, and what violence is left
   is the remaining elites' (Turchin's squeeze).
 - **The land refills while commoners regain their satisfaction**, which lags the wage and the
   turmoil, not security.
@@ -529,10 +532,11 @@ migration) · partial-map re-evaluation on territory change.
 - **Huge low-control empires can still sit in fracture for over a century** (a few countries in
   a hundred over 1000 years, all of 500+ locations; see the trap in §10). Breakaways may be the
   real answer; recheck after them.
-- **A fracture's population loss is front-loaded with the crises on** (three quarters of it in the
-  first 25 years, against about half with them off): the violence comes in a burst.
-- **The cycle runs about 185 years**, against the 150 targeted, mostly a long strain: with wages
-  held above the demotion wage, elites grow only by reproduction.
+- **A fracture's population loss is front-loaded with the crises on** (over half of it in the
+  first 25 years, against about a quarter with them off): the violence comes in a burst.
+- **Population can't overshoot the land until goods exist.** It peaks about at capacity (the
+  pressure gauge's 0.8). A real Malthusian overshoot needs food to run out, and famine, not merely
+  being overfull, should be what breaks commoner satisfaction then.
 - **Elite satisfaction reads only felt overproduction**, not elite income per head, so the squeeze
   on elites late in a fracture shows in demotion rather than in their discontent.
 - **The cycle ledger isn't shown in game.** It is the hook for a panel of a country's flows.

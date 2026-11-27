@@ -18,6 +18,7 @@ struct LocationSecularCycle {
     std::vector<Fixed64> elite_satisfaction;
     std::vector<Fixed64> effective_radicalism; // the owner's radicalism as it shows here, after suppression
     std::vector<Fixed64> security;
+    std::vector<Fixed64> fertility; // share of the way from the lowest birth rate to the highest
 
     void clear();
     void feed_hash(rota::core::Hasher& h) const;

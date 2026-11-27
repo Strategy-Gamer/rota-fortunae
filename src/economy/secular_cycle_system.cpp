@@ -22,12 +22,14 @@ namespace rc = rota::countries;
 const Fixed64 ZERO;
 const Fixed64 ONE(1);
 const Fixed64 CAPACITY(LOCATION_CAPACITY);
+const Fixed64 FULL_PRESSURE = milli(1250); // the gauge's 1, in commoners per head of capacity: above 0.8 the land is overfull
 
 // Population & vital rates
 const Fixed64 MAX_BIRTH = milli(35);
 const Fixed64 MIN_BIRTH = milli(15);
 const Fixed64 DEATH_BASE = milli(10);
 const Fixed64 CHILD_MORTALITY = milli(400);
+const Fixed64 FERTILITY_ADJUST = milli(50); // a year's step toward what conditions call for: the parents were born a generation ago
 const Fixed64 OVERSHOOT_MORTALITY = milli(5); // extra deaths per unit of population beyond the effective cap
 const Fixed64 SECURITY_RECOVERY = milli(50);
 const Fixed64 SECURITY_FLOOR = milli(500);
@@ -234,13 +236,17 @@ void population_and_economy(const Pass& p) {
         security = std::max(security, SECURITY_FLOOR);
         cyc.security[loc] = security;
 
-        // high fertility well under cap, smoothstep decline as density climbs; insecurity and dissatisfaction shrink the effective cap
+        // insecurity and dissatisfaction shrink the effective cap, mild dissatisfaction hardly at all; fertility falls
+        // by smoothstep as density nears it, and follows a generation late
         const std::int64_t pop = eco.commoners[loc];
-        const Fixed64 carried = security * (DISCONTENT_CAPACITY + (ONE - DISCONTENT_CAPACITY) * cyc.commoner_satisfaction[loc]);
+        const Fixed64 discontent = ONE - cyc.commoner_satisfaction[loc];
+        const Fixed64 carried = security * (DISCONTENT_CAPACITY + (ONE - DISCONTENT_CAPACITY) * (ONE - discontent * discontent));
         const Fixed64 rel = per_capacity(pop) / carried;
         Fixed64 t = std::clamp(rel - milli(500), ZERO, ONE);
         t = t * t * (Fixed64(3) - t * 2);
-        const Fixed64 birth = MAX_BIRTH - (MAX_BIRTH - MIN_BIRTH) * t;
+        Fixed64& fertility = cyc.fertility[loc];
+        fertility += FERTILITY_ADJUST * (ONE - t - fertility);
+        const Fixed64 birth = MIN_BIRTH + (MAX_BIRTH - MIN_BIRTH) * fertility;
         const Fixed64 natural_death = DEATH_BASE + CHILD_MORTALITY * birth;
         // beyond what the land carries, famine and disease cull the surplus
         const Fixed64 overshoot_death = OVERSHOOT_MORTALITY * std::max(ZERO, rel - ONE);
@@ -575,8 +581,7 @@ Fixed64 elite_positions(const rota::core::World& world, LocationID loc, Fixed64 
 
 Fixed64 population_pressure_gauge(std::int64_t commoners, std::int64_t capacity) {
     if (capacity <= 0) return ZERO;
-    const Fixed64 rel = Fixed64::from_raw(commoners * Fixed64::SCALE / capacity);
-    return rota::fmath::logistic(rel, Fixed64(3), ONE); // gentle slope, so it tracks real population in a Turchin-like band
+    return std::min(ONE, Fixed64::from_raw(commoners * Fixed64::SCALE / capacity) / FULL_PRESSURE);
 }
 
 Fixed64 elite_overproduction_gauge(Fixed64 elites_per_position) {
